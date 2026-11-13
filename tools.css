@@ -1,0 +1,45 @@
+/* ПЛАТФОРМА · интерфейс каталога инструментов v1 */
+.tool-intro{margin-bottom:22px}
+.tool-count{margin-top:10px;font-size:12px;color:var(--muted)}
+.tool-toolbar{display:flex;justify-content:flex-end;gap:12px;margin:0 0 20px}
+.tool-primary{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--edge-glow);border-radius:12px;background:var(--accent-soft);color:var(--ink-strong);padding:13px 17px;font-weight:760;transition:.2s}
+.tool-primary:hover{transform:translateY(-2px);box-shadow:0 0 20px var(--glow)}
+.tool-primary svg,.tool-add-card svg{width:19px;height:19px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round}
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:18px}
+.tool-card{min-height:200px;border:1px solid var(--line);border-radius:20px;padding:23px;background:var(--surface);box-shadow:var(--shadow);display:flex;flex-direction:column;gap:15px;transition:transform .23s,box-shadow .23s,border-color .23s}
+.tool-card:hover{transform:translateY(-3px);border-color:var(--edge-glow);box-shadow:var(--shadow),0 0 20px var(--glow)}
+.tool-card .tool-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.tool-card h2{font-size:20px;line-height:1.25;margin:0;color:var(--ink-strong);overflow-wrap:anywhere}
+.tool-state{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px;line-height:1.6}
+.tool-state .dot{width:6px;height:6px;flex:0 0 auto}
+.tool-card-actions{display:flex;align-items:center;gap:10px;margin-top:auto}
+.tool-open{min-height:43px;flex:1;border:1px solid var(--line);border-radius:11px;background:var(--surface2);color:var(--ink-strong);padding:10px;font-size:12px;font-weight:740;transition:.2s}
+.tool-open:hover{border-color:var(--edge-glow);box-shadow:0 0 15px var(--glow)}
+.tool-edit{height:43px;width:43px;flex:0 0 43px;display:grid;place-items:center;border:1px solid var(--line);border-radius:11px;background:var(--surface2);color:var(--ink-strong)}
+.tool-edit svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tool-add-card{border:1px dashed var(--edge-glow);background:transparent;display:flex;align-items:center;justify-content:center;gap:13px;text-align:center;color:var(--ink-strong);font-size:15px;font-weight:760}
+.tool-add-card .plus-large{display:grid;place-items:center;width:51px;height:51px;border:1px solid var(--line);border-radius:15px;background:var(--accent-soft)}
+.tool-add-card .plus-large svg{width:24px;height:24px}
+.tools-empty{border:1px dashed var(--line);border-radius:18px;background:var(--surface);padding:23px;margin-bottom:18px;color:var(--muted);font-size:14px;line-height:1.65}
+.tools-empty strong{display:block;margin-bottom:7px;color:var(--ink-strong);font-size:18px}
+.sidebar-divider{border-top:1px solid var(--line);margin:9px 6px 12px}
+.nav .sidebar-add{color:var(--accent);border:1px dashed var(--edge-glow);background:var(--surface2);margin-top:8px}
+.nav button[title]{overflow-wrap:anywhere;min-width:0}
+.tool-dialog{width:min(480px,calc(100% - 28px));max-height:calc(100vh - 28px);overflow:auto;border:1px solid var(--line);border-radius:21px;background:var(--surface);color:var(--ink-strong);padding:27px;box-shadow:0 28px 85px rgba(0,0,0,.38)}
+.tool-dialog::backdrop{background:rgba(4,10,17,.7);backdrop-filter:blur(4px)}
+.tool-dialog form{display:grid;gap:12px}
+.tool-dialog-head{display:flex;align-items:start;justify-content:space-between;gap:14px}
+.tool-dialog h2{margin:0 0 12px;font-size:23px;color:var(--ink-strong)}
+.tool-dialog label{font-size:13px;font-weight:740;color:var(--ink-strong)}
+.tool-dialog input{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px 13px;background:var(--surface2);color:var(--ink-strong);font:inherit;font-size:14px;outline:none}
+.tool-dialog input:focus{border-color:var(--edge-glow);box-shadow:0 0 0 3px var(--glow)}
+.tool-dialog .dialog-close{border:0;background:transparent;color:var(--muted);font-size:26px;line-height:1}
+.tool-dialog .tool-hint{margin:4px 0 6px;color:var(--muted);font-size:12px;line-height:1.6}
+.tool-dialog .tool-error{color:#e77b7b;font-size:12px;margin:0}
+.tool-dialog .tool-error[hidden]{display:none}
+.tool-dialog-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:7px}
+.tool-dialog-actions button{border-radius:11px;border:1px solid var(--line);padding:11px 15px;background:var(--surface2);color:var(--ink-strong);font-weight:750}
+.tool-dialog-actions .save-tool{background:var(--accent-soft);border-color:var(--edge-glow)}
+.tool-dialog-actions .delete-tool{color:#e88a8a;margin-right:auto}
+.tool-dialog-actions button[hidden]{display:none}
+@media(max-width:760px){.tool-toolbar{justify-content:flex-start}.tool-grid{grid-template-columns:1fr}.tool-card{min-height:175px}.nav .sidebar-add{font-size:0}}
