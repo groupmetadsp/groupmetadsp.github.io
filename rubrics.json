@@ -1,7 +1,20 @@
 {
   "system": [],
   "method": [],
-  "tools": [],
+  "tools": [
+    {
+      "id": "meta-design-tools",
+      "name": "Инструменты проектирования",
+      "materials": [
+        {
+          "id": "meta-massing",
+          "name": "03 · Мета Массинг",
+          "url": "/meta/#massing",
+          "status": "verified"
+        }
+      ]
+    }
+  ],
   "projects": [],
   "analytics": [],
   "knowledge": [
