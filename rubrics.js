@@ -1,9 +1,10 @@
-/* ПЛАТФОРМА v1.1 · пиктограммы материалов */
+/* ПЛАТФОРМА v1.2 · пиктограммы и перетаскивание подразделов и материалов */
 (function(){
 'use strict';
 const IDS=['system','method','tools','projects','analytics','knowledge','development'];
 const STORAGE='platform-hierarchy-v2';
 const DELETED_KEY='platform-hierarchy-deleted-v1';
+const ORDER_KEY='platform-hierarchy-order-v1';
 const LEGACY='platform-rubric-drafts-v1';
 const LEGACY_TOOLS='platform-tool-drafts-v1';
 const el=id=>document.getElementById(id);
@@ -45,6 +46,31 @@ function subsection(raw){
 function sectionsList(v){return Array.isArray(v)?v.map(subsection).filter(Boolean):[];}
 function storageGet(key,fallback){
   try{const val=localStorage.getItem(key);return val?JSON.parse(val):fallback;}catch(e){return fallback;}
+}
+// Отдельная раскладка: порядок не меняет опубликованный каталог и не теряет старые материалы.
+const savedOrdering=storageGet(ORDER_KEY,{});
+const ordering={
+  subsections:(savedOrdering.subsections&&typeof savedOrdering.subsections==='object')?savedOrdering.subsections:{},
+  materials:(savedOrdering.materials&&typeof savedOrdering.materials==='object')?savedOrdering.materials:{}
+};
+function orderedItems(items,ids){
+  if(!Array.isArray(ids)||!ids.length)return items;
+  const rank=new Map(ids.map((id,index)=>[id,index]));
+  return items.map((item,index)=>({item,index})).sort((a,b)=>{
+    const ra=rank.has(a.item.id)?rank.get(a.item.id):Number.MAX_SAFE_INTEGER;
+    const rb=rank.has(b.item.id)?rank.get(b.item.id):Number.MAX_SAFE_INTEGER;
+    return ra===rb?a.index-b.index:ra-rb;
+  }).map(x=>x.item);
+}
+function subsectionOrder(rubric){
+  return Array.isArray(ordering.subsections[rubric])?ordering.subsections[rubric]:[];
+}
+function materialOrder(rubric,subId){
+  return Array.isArray(ordering.materials[rubric]?.[subId])?ordering.materials[rubric][subId]:[];
+}
+function saveOrdering(){
+  try{localStorage.setItem(ORDER_KEY,JSON.stringify(ordering));return true;}
+  catch(e){alert('Не удалось сохранить порядок в памяти браузера.');return false;}
 }
 function persist(){
   try{
@@ -112,8 +138,12 @@ function mergedSections(rubric){
   const map=new Map();
   (published[rubric]||[]).forEach(s=>map.set(s.id,{...s,published:true}));
   (drafts[rubric]||[]).forEach(s=>map.set(s.id,{...s,published:false}));
-  return Array.from(map.values()).filter(s=>!subsectionRemoved(rubric,s.id))
-    .map(s=>({...s,materials:s.materials.filter(m=>!materialRemoved(rubric,s.id,m.id))}));
+  const kept=Array.from(map.values()).filter(s=>!subsectionRemoved(rubric,s.id))
+    .map(s=>({
+      ...s,
+      materials:orderedItems(s.materials.filter(m=>!materialRemoved(rubric,s.id,m.id)),materialOrder(rubric,s.id))
+    }));
+  return orderedItems(kept,subsectionOrder(rubric));
 }
 function pick(rubric){
   const list=mergedSections(rubric);
@@ -129,6 +159,9 @@ function copyForEditing(rubric,subId){
   s={id:base.id,name:base.name,materials:base.materials.map(t=>({...t}))};
   drafts[rubric].push(s);
   return s;
+}
+function gripIcon(){
+  return '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>';
 }
 function trashIcon(){
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg>';
@@ -175,7 +208,8 @@ navMarkup=function(){
   const rows=mergedSections(rubric).map(s=>{
     const name=esc(s.name);
     const activeClass=active&&active.id===s.id?'active':'';
-    return '<div class="rubric-nav-row">'
+    return '<div class="rubric-nav-row rubric-sortable" data-sort-id="'+s.id+'" data-sort-kind="subsections">'
+      +'<button type="button" class="rubric-drag-handle" data-drag-handle="subsections" title="Перетащить подраздел для изменения порядка" aria-label="Перетащить подраздел «'+name+'». Стрелки вверх и вниз меняют порядок">'+gripIcon()+'</button>'
       +'<button type="button" data-subsection="'+s.id+'" class="rubric-nav-item '+activeClass+'" '+(activeClass?'aria-current="page"':'')+' title="'+name+'">'
         +icon('archive')+'<span>'+name+'</span>'
       +'</button>'
@@ -206,8 +240,11 @@ function renderRubric(rubric){
       const name=esc(t.name);
       const hasLink=!!validUrl(t.url);
       const main=t.primary===true;
-      return '<article class="tool-card rubric-material-card'+(main?' is-primary':'')+'">'
-        +'<div class="tool-card-top"><h2>'+name+'</h2>'+materialBadges(t)+'</div>'
+      return '<article class="tool-card rubric-material-card rubric-sortable'+(main?' is-primary':'')+'" data-sort-id="'+t.id+'" data-sort-kind="materials">'
+        +'<div class="tool-card-top"><h2>'+name+'</h2>'
+          +'<div class="material-card-head-actions">'+materialBadges(t)
+          +'<button type="button" class="material-drag-handle" data-drag-handle="materials" title="Перетащить материал" aria-label="Перетащить материал «'+name+'». Стрелки меняют порядок">'+gripIcon()+'</button>'
+          +'</div></div>'
         +'<div class="tool-state"><span class="dot"></span>'
            +(hasLink?'Ссылка подключена':'Ссылка пока не назначена')
         +'</div>'
@@ -313,6 +350,112 @@ function closeDialog(){
   if(typeof el('rubric-dialog').close==='function')el('rubric-dialog').close();
   else el('rubric-dialog').removeAttribute('open');
 }
+// Перемещение только в пределах текущей рубрики / подраздела.
+function moveSorted(kind,sourceId,targetId,after){
+  if(!isRubric(current)||sourceId===targetId)return false;
+  const rubric=current,sub=pick(rubric);
+  const isSub=kind==='subsections';
+  const list=isSub?mergedSections(rubric):(sub?sub.materials:[]);
+  const ids=list.map(item=>item.id);
+  const from=ids.indexOf(sourceId),to=ids.indexOf(targetId);
+  if(from<0||to<0)return false;
+  ids.splice(from,1);
+  const dest=ids.indexOf(targetId)+(after?1:0);
+  ids.splice(dest,0,sourceId);
+  if(isSub){
+    ordering.subsections[rubric]=ids;
+  }else{
+    if(!sub)return false;
+    if(!ordering.materials[rubric])ordering.materials[rubric]={};
+    ordering.materials[rubric][sub.id]=ids;
+  }
+  saveOrdering();
+  render();
+  return true;
+}
+function sortFromDOM(state){
+  const ids=Array.from(state.container.children)
+    .filter(node=>node.matches('[data-sort-kind="'+state.kind+'"]'))
+    .map(node=>node.dataset.sortId);
+  if(!ids.length)return;
+  if(state.kind==='subsections')ordering.subsections[state.rubric]=ids;
+  else{
+    if(!ordering.materials[state.rubric])ordering.materials[state.rubric]={};
+    ordering.materials[state.rubric][state.subId]=ids;
+  }
+  saveOrdering();
+  render();
+}
+let dragState=null;
+document.addEventListener('pointerdown',e=>{
+  const handle=e.target.closest('[data-drag-handle]');
+  if(!handle||!isRubric(current)||(e.pointerType==='mouse'&&e.button!==0))return;
+  const source=handle.closest('[data-sort-kind][data-sort-id]');
+  if(!source)return;
+  const kind=source.dataset.sortKind;
+  const container=source.parentElement;
+  if(!container || !['subsections','materials'].includes(kind))return;
+  const sub=pick(current);
+  dragState={
+    source,kind,container,rubric:current,subId:sub?.id||'',
+    pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,active:false
+  };
+  // На телефоне отключаем прокрутку только при взаимодействии с ручкой.
+  e.preventDefault();
+});
+document.addEventListener('pointermove',e=>{
+  const d=dragState;
+  if(!d||e.pointerId!==d.pointerId)return;
+  if(!d.active){
+    if(Math.hypot(e.clientX-d.startX,e.clientY-d.startY)<7)return;
+    d.active=true;
+    d.source.classList.add('is-dragging');
+    document.body.classList.add('rubric-drag-active');
+  }
+  e.preventDefault();
+  const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-sort-kind="'+d.kind+'"][data-sort-id]');
+  if(!target || target===d.source || target.parentElement!==d.container)return;
+  const rect=target.getBoundingClientRect();
+  const after=d.kind==='subsections'
+    ?e.clientY>rect.top+rect.height/2
+    : (e.clientY>rect.top+rect.height*0.75 ||
+      (e.clientY>=rect.top && e.clientY<=rect.bottom && e.clientX>rect.left+rect.width/2));
+  const anchor=after?target.nextSibling:target;
+  if(anchor!==d.source)d.container.insertBefore(d.source,anchor);
+},{passive:false});
+function finishDrag(e){
+  const d=dragState;
+  if(!d||(e&&e.pointerId!==d.pointerId))return;
+  dragState=null;
+  document.body.classList.remove('rubric-drag-active');
+  d.source.classList.remove('is-dragging');
+  if(d.active)sortFromDOM(d);
+}
+document.addEventListener('pointerup',finishDrag);
+document.addEventListener('pointercancel',finishDrag);
+document.addEventListener('keydown',e=>{
+  const handle=e.target.closest('[data-drag-handle]');
+  if(!handle||!isRubric(current))return;
+  const kind=handle.dataset.dragHandle;
+  const relevant=kind==='subsections'
+    ?['ArrowUp','ArrowDown']:['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
+  if(!relevant.includes(e.key))return;
+  const item=handle.closest('[data-sort-id]');
+  const siblings=Array.from(item?.parentElement?.children||[])
+    .filter(node=>node.matches('[data-sort-kind="'+kind+'"]'));
+  const index=siblings.indexOf(item);
+  const direction=['ArrowUp','ArrowLeft'].includes(e.key)?-1:1;
+  const adjacent=siblings[index+direction];
+  if(!adjacent)return;
+  e.preventDefault();
+  const sourceId=item.dataset.sortId,targetId=adjacent.dataset.sortId;
+  const after=direction>0;
+  if(moveSorted(kind,sourceId,targetId,after)){
+    const next=Array.from(document.querySelectorAll('[data-sort-kind="'+kind+'"]'))
+      .find(node=>node.dataset.sortId===sourceId);
+    next?.querySelector('[data-drag-handle]')?.focus();
+  }
+});
 function openMaterial(id){
   const sub=pick(current);
   if(!sub)return;
