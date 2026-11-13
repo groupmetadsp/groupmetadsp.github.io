@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ПЛАТФОРМА v0.6</title>
+<title>ПЛАТФОРМА v0.7</title>
 <style>
 :root{
   --bg:#e7ecf1;
@@ -208,6 +208,7 @@ body.focus-mode .audio-panel{right:0}
 :root[data-theme="dark"] .slogan{background:linear-gradient(95deg,#eef5fb 0%,#a8c9e8 78%,#87b9e4 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 @media(max-width:760px){.slogan{font-size:17px}}
 </style>
+<link rel="stylesheet" href="tools.css">
 </head>
 <body>
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
@@ -244,6 +245,8 @@ body.focus-mode .audio-panel{right:0}
   <symbol id="i-muted" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="m17 9 5 6m0-6-5 6"/></symbol>
   <symbol id="i-full" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5"/></symbol>
   <symbol id="i-exit" viewBox="0 0 24 24"><path d="M9 3H3v6M15 3h6v6M21 15v6h-6M3 15v6h6"/><path d="m8 8-5-5m13 5 5-5m0 18-5-5M3 21l5-5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="m4 20 4-.9L19 8a2 2 0 0 0-3-3L5 16zM14 7l3 3"/></symbol>
 </svg>
 
 <header>
@@ -277,7 +280,7 @@ body.focus-mode .audio-panel{right:0}
   <div class="side-label">Разделы</div>
   <nav class="nav" id="nav"></nav>
   <div class="side-bottom">
-    <div class="version">Концепция интерфейса<br>ПЛАТФОРМА · v0.6</div>
+    <div class="version">Концепция интерфейса<br>ПЛАТФОРМА · v0.7</div>
   </div>
 </aside>
 
@@ -288,7 +291,7 @@ const sections = [
   {id:'home', name:'Главная', icon:'home', tag:'Обзор', desc:'Стартовый экран с общей логикой работы системы.', work:['Краткий обзор структуры системы','Быстрый переход в основные разделы','Фиксация статуса наполнения разделов']},
   {id:'system', name:'Система', icon:'system', tag:'Организационная модель', desc:'Цели, функции, задачи, структура, роли и связи внутри Платформы.', work:['Цель и назначение Платформы','Функции, задачи и зоны ответственности','Организационная структура и роли']},
   {id:'method', name:'Методология', icon:'book', tag:'Правила проектирования', desc:'Подходы, алгоритмы и стандарты, на которых строится работа Платформы.', work:['Алгоритм проектирования и параметризации','КЭП, квартирография, типы секций','Стандарты паркинга, АР, КР и инженерии']},
-  {id:'tools', name:'Инструменты', icon:'tool', tag:'Цифровые инструменты', desc:'Единый каталог приложений и расчетных модулей Платформы.', work:['МЕТАПАРКИНГ','МЕТАСЕБЕС','МЕТАПОТОК и дополнительные калькуляторы']},
+  {id:'tools', name:'Инструменты', icon:'tool', tag:'Цифровые инструменты', desc:'Единый каталог приложений и расчетных модулей Платформы.', work:[]},
   {id:'projects', name:'Проекты', icon:'project', tag:'Объекты и решения', desc:'Карточки объектов, исходные данные, проектные решения и результаты.', work:['Реестр проектов','Паспорта объектов и параметры','История принятых решений']},
   {id:'analytics', name:'Аналитика', icon:'chart', tag:'Показатели эффективности', desc:'Аналитика эффективности решений, себестоимости, сроков и результатов.', work:['Показатели по площадям и КЭП','Себестоимость и экономический эффект','Сравнение вариантов решений']},
   {id:'knowledge', name:'Стандарты', icon:'archive', tag:'Библиотека опыта', desc:'Нормативы, типовые решения, исследования и накопленные выводы.', work:['Типовые решения и модули','Нормативная база и мониторинги','Разборы проектов и технические выводы']},
@@ -338,7 +341,7 @@ function renderHome(){
           <div class="quick">
             <button data-go="system">Система<span>Цели, функции, задачи и роли</span></button>
             <button data-go="method">Методология<span>Правила проектирования</span></button>
-            <button data-go="tools">Инструменты<span>МЕТАПАРКИНГ, МЕТАСЕБЕС, МЕТАПОТОК</span></button>
+            <button data-go="tools">Инструменты<span>Каталог и подключение приложений</span></button>
             <button data-go="projects">Проекты<span>Реестр объектов и решений</span></button>
           </div>
         </div>
@@ -550,5 +553,6 @@ document.addEventListener('pointermove', e=>{
 },{passive:true});
 render();
 </script>
+<script src="tools.js"></script>
 </body>
 </html>
