@@ -43,3 +43,23 @@
 .tool-dialog-actions .delete-tool{color:#e88a8a;margin-right:auto}
 .tool-dialog-actions button[hidden]{display:none}
 @media(max-width:760px){.tool-toolbar{justify-content:flex-start}.tool-grid{grid-template-columns:1fr}.tool-card{min-height:175px}.nav .sidebar-add{font-size:0}}
+
+/* Двухуровневая навигация: подразделы слева, материалы в рабочей области */
+.rubric-nav-row{display:flex;align-items:center;gap:3px;min-width:0}
+.nav .rubric-nav-row .rubric-nav-item{flex:1;min-width:0;padding-right:7px;overflow-wrap:anywhere}
+.nav .rubric-nav-row .rubric-nav-edit{display:grid;place-items:center;flex:0 0 29px;width:29px;height:33px;padding:6px 3px;border-radius:8px;opacity:.45}
+.nav .rubric-nav-row .rubric-nav-edit:hover,.nav .rubric-nav-row:focus-within .rubric-nav-edit{opacity:1;background:var(--accent-soft)}
+.nav .rubric-nav-row .rubric-nav-edit svg{width:15px;height:15px}
+.rubric-subheading{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:6px 0 23px;padding:6px 0 20px;border-bottom:1px solid var(--line)}
+.rubric-subheading h2{font-size:clamp(21px,2.5vw,32px);margin:0;color:var(--ink-strong);letter-spacing:-.8px}
+.rubric-kicker{margin:0 0 8px;color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px}
+.rubric-empty{padding:34px;min-height:190px;display:flex;flex-direction:column;justify-content:center}
+#rubric-url-wrap{display:grid;gap:10px}
+#rubric-url-wrap[hidden]{display:none}
+@media(max-width:760px){
+  .rubric-subheading{align-items:flex-start;flex-direction:column}
+  .nav .rubric-nav-row .rubric-nav-item{padding:13px 6px}
+  .nav .rubric-nav-row .rubric-nav-edit{flex:0 0 20px;width:20px;padding:3px 2px}
+  .nav .rubric-nav-row .rubric-nav-edit svg{width:14px;height:14px}
+  .sidebar .side-label{display:none}
+}
