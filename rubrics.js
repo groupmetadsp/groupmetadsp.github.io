@@ -1,4 +1,4 @@
-/* ПЛАТФОРМА v1.0 · каталог подразделов и материалов */
+/* ПЛАТФОРМА v1.1 · пиктограммы материалов */
 (function(){
 'use strict';
 const IDS=['system','method','tools','projects','analytics','knowledge','development'];
@@ -27,7 +27,9 @@ function material(raw){
   const name=String(raw.name||'').trim().slice(0,100);
   if(!id||!name)return null;
   const url=typeof raw.url==='string'?raw.url.trim().slice(0,900):'';
-  return {id,name,url,primary:raw.primary===true};
+  const allowedStatuses=['development','verified','update'];
+  const status=allowedStatuses.includes(raw.status)?raw.status:'';
+  return {id,name,url,primary:raw.primary===true,status,archived:raw.archived===true};
 }
 function subsection(raw){
   if(!raw || typeof raw!=='object')return null;
@@ -131,6 +133,40 @@ function copyForEditing(rubric,subId){
 function trashIcon(){
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg>';
 }
+// Небольшие SVG без внешних библиотек, единый стиль штриховых пиктограмм.
+const badgePaths={
+  star:'<path d="m12 2.6 2.9 5.9 6.5 1-4.7 4.6 1.1 6.5L12 17.5l-5.8 3.1 1.1-6.5-4.7-4.6 6.5-1z"/>',
+  construction:'<path d="M4 20V9M20 20V9M2 9h20M3 4l4 5m2-5 4 5m2-5 4 5M4 20h16"/>',
+  verified:'<path d="m12 2 2.3 1.5 2.7-.1 1.2 2.5 2.5 1.2-.1 2.7L22 12l-1.4 2.2.1 2.7-2.5 1.2-1.2 2.5-2.7-.1L12 22l-2.3-1.5-2.7.1-1.2-2.5-2.5-1.2.1-2.7L2 12l1.4-2.2-.1-2.7 2.5-1.2L7 3.4l2.7.1z"/><path d="m8.5 12 2.5 2.5 4.8-5"/>',
+  update:'<path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.4 9a7.5 7.5 0 0 1 13-2L20 12M4 12l1.6 4a7.5 7.5 0 0 0 13-1"/>',
+  archive:'<rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v12h14V8M10 13h4"/>'
+};
+const badgeHelp={
+  development:'Тестовый режим. Продукт в разработке',
+  verified:'Материал проверен и готов к применению',
+  update:'Материал требует обновления',
+  archive:'Архивная версия. Не использовать как актуальную'
+};
+function badgeSvg(type){
+  return '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(badgePaths[type]||'')+'</svg>';
+}
+function materialBadges(t){
+  const main=t.primary===true;
+  const starTip=main?'Главный материал подраздела. Нажмите, чтобы снять отметку':'Сделать главным материалом подраздела';
+  let html='<div class="material-symbols" aria-label="Обозначения материала">';
+  html+='<button type="button" class="material-symbol material-symbol-star'+(main?' is-on':'')+'"'
+    +' data-primary-material="'+t.id+'" aria-pressed="'+(main?'true':'false')+'"'
+    +' aria-label="'+esc(starTip)+'" data-tooltip="'+esc(starTip)+'">'+badgeSvg('star')+'</button>';
+  if(badgeHelp[t.status]){
+    html+='<span class="material-symbol material-symbol-'+t.status+'" tabindex="0" role="img"'
+      +' aria-label="'+esc(badgeHelp[t.status])+'" data-tooltip="'+esc(badgeHelp[t.status])+'">'+badgeSvg(t.status)+'</span>';
+  }
+  if(t.archived){
+    html+='<span class="material-symbol material-symbol-archive" tabindex="0" role="img"'
+      +' aria-label="'+esc(badgeHelp.archive)+'" data-tooltip="'+esc(badgeHelp.archive)+'">'+badgeSvg('archive')+'</span>';
+  }
+  return html+'</div>';
+}
 const originalNav=navMarkup;
 navMarkup=function(){
   if(!isRubric(current))return originalNav();
@@ -171,15 +207,10 @@ function renderRubric(rubric){
       const hasLink=!!validUrl(t.url);
       const main=t.primary===true;
       return '<article class="tool-card rubric-material-card'+(main?' is-primary':'')+'">'
-        +'<div class="tool-card-top"><h2>'+name+'</h2></div>'
+        +'<div class="tool-card-top"><h2>'+name+'</h2>'+materialBadges(t)+'</div>'
         +'<div class="tool-state"><span class="dot"></span>'
-           +(main?'Главный материал · ':'')
            +(hasLink?'Ссылка подключена':'Ссылка пока не назначена')
         +'</div>'
-        +'<button type="button" class="rubric-main-toggle'+(main?' active':'')+'" data-primary-material="'+t.id+'" aria-pressed="'+(main?'true':'false')+'" title="'+(main?'Снять отметку главного материала':'Сделать главным материалом')+'">'
-           +'<span class="rubric-main-star" aria-hidden="true">★</span>'
-           +(main?'Главный материал':'Сделать главным')
-        +'</button>'
         +'<div class="tool-card-actions">'
         +'<button type="button" class="tool-open" data-open-material="'+t.id+'">'+(hasLink?'Открыть':'Назначить ссылку')+'</button>'
         +'<button type="button" class="tool-edit" data-edit-material="'+t.id+'" title="Редактировать материал" aria-label="Редактировать '+name+'">'+icon('pencil')+'</button>'
@@ -227,6 +258,18 @@ const modal=[
         '<label for="rubric-url">Ссылка на материал (необязательно)</label>',
         '<input id="rubric-url" type="text" inputmode="url" autocomplete="off" placeholder="/папка/">',
       '</div>',
+      '<div id="rubric-flags-wrap" class="rubric-flags-wrap">',
+        '<label for="rubric-status">Состояние материала</label>',
+        '<select id="rubric-status">',
+          '<option value="">Не указано</option>',
+          '<option value="development">В разработке / тестовый режим</option>',
+          '<option value="verified">Проверен и готов к применению</option>',
+          '<option value="update">Требует актуализации</option>',
+        '</select>',
+        '<label class="rubric-archive-check" for="rubric-archived">',
+          '<input type="checkbox" id="rubric-archived"> Архивная версия',
+        '</label>',
+      '</div>',
       '<p class="tool-error" id="rubric-error" hidden></p>',
       '<p class="tool-hint" id="rubric-hint">Изменение сохраняется в этом браузере. Для публикации для всех пользователей обновите каталог в GitHub.</p>',
       '<div class="tool-dialog-actions">',
@@ -253,6 +296,9 @@ function openDialog(type,subId=null,matId=null){
   el('rubric-url-wrap').hidden=!isMaterial;
   el('rubric-url').value=isMaterial&&mat?mat.url:'';
   el('rubric-url').placeholder=isMaterial?'/'+(current==='knowledge'?'standards':current)+'/название/':'/папка/';
+  el('rubric-flags-wrap').hidden=!isMaterial;
+  el('rubric-status').value=isMaterial&&mat?mat.status||'':'';
+  el('rubric-archived').checked=!!(isMaterial&&mat&&mat.archived);
   el('rubric-error').hidden=true;
   el('rubric-hint').textContent=isMaterial
     ? 'Материал будет добавлен в подраздел «'+(sub?sub.name:'')+'», а не в список подразделов. Изменения в браузере — черновик до публикации в GitHub.'
@@ -362,7 +408,12 @@ el('rubric-form').addEventListener('submit',function(e){
     if(!sub)return;
     const id=editorMaterialId||uid('mat');
     const pos=sub.materials.findIndex(x=>x.id===id);
-    const record={id,name:name.slice(0,100),url:href,primary:pos>=0?sub.materials[pos].primary===true:false};
+    const record={
+      id,name:name.slice(0,100),url:href,
+      primary:pos>=0?sub.materials[pos].primary===true:false,
+      status:el('rubric-status').value,
+      archived:el('rubric-archived').checked
+    };
     if(pos>=0)sub.materials[pos]=record;else sub.materials.push(record);
   }
   persist();closeDialog();render();playSound('navigate');
