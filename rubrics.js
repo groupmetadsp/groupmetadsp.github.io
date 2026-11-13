@@ -1,8 +1,9 @@
-/* ПЛАТФОРМА v0.9 · каталог подразделов и материалов */
+/* ПЛАТФОРМА v1.0 · каталог подразделов и материалов */
 (function(){
 'use strict';
 const IDS=['system','method','tools','projects','analytics','knowledge','development'];
 const STORAGE='platform-hierarchy-v2';
+const DELETED_KEY='platform-hierarchy-deleted-v1';
 const LEGACY='platform-rubric-drafts-v1';
 const LEGACY_TOOLS='platform-tool-drafts-v1';
 const el=id=>document.getElementById(id);
@@ -11,6 +12,7 @@ const sectionInfo=id=>sections.find(s=>s.id===id);
 const empty=()=>Object.fromEntries(IDS.map(id=>[id,[]]));
 let published=empty();
 let drafts=empty();
+let removed=Object.fromEntries(IDS.map(id=>[id,{subsections:[],materials:{}}]));
 let chosen=Object.fromEntries(IDS.map(id=>[id,null]));
 let editorType='',editorRubric='',editorSubId='',editorMaterialId='';
 function esc(x){
@@ -25,22 +27,42 @@ function material(raw){
   const name=String(raw.name||'').trim().slice(0,100);
   if(!id||!name)return null;
   const url=typeof raw.url==='string'?raw.url.trim().slice(0,900):'';
-  return {id,name,url};
+  return {id,name,url,primary:raw.primary===true};
 }
 function subsection(raw){
   if(!raw || typeof raw!=='object')return null;
   const id=String(raw.id||'').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,90);
   const name=String(raw.name||'').trim().slice(0,90);
   if(!id||!name)return null;
-  return {id,name,materials:Array.isArray(raw.materials)?raw.materials.map(material).filter(Boolean):[]};
+  const materials=Array.isArray(raw.materials)?raw.materials.map(material).filter(Boolean):[];
+  // В пределах одного подраздела может быть только один главный материал.
+  let hasPrimary=false;
+  for(const m of materials){if(m.primary){if(hasPrimary)m.primary=false;else hasPrimary=true;}}
+  return {id,name,materials};
 }
 function sectionsList(v){return Array.isArray(v)?v.map(subsection).filter(Boolean):[];}
 function storageGet(key,fallback){
   try{const val=localStorage.getItem(key);return val?JSON.parse(val):fallback;}catch(e){return fallback;}
 }
 function persist(){
-  try{localStorage.setItem(STORAGE,JSON.stringify(drafts));return true;}
-  catch(e){alert('Не удалось сохранить изменение в этом браузере.');return false;}
+  try{
+    localStorage.setItem(STORAGE,JSON.stringify(drafts));
+    localStorage.setItem(DELETED_KEY,JSON.stringify(removed));
+    return true;
+  }catch(e){alert('Не удалось сохранить изменение в этом браузере.');return false;}
+}
+function ensureRemoved(rubric){
+  if(!removed[rubric])removed[rubric]={subsections:[],materials:{}};
+  if(!Array.isArray(removed[rubric].subsections))removed[rubric].subsections=[];
+  if(!removed[rubric].materials || typeof removed[rubric].materials!=='object')removed[rubric].materials={};
+  return removed[rubric];
+}
+function materialRemoved(rubric,subId,matId){
+  const deleted=ensureRemoved(rubric);
+  return (deleted.materials[subId]||[]).includes(matId);
+}
+function subsectionRemoved(rubric,subId){
+  return ensureRemoved(rubric).subsections.includes(subId);
 }
 function validUrl(raw){
   if(!raw||!raw.trim())return '';
@@ -52,6 +74,14 @@ function validUrl(raw){
   }catch(e){return '';}
 }
 const stored=storageGet(STORAGE,{});
+const deleted=storageGet(DELETED_KEY,{});
+for(const id of IDS){
+  const record=deleted && deleted[id] ? deleted[id] : {};
+  removed[id]={
+    subsections:Array.isArray(record.subsections)?record.subsections.filter(x=>typeof x==='string'):[],
+    materials:record.materials && typeof record.materials==='object' ? record.materials : {}
+  };
+}
 for(const rubric of IDS)drafts[rubric]=sectionsList(stored?.[rubric]);
 // Перенос карточек старой одноуровневой версии без потери данных.
 function migrateLegacy(){
@@ -80,7 +110,8 @@ function mergedSections(rubric){
   const map=new Map();
   (published[rubric]||[]).forEach(s=>map.set(s.id,{...s,published:true}));
   (drafts[rubric]||[]).forEach(s=>map.set(s.id,{...s,published:false}));
-  return Array.from(map.values());
+  return Array.from(map.values()).filter(s=>!subsectionRemoved(rubric,s.id))
+    .map(s=>({...s,materials:s.materials.filter(m=>!materialRemoved(rubric,s.id,m.id))}));
 }
 function pick(rubric){
   const list=mergedSections(rubric);
@@ -97,6 +128,9 @@ function copyForEditing(rubric,subId){
   drafts[rubric].push(s);
   return s;
 }
+function trashIcon(){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg>';
+}
 const originalNav=navMarkup;
 navMarkup=function(){
   if(!isRubric(current))return originalNav();
@@ -111,6 +145,8 @@ navMarkup=function(){
       +'</button>'
       +'<button type="button" class="rubric-nav-edit" data-edit-subsection="'+s.id+'" title="Редактировать подраздел" aria-label="Редактировать '+name+'">'
         +icon('pencil')+'</button>'
+      +'<button type="button" class="rubric-nav-delete" data-delete-subsection="'+s.id+'" title="Удалить подраздел" aria-label="Удалить '+name+'">'
+        +trashIcon()+'</button>'
       +'</div>';
   }).join('');
   return '<button type="button" data-go="home" title="Вернуться к разделам">'
@@ -133,13 +169,21 @@ function renderRubric(rubric){
     const cards=selected.materials.map(t=>{
       const name=esc(t.name);
       const hasLink=!!validUrl(t.url);
-      return '<article class="tool-card">'
+      const main=t.primary===true;
+      return '<article class="tool-card rubric-material-card'+(main?' is-primary':'')+'">'
         +'<div class="tool-card-top"><h2>'+name+'</h2></div>'
         +'<div class="tool-state"><span class="dot"></span>'
-           +(hasLink?'Материал подключён':'Ссылка пока не назначена')
-        +'</div><div class="tool-card-actions">'
-        +'<button type="button" class="tool-open" data-open-material="'+t.id+'">'+(hasLink?'Открыть материал':'Назначить ссылку')+'</button>'
+           +(main?'Главный материал · ':'')
+           +(hasLink?'Ссылка подключена':'Ссылка пока не назначена')
+        +'</div>'
+        +'<button type="button" class="rubric-main-toggle'+(main?' active':'')+'" data-primary-material="'+t.id+'" aria-pressed="'+(main?'true':'false')+'" title="'+(main?'Снять отметку главного материала':'Сделать главным материалом')+'">'
+           +'<span class="rubric-main-star" aria-hidden="true">★</span>'
+           +(main?'Главный материал':'Сделать главным')
+        +'</button>'
+        +'<div class="tool-card-actions">'
+        +'<button type="button" class="tool-open" data-open-material="'+t.id+'">'+(hasLink?'Открыть':'Назначить ссылку')+'</button>'
         +'<button type="button" class="tool-edit" data-edit-material="'+t.id+'" title="Редактировать материал" aria-label="Редактировать '+name+'">'+icon('pencil')+'</button>'
+        +'<button type="button" class="tool-delete" data-delete-material="'+t.id+'" title="Удалить материал" aria-label="Удалить '+name+'">'+trashIcon()+'</button>'
         +'</div></article>';
     }).join('');
     body='<div class="rubric-subheading">'
@@ -213,7 +257,7 @@ function openDialog(type,subId=null,matId=null){
   el('rubric-hint').textContent=isMaterial
     ? 'Материал будет добавлен в подраздел «'+(sub?sub.name:'')+'», а не в список подразделов. Изменения в браузере — черновик до публикации в GitHub.'
     : 'Создаётся подраздел в меню слева. Материалы добавляются отдельно в его рабочем окне. Изменения в браузере — черновик.';
-  const canDelete=type==='subsection'?!!(sub&&!sub.published):!!(mat && sub && !sub.published);
+  const canDelete=type==='subsection'?!!sub:!!(mat && sub);
   el('rubric-delete').hidden=!canDelete;
   if(typeof el('rubric-dialog').showModal==='function')el('rubric-dialog').showModal();
   else el('rubric-dialog').setAttribute('open','');
@@ -233,6 +277,42 @@ function openMaterial(id){
   audioStarted=true;playSound('navigate');
   window.open(href,'_blank','noopener,noreferrer');
 }
+function removeSubsection(rubric,subId){
+  const target=mergedSections(rubric).find(s=>s.id===subId);
+  if(!target)return;
+  const count=target.materials.length;
+  const msg='Удалить подраздел «'+target.name+'»'
+    +(count?' вместе с материалами ('+count+')':'')+'?\nДействие нельзя отменить.';
+  if(!window.confirm(msg))return;
+  drafts[rubric]=drafts[rubric].filter(s=>s.id!==subId);
+  const d=ensureRemoved(rubric);
+  if(!d.subsections.includes(subId))d.subsections.push(subId);
+  if(chosen[rubric]===subId)chosen[rubric]=null;
+  persist();render();playSound('navigate');
+}
+function removeMaterial(rubric,subId,matId){
+  const sub=mergedSections(rubric).find(s=>s.id===subId);
+  const target=sub?.materials.find(t=>t.id===matId);
+  if(!target)return;
+  if(!window.confirm('Удалить материал «'+target.name+'» из подраздела «'+sub.name+'»?\nДействие нельзя отменить.'))return;
+  const copy=copyForEditing(rubric,subId);
+  if(!copy)return;
+  copy.materials=copy.materials.filter(m=>m.id!==matId);
+  const d=ensureRemoved(rubric);
+  if(!Array.isArray(d.materials[subId]))d.materials[subId]=[];
+  if(!d.materials[subId].includes(matId))d.materials[subId].push(matId);
+  persist();render();playSound('navigate');
+}
+function setPrimaryMaterial(rubric,subId,matId){
+  const sub=mergedSections(rubric).find(s=>s.id===subId);
+  const item=sub?.materials.find(m=>m.id===matId);
+  if(!item)return;
+  const copy=copyForEditing(rubric,subId);
+  if(!copy)return;
+  const next=!item.primary;
+  copy.materials.forEach(m=>{m.primary=(next&&m.id===matId);});
+  persist();render();playSound('navigate');
+}
 document.addEventListener('click',function(e){
   const choose=e.target.closest('[data-subsection]');
   if(choose){
@@ -243,6 +323,12 @@ document.addEventListener('click',function(e){
   if(newSub){openDialog('subsection');return;}
   const editSub=e.target.closest('[data-edit-subsection]');
   if(editSub){openDialog('subsection',editSub.dataset.editSubsection);return;}
+  const deleteSub=e.target.closest('[data-delete-subsection]');
+  if(deleteSub){removeSubsection(current,deleteSub.dataset.deleteSubsection);return;}
+  const main=e.target.closest('[data-primary-material]');
+  if(main){const sub=pick(current);if(sub)setPrimaryMaterial(current,sub.id,main.dataset.primaryMaterial);return;}
+  const deleteMat=e.target.closest('[data-delete-material]');
+  if(deleteMat){const sub=pick(current);if(sub)removeMaterial(current,sub.id,deleteMat.dataset.deleteMaterial);return;}
   const newMat=e.target.closest('[data-new-material]');
   if(newMat){const sub=pick(current);if(sub)openDialog('material',sub.id);return;}
   const editMat=e.target.closest('[data-edit-material]');
@@ -276,7 +362,7 @@ el('rubric-form').addEventListener('submit',function(e){
     if(!sub)return;
     const id=editorMaterialId||uid('mat');
     const pos=sub.materials.findIndex(x=>x.id===id);
-    const record={id,name:name.slice(0,100),url:href};
+    const record={id,name:name.slice(0,100),url:href,primary:pos>=0?sub.materials[pos].primary===true:false};
     if(pos>=0)sub.materials[pos]=record;else sub.materials.push(record);
   }
   persist();closeDialog();render();playSound('navigate');
@@ -285,15 +371,10 @@ el('rubric-close').onclick=closeDialog;
 el('rubric-cancel').onclick=closeDialog;
 el('rubric-delete').onclick=function(){
   if(!isRubric(editorRubric))return;
-  if(editorType==='subsection'){
-    drafts[editorRubric]=drafts[editorRubric].filter(s=>s.id!==editorSubId);
-    if(chosen[editorRubric]===editorSubId)chosen[editorRubric]=null;
-  }else if(editorType==='material'){
-    const sub=drafts[editorRubric].find(s=>s.id===editorSubId);
-    if(!sub)return;
-    sub.materials=sub.materials.filter(t=>t.id!==editorMaterialId);
-  }
-  persist();closeDialog();render();
+  const rubric=editorRubric, subId=editorSubId, matId=editorMaterialId, type=editorType;
+  closeDialog();
+  if(type==='subsection')removeSubsection(rubric,subId);
+  else if(type==='material')removeMaterial(rubric,subId,matId);
 };
 function removeCopies(){
   for(const rubric of IDS){
