@@ -1,4 +1,4 @@
-/* ПЛАТФОРМА v1.2 · пиктограммы и перетаскивание подразделов и материалов */
+/* ПЛАТФОРМА v1.3 · все символы доступны на каждой карточке */
 (function(){
 'use strict';
 const IDS=['system','method','tools','projects','analytics','knowledge','development'];
@@ -189,15 +189,19 @@ function materialBadges(t){
   let html='<div class="material-symbols" aria-label="Обозначения материала">';
   html+='<button type="button" class="material-symbol material-symbol-star'+(main?' is-on':'')+'"'
     +' data-primary-material="'+t.id+'" aria-pressed="'+(main?'true':'false')+'"'
-    +' aria-label="'+esc(starTip)+'" data-tooltip="'+esc(starTip)+'">'+badgeSvg('star')+'</button>';
-  if(badgeHelp[t.status]){
-    html+='<span class="material-symbol material-symbol-'+t.status+'" tabindex="0" role="img"'
-      +' aria-label="'+esc(badgeHelp[t.status])+'" data-tooltip="'+esc(badgeHelp[t.status])+'">'+badgeSvg(t.status)+'</span>';
+    +' aria-label="'+esc(starTip)+'" data-tooltip="'+esc(starTip)+'" title="'+esc(starTip)+'">'+badgeSvg('star')+'</button>';
+  for(const status of ['development','verified','update']){
+    const active=t.status===status;
+    const tooltip=(active?'Снять статус: ':'Установить статус: ')+badgeHelp[status];
+    html+='<button type="button" class="material-symbol material-symbol-status material-symbol-'+status+(active?' is-on':'')+'"'
+      +' data-status-material="'+t.id+'" data-status-value="'+status+'" aria-pressed="'+(active?'true':'false')+'"'
+      +' aria-label="'+esc(tooltip)+'" data-tooltip="'+esc(tooltip)+'" title="'+esc(tooltip)+'">'+badgeSvg(status==='development'?'construction':status)+'</button>';
   }
-  if(t.archived){
-    html+='<span class="material-symbol material-symbol-archive" tabindex="0" role="img"'
-      +' aria-label="'+esc(badgeHelp.archive)+'" data-tooltip="'+esc(badgeHelp.archive)+'">'+badgeSvg('archive')+'</span>';
-  }
+  const archived=t.archived===true;
+  const archiveTip=(archived?'Снять отметку «Архив». ':'Отметить как архив. ')+badgeHelp.archive;
+  html+='<button type="button" class="material-symbol material-symbol-status material-symbol-archive'+(archived?' is-on':'')+'"'
+    +' data-archive-material="'+t.id+'" aria-pressed="'+(archived?'true':'false')+'"'
+    +' aria-label="'+esc(archiveTip)+'" data-tooltip="'+esc(archiveTip)+'" title="'+esc(archiveTip)+'">'+badgeSvg('archive')+'</button>';
   return html+'</div>';
 }
 const originalNav=navMarkup;
@@ -502,6 +506,27 @@ function setPrimaryMaterial(rubric,subId,matId){
   copy.materials.forEach(m=>{m.primary=(next&&m.id===matId);});
   persist();render();playSound('navigate');
 }
+function setMaterialStatus(rubric,subId,matId,status){
+  if(!['development','verified','update'].includes(status))return;
+  const sub=mergedSections(rubric).find(s=>s.id===subId);
+  const original=sub?.materials.find(m=>m.id===matId);
+  if(!original)return;
+  const copy=copyForEditing(rubric,subId);
+  const target=copy?.materials.find(m=>m.id===matId);
+  if(!target)return;
+  target.status=(original.status===status?'':status);
+  persist();render();playSound('navigate');
+}
+function toggleMaterialArchive(rubric,subId,matId){
+  const sub=mergedSections(rubric).find(s=>s.id===subId);
+  const original=sub?.materials.find(m=>m.id===matId);
+  if(!original)return;
+  const copy=copyForEditing(rubric,subId);
+  const target=copy?.materials.find(m=>m.id===matId);
+  if(!target)return;
+  target.archived=!original.archived;
+  persist();render();playSound('navigate');
+}
 document.addEventListener('click',function(e){
   const choose=e.target.closest('[data-subsection]');
   if(choose){
@@ -516,6 +541,10 @@ document.addEventListener('click',function(e){
   if(deleteSub){removeSubsection(current,deleteSub.dataset.deleteSubsection);return;}
   const main=e.target.closest('[data-primary-material]');
   if(main){const sub=pick(current);if(sub)setPrimaryMaterial(current,sub.id,main.dataset.primaryMaterial);return;}
+  const status=e.target.closest('[data-status-material]');
+  if(status){const sub=pick(current);if(sub)setMaterialStatus(current,sub.id,status.dataset.statusMaterial,status.dataset.statusValue);return;}
+  const archive=e.target.closest('[data-archive-material]');
+  if(archive){const sub=pick(current);if(sub)toggleMaterialArchive(current,sub.id,archive.dataset.archiveMaterial);return;}
   const deleteMat=e.target.closest('[data-delete-material]');
   if(deleteMat){const sub=pick(current);if(sub)removeMaterial(current,sub.id,deleteMat.dataset.deleteMaterial);return;}
   const newMat=e.target.closest('[data-new-material]');
