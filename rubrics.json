@@ -4,6 +4,18 @@
   "tools": [],
   "projects": [],
   "analytics": [],
-  "knowledge": [],
+  "knowledge": [
+    {
+      "id": "technical-assignment",
+      "name": "Техническое задание",
+      "materials": [
+        {
+          "id": "alternative-assembly-immutable",
+          "name": "Альтернативная сборка (с неизменяемой частью)",
+          "url": ""
+        }
+      ]
+    }
+  ],
   "development": []
 }
