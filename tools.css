@@ -115,3 +115,94 @@
   .tool-card-actions{gap:7px}
   .tool-delete,.tool-edit{width:39px;height:39px;flex:0 0 39px}
 }
+
+/* ПЛАТФОРМА v1.2: строка символов, подсказки и drag-and-drop */
+.rubric-material-card .tool-card-top{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;overflow:visible;
+}
+.rubric-material-card .tool-card-top h2{flex:1;min-width:0}
+.material-card-head-actions{display:flex;flex:0 0 auto;align-items:center;gap:5px}
+.material-symbols{display:inline-flex;flex:0 0 auto;align-items:center;gap:4px;white-space:nowrap}
+.material-symbol{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;
+  width:29px;height:29px;min-width:29px;padding:5px;border:1px solid transparent;border-radius:9px;
+  color:var(--muted);background:transparent;outline-offset:2px;cursor:help;
+  transition:background .18s,color .18s,border-color .18s,transform .18s;
+}
+.material-symbol svg{width:18px;height:18px;display:block;flex:0 0 auto}
+.material-symbol-star{cursor:pointer;color:var(--muted)}
+.material-symbol-star:hover,.material-symbol-star:focus-visible{color:#44d784;background:rgba(44,215,132,.12)}
+.material-symbol-star.is-on{color:#47e492;background:rgba(47,205,112,.15)}
+.material-symbol-star.is-on svg{fill:currentColor;stroke:currentColor}
+.material-symbol-development{color:#e9ab43;background:rgba(227,161,43,.13)}
+.material-symbol-verified{color:#41c781;background:rgba(42,184,105,.11)}
+.material-symbol-update{color:#e6a050;background:rgba(230,160,80,.13)}
+.material-symbol-archive{color:#9ba7b6;background:rgba(140,153,172,.13)}
+.material-symbol:hover,.material-symbol:focus{z-index:12;transform:translateY(-1px);border-color:currentColor}
+.material-symbol[data-tooltip]::after{
+  content:attr(data-tooltip);position:absolute;right:-7px;top:calc(100% + 9px);z-index:25;
+  pointer-events:none;width:max-content;max-width:min(240px,calc(100vw - 44px));white-space:normal;
+  padding:9px 11px;border-radius:10px;background:#0e1824;color:#e9f3ff;
+  border:1px solid rgba(144,187,217,.36);box-shadow:0 14px 32px rgba(0,0,0,.35);
+  font-size:12px;font-weight:600;line-height:1.5;text-align:left;
+  opacity:0;visibility:hidden;transform:translateY(-3px);
+  transition:opacity .14s,transform .14s,visibility .14s;
+}
+.material-symbol[data-tooltip]:hover::after,
+.material-symbol[data-tooltip]:focus::after,
+.material-symbol[data-tooltip]:focus-visible::after{
+  opacity:1;visibility:visible;transform:translateY(0);
+}
+.tool-card.rubric-material-card:hover,.tool-card.rubric-material-card:focus-within{z-index:3}
+.rubric-flags-wrap{display:grid;gap:10px;margin:3px 0}
+.rubric-flags-wrap[hidden]{display:none}
+.tool-dialog .rubric-flags-wrap select{
+  width:100%;border:1px solid var(--line);border-radius:11px;padding:12px 13px;
+  background:var(--surface2);color:var(--ink-strong);font:inherit;font-size:14px;outline:none;
+}
+.tool-dialog .rubric-flags-wrap select:focus{border-color:var(--edge-glow);box-shadow:0 0 0 3px var(--glow)}
+.tool-dialog .rubric-archive-check{display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600}
+.tool-dialog .rubric-archive-check input{width:17px;height:17px;margin:0;accent-color:#4bc77f}
+
+/* Ручки перетаскивания в боковой панели и на карточках */
+.nav .rubric-nav-row .rubric-drag-handle{
+  display:grid;place-items:center;flex:0 0 18px;width:18px;height:33px;padding:2px 0;
+  border:0;border-radius:7px;background:transparent;color:var(--muted);
+  opacity:.55;cursor:grab;touch-action:none;user-select:none;
+}
+.nav .rubric-nav-row .rubric-drag-handle svg{width:15px;height:19px;stroke:none;fill:currentColor}
+.nav .rubric-nav-row .rubric-drag-handle:hover,
+.nav .rubric-nav-row .rubric-drag-handle:focus-visible{opacity:1;color:var(--accent);background:var(--surface2)}
+.material-drag-handle{
+  display:grid;place-items:center;flex:0 0 28px;width:28px;height:29px;padding:5px;
+  border:1px solid var(--line);border-radius:9px;background:var(--surface2);
+  color:var(--muted);cursor:grab;touch-action:none;user-select:none;
+}
+.material-drag-handle svg{width:17px;height:18px;fill:currentColor;stroke:none}
+.material-drag-handle:hover,.material-drag-handle:focus-visible{
+  color:var(--accent);border-color:var(--edge-glow);box-shadow:0 0 11px var(--glow)
+}
+.rubric-drag-active,.rubric-drag-active *{cursor:grabbing!important}
+.rubric-sortable.is-dragging{
+  opacity:.62;outline:2px dashed var(--accent);outline-offset:-3px;
+  box-shadow:0 0 20px var(--glow);transform:scale(.99);
+  transition:none!important;
+}
+@media(max-width:760px){
+  .rubric-material-card .tool-card-top{align-items:flex-start;flex-wrap:wrap}
+  .material-card-head-actions{width:100%;justify-content:flex-end}
+  .material-symbols{gap:3px}
+  .material-symbol{width:28px;height:28px;min-width:28px}
+  .nav .rubric-nav-row{gap:1px}
+  .nav .rubric-nav-row .rubric-drag-handle{flex:0 0 11px;width:11px;padding:1px}
+  .nav .rubric-nav-row .rubric-drag-handle svg{width:11px}
+  .nav .rubric-nav-row .rubric-nav-item{padding:12px 3px}
+  .nav .rubric-nav-row .rubric-nav-item svg{width:15px}
+  .nav .rubric-nav-row .rubric-nav-edit,.nav .rubric-nav-row .rubric-nav-delete{
+    flex:0 0 15px;width:15px;padding:2px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .rubric-sortable.is-dragging{transform:none}
+  .material-symbol[data-tooltip]::after{transition:none}
+}
