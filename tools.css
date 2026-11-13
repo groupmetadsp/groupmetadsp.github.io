@@ -206,3 +206,73 @@
   .rubric-sortable.is-dragging{transform:none}
   .material-symbol[data-tooltip]::after{transition:none}
 }
+
+
+/* ПЛАТФОРМА v1.3 — все пять статусов всегда доступны на карточке */
+.rubric-material-card .tool-card-top{
+  flex-direction:column;
+  align-items:stretch;
+  gap:12px;
+}
+.rubric-material-card .tool-card-top h2{
+  flex:none;
+  width:100%;
+}
+.rubric-material-card .material-card-head-actions{
+  display:flex;
+  justify-content:space-between;
+  width:100%;
+  flex:none;
+  gap:7px;
+}
+.rubric-material-card .material-symbols{
+  display:inline-flex;
+  gap:5px;
+  flex-wrap:nowrap;
+}
+.material-symbol-status{
+  cursor:pointer;
+}
+.material-symbol-status:not(.is-on){
+  color:var(--muted);
+  background:transparent;
+  border-color:transparent;
+  opacity:.55;
+}
+.material-symbol-status:not(.is-on):hover,
+.material-symbol-status:not(.is-on):focus-visible{
+  color:var(--ink-strong);
+  opacity:1;
+  background:var(--surface2);
+  border-color:var(--line);
+}
+.material-symbol-development.is-on{
+  color:#e9ab43;
+  border-color:rgba(227,161,43,.3);
+  background:rgba(227,161,43,.15);
+  opacity:1;
+}
+.material-symbol-verified.is-on{
+  color:#41c781;
+  border-color:rgba(42,184,105,.3);
+  background:rgba(42,184,105,.14);
+  opacity:1;
+}
+.material-symbol-update.is-on{
+  color:#e6a050;
+  border-color:rgba(230,160,80,.3);
+  background:rgba(230,160,80,.15);
+  opacity:1;
+}
+.material-symbol-archive.is-on{
+  color:#b2c0cf;
+  border-color:rgba(140,153,172,.4);
+  background:rgba(140,153,172,.17);
+  opacity:1;
+}
+.material-symbol-star:not(.is-on){opacity:.65}
+.material-symbol-star:not(.is-on):hover,.material-symbol-star:not(.is-on):focus-visible{opacity:1}
+@media(max-width:760px){
+  .rubric-material-card .material-card-head-actions{width:100%;justify-content:space-between}
+  .rubric-material-card .material-symbols{gap:4px}
+}
