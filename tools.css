@@ -63,3 +63,55 @@
   .nav .rubric-nav-row .rubric-nav-edit svg{width:14px;height:14px}
   .sidebar .side-label{display:none}
 }
+
+/* ПЛАТФОРМА v1.0: корзина, главный материал и зелёный пульс */
+.nav .rubric-nav-row .rubric-nav-delete{
+  display:grid;place-items:center;flex:0 0 29px;width:29px;height:33px;
+  padding:6px 3px;border-radius:8px;color:var(--muted);opacity:.55;
+}
+.nav .rubric-nav-row .rubric-nav-delete:hover,
+.nav .rubric-nav-row .rubric-nav-delete:focus-visible{
+  color:#e26464;background:rgba(226,100,100,.12);opacity:1;
+}
+.nav .rubric-nav-row .rubric-nav-delete svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9}
+.tool-delete{
+  flex:0 0 43px;width:43px;height:43px;display:grid;place-items:center;
+  border:1px solid var(--line);border-radius:11px;background:var(--surface2);color:var(--muted);
+}
+.tool-delete:hover,.tool-delete:focus-visible{
+  color:#e26464;border-color:rgba(226,100,100,.45);background:rgba(226,100,100,.1);
+}
+.tool-delete svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9}
+.rubric-material-card{isolation:isolate}
+.rubric-main-toggle{
+  align-self:flex-start;border:1px solid var(--line);border-radius:999px;
+  padding:7px 12px;display:inline-flex;align-items:center;gap:7px;
+  background:var(--surface2);color:var(--muted);font-size:12px;font-weight:730;
+  transition:background .2s,color .2s,border-color .2s,box-shadow .2s;
+}
+.rubric-main-toggle:hover{color:#37bc71;border-color:rgba(55,188,113,.45)}
+.rubric-main-star{font-size:15px;line-height:1}
+.rubric-main-toggle.active{
+  color:#43df8a;background:rgba(36,171,94,.13);border-color:rgba(61,222,128,.55);
+}
+.rubric-material-card.is-primary{
+  border-color:#45db83;
+  background:linear-gradient(145deg,rgba(44,198,105,.115),transparent 50%),var(--surface);
+  animation:rubric-primary-pulse 2.4s ease-in-out infinite;
+}
+@keyframes rubric-primary-pulse{
+  0%,100%{box-shadow:var(--shadow),0 0 8px rgba(44,211,112,.16),inset 0 0 0 1px rgba(46,220,111,.14)}
+  50%{box-shadow:var(--shadow),0 0 31px rgba(35,225,104,.62),0 0 11px rgba(46,220,111,.46),inset 0 0 0 1px rgba(46,220,111,.72)}
+}
+@media (prefers-reduced-motion:reduce){
+  .rubric-material-card.is-primary{
+    animation:none!important;
+    box-shadow:var(--shadow),0 0 15px rgba(35,225,104,.36);
+  }
+}
+@media(max-width:760px){
+  .nav .rubric-nav-row .rubric-nav-delete{flex:0 0 18px;width:18px;padding:3px 1px}
+  .nav .rubric-nav-row .rubric-nav-delete svg{width:14px;height:14px}
+  .tool-card-actions{gap:7px}
+  .tool-delete,.tool-edit{width:39px;height:39px;flex:0 0 39px}
+}
