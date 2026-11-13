@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ПЛАТФОРМА v0.7</title>
+<title>ПЛАТФОРМА v0.8</title>
 <style>
 :root{
   --bg:#e7ecf1;
@@ -208,7 +208,7 @@ body.focus-mode .audio-panel{right:0}
 :root[data-theme="dark"] .slogan{background:linear-gradient(95deg,#eef5fb 0%,#a8c9e8 78%,#87b9e4 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 @media(max-width:760px){.slogan{font-size:17px}}
 </style>
-<link rel="stylesheet" href="tools.css">
+<link rel="stylesheet" href="tools.css?v=0.8">
 </head>
 <body>
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
@@ -280,7 +280,7 @@ body.focus-mode .audio-panel{right:0}
   <div class="side-label">Разделы</div>
   <nav class="nav" id="nav"></nav>
   <div class="side-bottom">
-    <div class="version">Концепция интерфейса<br>ПЛАТФОРМА · v0.7</div>
+    <div class="version">Концепция интерфейса<br>ПЛАТФОРМА · v0.8</div>
   </div>
 </aside>
 
@@ -321,23 +321,23 @@ function renderHome(){
           <p class="slogan">НЕ ПРОЕКТИРУЕМ ЗДАНИЕ.<br>ВЫЧИСЛЯЕМ, КАКИМ ОНО ДОЛЖНО БЫТЬ.</p>
           <p class="lead">Единая рабочая среда для методологии, инструментов, проектов и аналитики. Навигация всегда остается слева, а содержимое открывается в свободной рабочей области.</p>
         </div>
-        <div class="badge"><span class="dot"></span> Прототип интерфейса</div>
+        <div class="badge"><span class="dot"></span> Навигационный портал</div>
       </section>
 
       <section class="grid">
         <div class="panel">
           <h2>Что уже зафиксировано</h2>
-          <p>На текущем этапе согласовывается общая оболочка сайта: навигация, структура разделов, логика работы экрана и визуальный стиль.</p>
+          <p>Единая оболочка Платформы с самостоятельными каталогами материалов для каждого раздела.</p>
           <div class="list">
-            <div class="item">Постоянная левая панель с рубриками</div>
+            <div class="item">Левая панель разделов и собственное меню внутри каждой рубрики</div>
             <div class="item">Фиксированная верхняя панель управления</div>
-            <div class="item">Открытие разделов в рабочей области справа</div>
+            <div class="item">Карточки материалов с названиями и ссылками на опубликованные страницы</div>
             <div class="item">Полноэкранный режим только для рабочего экрана</div>
           </div>
         </div>
         <div class="panel">
           <h2>Быстрый переход</h2>
-          <p>На этом этапе каждый раздел открыт как заглушка «В работе» с кратким описанием планируемого содержимого.</p>
+          <p>В каждой рубрике можно создавать карточки, назначать ссылки и переходить к материалам.</p>
           <div class="quick">
             <button data-go="system">Система<span>Цели, функции, задачи и роли</span></button>
             <button data-go="method">Методология<span>Правила проектирования</span></button>
@@ -347,7 +347,7 @@ function renderHome(){
         </div>
       </section>
 
-      <div class="footer">ПЛАТФОРМА · прототип стартового экрана</div>
+      <div class="footer">ПЛАТФОРМА · стартовая страница</div>
     </div>
   `;
 }
@@ -366,7 +366,7 @@ function renderSection(section){
           </div>
         </div>
       </section>
-      <div class="footer">ПЛАТФОРМА · прототип стартового экрана</div>
+      <div class="footer">ПЛАТФОРМА · стартовая страница</div>
     </div>
   `;
 }
@@ -553,6 +553,6 @@ document.addEventListener('pointermove', e=>{
 },{passive:true});
 render();
 </script>
-<script src="tools.js"></script>
+<script src="tools.js?v=0.8"></script>
 </body>
 </html>
