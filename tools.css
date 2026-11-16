@@ -83,6 +83,9 @@
 }
 .tool-delete svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9}
 .rubric-material-card{isolation:isolate}
+.rubric-material-card.is-linked{cursor:pointer}
+.rubric-material-card.is-linked:focus-visible{outline:2px solid var(--edge-glow);outline-offset:3px}
+.rubric-material-card.is-linked button{cursor:pointer}
 .rubric-main-toggle{
   align-self:flex-start;border:1px solid var(--line);border-radius:999px;
   padding:7px 12px;display:inline-flex;align-items:center;gap:7px;
@@ -276,3 +279,4 @@
   .rubric-material-card .material-card-head-actions{width:100%;justify-content:space-between}
   .rubric-material-card .material-symbols{gap:4px}
 }
+

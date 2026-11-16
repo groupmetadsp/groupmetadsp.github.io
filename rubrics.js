@@ -2,6 +2,12 @@
 (function(){
 'use strict';
 const IDS=['system','method','tools','projects','analytics','knowledge','development'];
+const PLATFORM_TOOLS=[
+  {id:'apartment-catalog',name:'01 · Каталог квартир',url:'/meta/#catalog',status:'verified'},
+  {id:'floor-configurator',name:'02 · Конфигуратор этажа',url:'/meta/#configurator',status:'verified'},
+  {id:'meta-massing',name:'03 · Мета Массинг',url:'/meta/#massing',status:'verified'},
+  {id:'above-ground-parking',name:'04 · Надземный паркинг',url:'/meta/#massing',status:'verified'}
+];
 const STORAGE='platform-hierarchy-v2';
 const DELETED_KEY='platform-hierarchy-deleted-v1';
 const ORDER_KEY='platform-hierarchy-order-v1';
@@ -98,7 +104,8 @@ function validUrl(raw){
   if(!value.startsWith('/') && !/^https:\/\//i.test(value))return '';
   try{
     const u=new URL(value,window.location.origin);
-    return u.protocol==='https:'?u.href:'';
+    const localPreview=['localhost','127.0.0.1'].includes(u.hostname);
+    return (u.protocol==='https:' || (u.protocol==='http:'&&localPreview))?u.href:'';
   }catch(e){return '';}
 }
 const stored=storageGet(STORAGE,{});
@@ -137,7 +144,21 @@ migrateLegacy();
 function mergedSections(rubric){
   const map=new Map();
   (published[rubric]||[]).forEach(s=>map.set(s.id,{...s,published:true}));
-  (drafts[rubric]||[]).forEach(s=>map.set(s.id,{...s,published:false}));
+  (drafts[rubric]||[]).forEach(s=>{
+    const live=map.get(s.id);
+    if(!live){map.set(s.id,{...s,published:false});return;}
+    // Опубликованные кнопки не должны исчезать из-за старого локального черновика.
+    const materials=new Map(live.materials.map(m=>[m.id,m]));
+    const nameKey=value=>String(value||'').toLocaleLowerCase('ru')
+      .replace(/^\s*\d+\s*[·.\-–—:]?\s*/,'').replace(/[^a-zа-яё0-9]+/g,'');
+    const liveByName=new Map(live.materials.map(m=>[nameKey(m.name),m]));
+    s.materials.forEach(m=>{
+      const base=materials.get(m.id)||liveByName.get(nameKey(m.name));
+      if(base){materials.set(base.id,{...base,...m,id:base.id,url:m.url||base.url,status:m.status||base.status});}
+      else materials.set(m.id,m);
+    });
+    map.set(s.id,{...s,materials:Array.from(materials.values()),published:false});
+  });
   const kept=Array.from(map.values()).filter(s=>!subsectionRemoved(rubric,s.id))
     .map(s=>({
       ...s,
@@ -244,7 +265,7 @@ function renderRubric(rubric){
       const name=esc(t.name);
       const hasLink=!!validUrl(t.url);
       const main=t.primary===true;
-      return '<article class="tool-card rubric-material-card rubric-sortable'+(main?' is-primary':'')+'" data-sort-id="'+t.id+'" data-sort-kind="materials">'
+      return '<article class="tool-card rubric-material-card rubric-sortable'+(main?' is-primary':'')+(hasLink?' is-linked':'')+'" data-sort-id="'+t.id+'" data-sort-kind="materials"'+(hasLink?' data-open-material="'+t.id+'" role="link" tabindex="0"':'')+'>'
         +'<div class="tool-card-top"><h2>'+name+'</h2>'
           +'<div class="material-card-head-actions">'+materialBadges(t)
           +'<button type="button" class="material-drag-handle" data-drag-handle="materials" title="Перетащить материал" aria-label="Перетащить материал «'+name+'». Стрелки меняют порядок">'+gripIcon()+'</button>'
@@ -551,8 +572,16 @@ document.addEventListener('click',function(e){
   if(newMat){const sub=pick(current);if(sub)openDialog('material',sub.id);return;}
   const editMat=e.target.closest('[data-edit-material]');
   if(editMat){const sub=pick(current);if(sub)openDialog('material',sub.id,editMat.dataset.editMaterial);return;}
+  const openButton=e.target.closest('.tool-open[data-open-material]');
+  if(openButton){openMaterial(openButton.dataset.openMaterial);return;}
+  if(e.target.closest('button,a,input,select,textarea'))return;
   const open=e.target.closest('[data-open-material]');
   if(open)openMaterial(open.dataset.openMaterial);
+});
+document.addEventListener('keydown',function(e){
+  const card=e.target.closest('.rubric-material-card[data-open-material]');
+  if(!card || e.target!==card || !['Enter',' '].includes(e.key))return;
+  e.preventDefault();openMaterial(card.dataset.openMaterial);
 });
 el('rubric-form').addEventListener('submit',function(e){
   e.preventDefault();
@@ -622,6 +651,13 @@ async function loadCatalog(){
   if(next && typeof next==='object' && !Array.isArray(next)){
     for(const id of IDS)published[id]=sectionsList(next[id]);
   }
+  const designTools=published.tools.find(s=>s.id==='meta-design-tools');
+  if(designTools){
+    const extra=designTools.materials.filter(m=>!PLATFORM_TOOLS.some(t=>t.id===m.id));
+    designTools.materials=PLATFORM_TOOLS.map(t=>({...t})).concat(extra);
+  }else{
+    published.tools.unshift({id:'meta-design-tools',name:'Инструменты проектирования',materials:PLATFORM_TOOLS.map(t=>({...t}))});
+  }
   // Сохраняем ранее опубликованные материалы в подразделе "Ранее добавленные".
   for(const id of IDS){
     const list=id==='tools'?legacyTools:old?.[id];
@@ -638,3 +674,4 @@ async function loadCatalog(){
 loadCatalog();
 render();
 })();
+
