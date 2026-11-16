@@ -208,6 +208,22 @@ body.focus-mode .audio-panel{right:0}
 .slogan{font-weight:760;font-size:clamp(17px,2.1vw,27px);line-height:1.4;letter-spacing:.015em;max-width:850px;margin:22px 0 0;color:var(--ink-strong);text-wrap:balance;text-shadow:0 0 22px rgba(136,197,245,.14)}
 :root[data-theme="dark"] .slogan{background:linear-gradient(95deg,#eef5fb 0%,#a8c9e8 78%,#87b9e4 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 @media(max-width:760px){.slogan{font-size:17px}}
+:root[data-theme="dream"]{--bg:#cf527d;--surface:#d85f87;--surface2:#e77796;--surface3:#f39b9e;--ink:#fff1e8;--ink-strong:#fff9dc;--muted:#ffe0d6;--line:rgba(255,231,201,.34);--accent:#fff34e;--accent-soft:#a93f71;--shadow:0 16px 42px rgba(113,25,75,.25);--glow:rgba(255,237,92,.22);--edge-glow:rgba(255,245,95,.55)}
+:root[data-theme="dream"] body{background:linear-gradient(165deg,#d45a82,#e65f8a 40%,#f68b85 72%,#d94e89)}
+:root[data-theme="dream"] body::before{inset:0;height:100vh;opacity:.55;background:radial-gradient(ellipse 60% 35% at 77% 22%,rgba(255,232,84,.54),transparent 75%),radial-gradient(ellipse 60% 38% at 24% 65%,rgba(255,128,122,.4),transparent 80%),linear-gradient(180deg,rgba(255,210,104,.18),rgba(210,50,125,.12))}
+:root[data-theme="dream"] body::after{display:none}
+:root[data-theme="dream"] header,:root[data-theme="dream"] .sidebar{background:rgba(189,58,111,.83);border-color:rgba(255,229,191,.3);backdrop-filter:blur(18px)}
+:root[data-theme="dream"] .panel,:root[data-theme="dream"] .state{background:rgba(205,67,119,.58);border-color:rgba(255,230,179,.32);box-shadow:0 14px 44px rgba(126,32,85,.22),inset 0 1px rgba(255,246,212,.2)}
+:root[data-theme="dream"] .hero h1,:root[data-theme="dream"] .state h2{font-family:Impact,"Arial Narrow","Roboto Condensed",sans-serif;text-transform:uppercase;letter-spacing:.02em;color:#fff75c;text-shadow:0 3px 24px rgba(255,224,68,.25)}
+:root[data-theme="dream"] .eyebrow{color:#fff27a}
+:root[data-theme="dream"] .brand-mark{background:#fff7d6;border-radius:9px;padding:3px}
+:root[data-theme="dream"] .brand-mark svg{width:34px;height:34px}
+:root[data-theme="dream"] .nav button.active{color:#fff64c}
+:root[data-theme="dream"] .label-work{color:#83315f}
+:root[data-theme="dream"] .slogan{color:#fff8bd;text-shadow:0 0 24px rgba(255,239,84,.32)}
+:root[data-theme="dream"] .badge,:root[data-theme="dream"] .iconbtn{background:rgba(255,197,160,.16);border-color:rgba(255,235,177,.35)}
+@media(prefers-reduced-motion:no-preference){:root[data-theme="dream"] .hero h1{animation:dream-glow 5s ease-in-out infinite alternate}}
+@keyframes dream-glow{from{text-shadow:0 2px 16px rgba(255,230,82,.18)}to{text-shadow:0 2px 32px rgba(255,241,106,.52)}}
 </style>
 <link rel="stylesheet" href="/tools.css?v=1.4">
 </head>
@@ -404,13 +420,17 @@ document.addEventListener('click', (e)=>{
 $('back').onclick = ()=>{ audioStarted=true; if(pointer>0){ pointer--; current = historyStack[pointer]; render(); playSound('navigate'); } };
 $('forward').onclick = ()=>{ audioStarted=true; if(pointer<historyStack.length-1){ pointer++; current = historyStack[pointer]; render(); playSound('navigate'); } };
 
+const themes=['dark','light','dream'];
 function applyTheme(theme){
-  document.documentElement.dataset.theme = theme;
-  $('theme').innerHTML = theme==='dark' ? icon('sun') : icon('moon');
-  $('theme').title = theme==='dark' ? 'Светлая тема' : 'Тёмная тема';
-  try{ localStorage.setItem('platform-theme-v04', theme); }catch(e){}
+ if(!themes.includes(theme))theme='dark';
+ document.documentElement.dataset.theme=theme;
+ $('theme').innerHTML=theme==='dark'?icon('sun'):theme==='light'?icon('moon'):'<span style="font-weight:900;font-size:12px;color:#fff34e">D</span>';
+ const next=themes[(themes.indexOf(theme)+1)%themes.length];
+ $('theme').title='Тема: '+({dark:'Тёмная',light:'Светлая',dream:'Dream'}[theme])+' · следующая: '+({dark:'Тёмная',light:'Светлая',dream:'Dream'}[next]);
+ $('theme').setAttribute('aria-label',$('theme').title);
+ try{localStorage.setItem('platform-theme-v04',theme)}catch(e){}
 }
-$('theme').onclick = ()=>{ audioStarted=true; applyTheme(document.documentElement.dataset.theme==='dark' ? 'light' : 'dark'); playSound('theme'); };
+$('theme').onclick=()=>{audioStarted=true;const current=document.documentElement.dataset.theme;applyTheme(themes[(themes.indexOf(current)+1)%themes.length]);playSound('theme')};
 
 async function toggleFullscreen(){
   audioStarted=true;
