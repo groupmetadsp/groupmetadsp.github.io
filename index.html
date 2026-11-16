@@ -235,26 +235,349 @@ body.focus-mode .audio-panel{right:0}
 .dream-dot{display:inline-block;width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,#ffe849,#ff986b,#d94d89);border:1px solid rgba(255,255,255,.7)}
 </style>
 <link rel="stylesheet" href="/tools.css?v=1.4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Roboto+Condensed:wght@500;600;700;800;900&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet">
+<style id="meta-restyle">
+
+/* МЕТА · альтернативный дизайн. Только представление, штатные скрипты сохранены. */
+:root{
+ --bg:#eee9df;--surface:#faf7f0;--surface2:#f1e8db;--surface3:#e8ddcc;
+ --ink:#414345;--ink-strong:#1e2327;--muted:#766f68;--line:#d5c9ba;
+ --accent:#cf5a28;--accent-soft:#f9dfcd;--shadow:0 15px 36px rgba(75,55,38,.10);
+ --glow:rgba(223,107,47,.13);--edge-glow:rgba(213,99,45,.49);
+}
+:root[data-theme="dark"]{
+ --bg:#10171a;--surface:#192126;--surface2:#232d32;--surface3:#2d393e;
+ --ink:#c3c9c9;--ink-strong:#f1f0e9;--muted:#9aa5a7;--line:#364247;
+ --accent:#ff793e;--accent-soft:#392a23;--shadow:0 15px 38px rgba(0,0,0,.36);
+ --glow:rgba(255,110,45,.17);--edge-glow:rgba(255,126,59,.54);
+}
+html,body{font-family:"Manrope","Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg)}
+body{background:var(--bg)!important}
+body::before{inset:0!important;height:100vh!important;opacity:1!important;filter:none!important;background:
+ radial-gradient(ellipse 75% 55% at 86% 94%,rgba(210,140,89,.085),transparent),
+ linear-gradient(var(--bg),var(--bg))!important;z-index:-2}
+body::after{display:none!important}
+:root[data-theme="dark"] body::before{background:
+ radial-gradient(ellipse 75% 65% at 90% 90%,rgba(237,104,49,.055),transparent),
+ linear-gradient(var(--bg),var(--bg))!important}
+body.pattern-diagonal{background-image:repeating-linear-gradient(135deg,transparent 0 49px,rgba(87,99,99,.10) 50px,transparent 51px)!important}
+:root[data-theme="dark"] body.pattern-diagonal{background-image:repeating-linear-gradient(135deg,transparent 0 49px,rgba(170,194,201,.075) 50px,transparent 51px)!important}
+body.pattern-grid{background-image:
+ linear-gradient(to right,rgba(120,119,107,.055) 1px,transparent 1px),
+ linear-gradient(to bottom,rgba(120,119,107,.055) 1px,transparent 1px),
+ linear-gradient(to right,rgba(120,119,107,.105) 1px,transparent 1px),
+ linear-gradient(to bottom,rgba(120,119,107,.105) 1px,transparent 1px)!important;
+ background-size:12px 12px,12px 12px,60px 60px,60px 60px!important}
+:root[data-theme="dark"] body.pattern-grid{background-image:
+ linear-gradient(to right,rgba(166,182,187,.032) 1px,transparent 1px),
+ linear-gradient(to bottom,rgba(166,182,187,.032) 1px,transparent 1px),
+ linear-gradient(to right,rgba(166,182,187,.10) 1px,transparent 1px),
+ linear-gradient(to bottom,rgba(166,182,187,.10) 1px,transparent 1px)!important}
+header,.sidebar{background:rgba(249,246,240,.94)!important;border-color:var(--line)!important;backdrop-filter:blur(18px)}
+:root[data-theme="dark"] header,:root[data-theme="dark"] .sidebar{background:rgba(19,27,31,.96)!important}
+.brand-title,.hero h1,.panel h2,.state h2,.slogan{font-family:"Roboto Condensed","Arial Narrow",Arial,sans-serif!important;font-weight:800!important;letter-spacing:-.025em!important}
+.brand-title{font-size:26px!important;letter-spacing:.035em!important}
+.hero h1{font-size:clamp(40px,5vw,72px);line-height:1.01;max-width:970px}
+.panel h2,.state h2{font-size:clamp(23px,2.1vw,31px)}
+.lead,.panel p,.state p{font-family:"PT Serif",Georgia,serif!important;line-height:1.7}
+.nav button,.quick button{font-family:"Manrope",sans-serif!important;font-weight:750!important}
+.nav button.active,.nav button:hover{color:var(--accent)!important}
+.nav svg,.quick svg,.iconbtn svg{stroke:var(--accent)!important}
+.eyebrow,.side-label{color:var(--accent)!important}
+.label-work,.badge{color:var(--accent)!important}
+.panel,.state,.quick button,.list .item,.worklist div,.iconbtn,.theme-menu,.audio-panel{background:var(--surface)!important;border-color:var(--line)!important;box-shadow:var(--shadow)}
+.panel:hover,.state:hover,.quick button:hover{border-color:var(--edge-glow)!important}
+.quick button{box-shadow:0 8px 0 rgba(71,61,52,.12),0 16px 24px rgba(45,38,33,.1);border-radius:17px!important}
+:root[data-theme="dark"] .quick button{box-shadow:0 8px 0 #0b1115,0 15px 28px rgba(0,0,0,.22)}
+.quick button:active{transform:translateY(5px)!important;box-shadow:0 3px 0 rgba(71,61,52,.14)}
+.theme-menu{width:214px}
+.theme-menu button[aria-pressed="true"]{background:var(--accent-soft)!important;color:var(--accent)!important}
+.theme-menu-title{color:var(--accent)}
+.pattern-options{margin:7px 0 2px;border-top:1px solid var(--line);padding:9px 5px 1px}
+.pattern-options .theme-menu-title{padding-left:7px}
+.pattern-options button{font-size:12px}
+.brand-mark{background:transparent!important;border-radius:0!important;box-shadow:none!important;padding:0!important}
+.brand-mark svg{width:42px!important;height:42px!important;stroke:none!important}
+:root[data-theme="dark"] .slogan{background:none!important;-webkit-background-clip:initial!important;background-clip:initial!important;color:var(--ink-strong)!important}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+</style>
+<style id="architecture-theme-styles">
+
+/* Вторая концепция: архитектурный минимализм. Первая остаётся неизменной. */
+.theme-visible-btn{min-width:184px!important}
+.theme-menu{width:332px!important;padding:11px!important}
+.theme-picker-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 11px}
+.theme-picker-grid button{border:1px solid var(--line)!important;border-radius:10px;padding:11px!important;align-items:center!important;display:flex!important;gap:9px!important;background:var(--surface2)!important;line-height:1.1;font-size:12px}
+.theme-picker-grid button[aria-pressed="true"]{border-color:var(--accent)!important;box-shadow:inset 0 0 0 1px var(--accent)}
+.theme-picker-grid button small{display:block;opacity:.75;font-weight:500;margin-top:5px;font-size:11px}
+.theme-swatch{display:inline-block;flex:0 0 27px;width:27px;height:27px;border-radius:7px;border:1px solid rgba(130,130,130,.25);box-shadow:inset 0 0 0 5px rgba(255,255,255,.035)}
+.dark-one{background:linear-gradient(135deg,#161e22 0 72%,#ff793e 72%)}
+.light-one{background:linear-gradient(135deg,#eee9df 0 72%,#cf5a28 72%)}
+.dark-two{background:linear-gradient(135deg,#0e1316 0 72%,#e36e34 72%)}
+.light-two{background:linear-gradient(135deg,#f3f0e9 0 72%,#b95228 72%)}
+.architecture-home{display:none}
+:root[data-design="2"]{
+ --sidebar:260px; --radius:11px;
+ --bg:#f3f0e9;--surface:#fcfaf6;--surface2:#ece8df;--surface3:#e7e0d5;
+ --ink:#474845;--ink-strong:#202827;--muted:#777770;--line:#d9d5cb;
+ --accent:#b95228;--accent-soft:#f3e0d3;
+ --shadow:0 7px 26px rgba(57,49,39,.055);--glow:rgba(185,82,40,.06);--edge-glow:rgba(185,82,40,.28);
+}
+:root[data-design="2"][data-theme="dark"]{
+ --bg:#10171a;--surface:#192125;--surface2:#222b2e;--surface3:#293539;
+ --ink:#b9c0bc;--ink-strong:#f1efe9;--muted:#99a5a1;--line:#364144;
+ --accent:#f47c43;--accent-soft:#32261f;
+ --shadow:0 8px 28px rgba(0,0,0,.16);--glow:rgba(244,124,67,.045);--edge-glow:rgba(244,124,67,.3);
+}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) header,:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .sidebar{box-shadow:none!important;border-color:var(--line)!important}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .brand-title{font-family:"Roboto Condensed",sans-serif!important;letter-spacing:.075em!important;font-weight:800!important;font-size:23px!important}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .main{padding-top:calc(var(--top) + 48px);padding-bottom:70px}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .wrap{max-width:1240px}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .hero{margin-bottom:35px}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .hero h1{font-size:clamp(54px,7vw,94px)!important;line-height:.94!important;letter-spacing:-.045em!important}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .eyebrow{font-size:10px;letter-spacing:3px}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .lead{font-family:"Manrope",Arial,sans-serif!important;font-size:14px;line-height:1.78;max-width:620px}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .slogan{font-family:"Roboto Condensed",sans-serif!important;font-weight:700;line-height:1.25;letter-spacing:.01em!important}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .nav{gap:3px}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .nav button{border-radius:6px;padding:12px 11px;font-weight:650}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .nav button:hover{transform:none!important;box-shadow:none!important;background:var(--surface2)!important}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .nav button.active{background:var(--surface2)!important;box-shadow:none!important;color:var(--ink-strong)!important}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .nav button.active::before{left:-13px;top:8px;bottom:8px;width:3px;box-shadow:none;border-radius:0}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .nav button:not(.active) svg{stroke:var(--muted)!important;filter:none!important}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .nav button.active svg{stroke:var(--accent)!important;filter:none!important}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .panel,:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .state,:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .quick button,
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .list .item,:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .worklist div{
+ border-radius:10px!important;box-shadow:none!important;border:1px solid var(--line)!important;
+}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .panel{padding:clamp(20px,2vw,32px)}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .panel:hover,:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .state:hover{box-shadow:none!important;border-color:var(--line)!important}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .panel::before,:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .state::before{display:none}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .panel h2,:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .state h2{font-family:"Roboto Condensed",Arial,sans-serif!important;font-size:clamp(26px,2.7vw,36px)!important;letter-spacing:-.025em!important}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .panel p,:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .state p{font-family:"Manrope",Arial,sans-serif!important;font-size:13px;line-height:1.75}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .quick button{padding:17px!important;font-size:14px;transition:background .17s,border-color .17s,transform .17s!important}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .quick button:hover{transform:none!important;background:var(--surface2)!important;border-color:var(--accent)!important}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .quick button:active{transform:translateY(1px)!important}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .iconbtn{box-shadow:none!important;border-radius:7px}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .brand-mark:hover{transform:none!important;box-shadow:none!important}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-home{display:block;margin:0 0 24px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 24px 23px}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-head,:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-foot{display:flex;justify-content:space-between;gap:14px;font-size:10px;letter-spacing:1.7px;font-weight:750;color:var(--muted)}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-head span:first-child{color:var(--accent)}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-diagram{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:30px;position:relative;margin:23px 0}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-diagram::before{content:"";position:absolute;left:10%;right:10%;top:50%;height:1px;background:var(--accent);opacity:.5}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-node{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;min-height:105px;padding:15px;background:var(--surface2);border:1px solid var(--line);border-radius:7px;gap:6px}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-node strong{font-family:"Roboto Condensed",sans-serif;font-size:19px;color:var(--ink-strong);letter-spacing:.02em}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-node small{font-size:10px;color:var(--muted);line-height:1.4}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-number{font-size:10px;font-weight:800;color:var(--accent);letter-spacing:1px}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-foot{border-top:1px solid var(--line);padding-top:14px;letter-spacing:.02em;text-transform:none;font-size:11px;font-weight:500}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-foot span{font-weight:800;letter-spacing:1px;color:var(--accent)}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .footer{opacity:.6}
+:root:is([data-design="2"],[data-design="3"],[data-design="4"]) .badge{border-radius:5px}
+@media(max-width:1000px){
+ :root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-diagram{gap:10px}
+ :root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-node{padding:11px}
+ :root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-node strong{font-size:16px}
+}
+@media(max-width:700px){
+ .theme-menu{width:min(332px,calc(100vw - 25px))!important;right:-16px!important}
+ .theme-visible-btn{min-width:118px!important}
+ :root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-diagram{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ :root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-diagram::before{display:none}
+ :root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-head span:last-child{display:none}
+ :root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-foot{display:block}
+ :root:is([data-design="2"],[data-design="3"],[data-design="4"]) .architecture-foot span{display:block;margin-top:4px}
+}
+@media(prefers-reduced-motion:reduce){
+ :root:is([data-design="2"],[data-design="3"],[data-design="4"]) *, :root:is([data-design="2"],[data-design="3"],[data-design="4"]) *::before,:root:is([data-design="2"],[data-design="3"],[data-design="4"]) *::after{animation:none!important;transition:none!important}
+}
+
+
+/* Theme 3 — midnight blue / ice blue, in dark and light modes */
+.dark-three{background:linear-gradient(135deg,#101c2a 0 72%,#78d8f3 72%)}
+.light-three{background:linear-gradient(135deg,#eff5f6 0 72%,#126685 72%)}
+:root[data-design="3"]{
+ --bg:#eff5f6;--surface:#ffffff;--surface2:#dcebf0;--surface3:#d2e4ea;
+ --ink:#38546a;--ink-strong:#152a38;--muted:#627d8d;--line:#c9dce3;
+ --accent:#126685;--accent-soft:#d5e8ed;--shadow:0 8px 28px rgba(19,58,79,.07);
+ --glow:rgba(18,102,133,.08);--edge-glow:rgba(18,102,133,.3);
+}
+:root[data-design="3"][data-theme="dark"]{
+ --bg:#101c2a;--surface:#172a38;--surface2:#1b3445;--surface3:#263f50;
+ --ink:#b9d0dd;--ink-strong:#edf5f7;--muted:#8faebc;--line:#304c5e;
+ --accent:#78d8f3;--accent-soft:#183d51;--shadow:0 10px 30px rgba(0,0,0,.23);
+ --glow:rgba(120,216,243,.07);--edge-glow:rgba(120,216,243,.35);
+}
+:root[data-design="3"] header,:root[data-design="3"] .sidebar{
+ background:rgba(249,253,254,.96)!important;border-color:var(--line)!important
+}
+:root[data-design="3"][data-theme="dark"] header,:root[data-design="3"][data-theme="dark"] .sidebar{
+ background:rgba(14,29,42,.97)!important;border-color:var(--line)!important
+}
+:root[data-design="3"] body::before{background:linear-gradient(var(--bg),var(--bg))!important}
+:root[data-design="3"][data-theme="dark"] .slogan{
+ color:var(--ink-strong)!important;background:none!important;
+ -webkit-background-clip:initial!important;background-clip:initial!important
+}
+:root[data-design="3"] .architecture-diagram::before{background:var(--accent)}
+:root[data-design="3"] .architecture-number{color:var(--accent)}
+
+/* Theme 2: compact typography and rhythm (dark + light only). */
+:root[data-design="2"] .hero h1{
+ font-size:clamp(32px,4.6vw,56px)!important;
+ line-height:1.02!important;
+ letter-spacing:-.035em!important;
+}
+:root[data-design="2"] .slogan{
+ font-size:clamp(18px,1.9vw,24px)!important;
+ line-height:1.22!important;
+ margin-top:20px!important;
+}
+:root[data-design="2"] .lead{
+ font-size:12px!important;
+ line-height:1.7!important;
+ max-width:560px!important;
+ margin-top:15px!important;
+}
+:root[data-design="2"] .hero{margin-bottom:22px!important}
+:root[data-design="2"] .panel h2,
+:root[data-design="2"] .state h2{
+ font-size:clamp(22px,2.1vw,30px)!important;
+}
+:root[data-design="2"] .architecture-home{padding:17px 21px 19px}
+:root[data-design="2"] .architecture-diagram{margin:17px 0}
+:root[data-design="2"] .architecture-node{min-height:94px}
+</style>
+<style id="water-theme-styles">
+/* Theme 4: calm water-glass design. Ripples are behind the UI, never on text/cards. */
+.dark-four{background:linear-gradient(155deg,#6b214c 0 55%,#ff4f97 55% 78%,#fff130 78%)}
+.light-four{background:linear-gradient(155deg,#fff52a 0 42%,#ff9a53 58%,#ff40a1 100%)}
+:root[data-design="4"]{
+ --bg:#fff4c6; --surface:#fff9e4; --surface2:#ffe4ce; --surface3:#ffd7b5;
+ --ink:#75445c; --ink-strong:#3d2037; --muted:#965d73; --line:#f0b6b5;
+ --accent:#e32779; --accent-soft:#ffd8e3; --shadow:0 10px 28px rgba(181,47,111,.10);
+ --glow:rgba(245,57,132,.09); --edge-glow:rgba(227,39,121,.30);
+}
+:root[data-design="4"][data-theme="dark"]{
+ --bg:#462038; --surface:#57273f; --surface2:#6d2d4a; --surface3:#8e3b58;
+ --ink:#f6cbd2; --ink-strong:#fff7d4; --muted:#ecafbd; --line:#88415e;
+ --accent:#fff338; --accent-soft:#754356; --shadow:0 10px 28px rgba(31,4,22,.28);
+ --glow:rgba(255,239,63,.10); --edge-glow:rgba(255,243,56,.3);
+}
+:root[data-design="4"] header,:root[data-design="4"] .sidebar{
+ background:rgba(255,243,215,.93)!important;border-color:var(--line)!important
+}
+:root[data-design="4"][data-theme="dark"] header,:root[data-design="4"][data-theme="dark"] .sidebar{
+ background:rgba(66,22,48,.94)!important;border-color:var(--line)!important
+}
+:root[data-design="4"] body{
+ background:linear-gradient(167deg,#fff640 0%,#ffb64b 34%,#ff7a76 62%,#fa409c 100%)!important;
+ background-attachment:fixed!important;
+}
+:root[data-design="4"][data-theme="dark"] body{
+ background:linear-gradient(165deg,#6e274a 0%,#ab3464 42%,#ed4f8c 72%,#ff8b7c 100%)!important;
+ background-attachment:fixed!important;
+}
+:root[data-design="4"] body.pattern-grid,
+:root[data-design="4"] body.pattern-diagonal{background-blend-mode:multiply!important}
+:root[data-design="4"] body::before{
+ background:radial-gradient(ellipse 70% 48% at 13% 5%,rgba(255,247,71,.46),transparent 80%),
+ radial-gradient(ellipse 65% 65% at 82% 90%,rgba(242,37,134,.27),transparent 78%)!important;
+ opacity:1!important;filter:none!important;
+}
+:root[data-design="4"][data-theme="dark"] body::before{
+ background:radial-gradient(ellipse 55% 48% at 12% 4%,rgba(255,185,53,.21),transparent 80%),
+ radial-gradient(ellipse 70% 60% at 89% 86%,rgba(255,44,154,.25),transparent 80%)!important;
+ opacity:1!important;filter:none!important;
+}
+:root[data-design="4"][data-theme="light"] .hero h1,
+:root[data-design="4"][data-theme="light"] .slogan{color:#3d2037!important;text-shadow:none!important}
+:root[data-design="4"][data-theme="dark"] .hero h1{color:#fff33f!important;text-shadow:none!important}
+:root[data-design="4"][data-theme="dark"] .slogan{color:#fff4b1!important;text-shadow:none!important}
+
+:root[data-design="4"][data-theme="dark"] .slogan{
+ color:var(--ink-strong)!important;background:none!important;
+ -webkit-background-clip:initial!important;background-clip:initial!important
+}
+.water-options{padding:8px 5px;border-top:1px solid var(--line)}
+.water-options button{font-size:12px}
+#water-ripple-toggle[aria-pressed="true"]{background:var(--accent-soft)!important;color:var(--accent)!important}
+#water-ripple-toggle[aria-pressed="false"]{color:var(--muted)!important}
+#water-ripple-layer{
+ position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+ opacity:0;visibility:hidden;contain:layout paint;
+}
+:root[data-design="4"][data-ripple="on"] #water-ripple-layer{
+ opacity:1;visibility:visible;
+}
+#water-ripple-layer::before,#water-ripple-layer::after{
+ content:"";position:absolute;inset:-35%;
+ border-radius:50%;
+ background:
+ repeating-radial-gradient(ellipse at 53% 55%,
+ transparent 0px,transparent 44px,
+ rgba(255,251,202,.16) 45px,transparent 47px,transparent 93px);
+ transform:scale(.9);
+ will-change:transform,opacity;
+ animation:meta-ripple-soft 18s ease-in-out infinite;
+}
+#water-ripple-layer::after{
+ background:repeating-radial-gradient(ellipse at 42% 48%,
+ transparent 0px,transparent 65px,
+ rgba(255,244,179,.12) 66px,transparent 69px,transparent 130px);
+ animation-duration:24s;animation-delay:-8s;opacity:.65;
+}
+:root[data-design="4"][data-theme="dark"] #water-ripple-layer::before{
+ background:repeating-radial-gradient(ellipse at 54% 57%,transparent 0px,transparent 44px,
+ rgba(255,231,139,.12) 45px,transparent 47px,transparent 93px)
+}
+:root[data-design="4"][data-theme="dark"] #water-ripple-layer::after{
+ background:repeating-radial-gradient(ellipse at 42% 48%,transparent 0px,transparent 65px,
+ rgba(255,214,154,.08) 66px,transparent 69px,transparent 130px)
+}
+@keyframes meta-ripple-soft{
+ 0%{transform:scale(.88) translate3d(-1%,.5%,0);opacity:.28}
+ 50%{transform:scale(1.08) translate3d(1%,-.5%,0);opacity:.72}
+ 100%{transform:scale(.88) translate3d(-1%,.5%,0);opacity:.28}
+}
+@media(prefers-reduced-motion:reduce){
+ #water-ripple-layer::before,#water-ripple-layer::after{animation:none!important;transform:none!important;opacity:.22}
+}
+</style>
+<style id="headline-sizing-v2-v3">
+/* User-approved headline reduction: 1.5x smaller than preceding Theme 2 and 3. */
+:root[data-design="2"] .hero h1{
+ font-size:clamp(21.33px,3.067vw,37.33px)!important;
+ line-height:1.06!important;
+ letter-spacing:-.02em!important;
+}
+:root[data-design="3"] .hero h1{
+ font-size:clamp(36px,4.667vw,62.67px)!important;
+ line-height:1.02!important;
+}
+</style>
 </head>
-<body>
+<body><div id="water-ripple-layer" aria-hidden="true"></div>
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
   <!-- Утвержденный знак №4 «Модули»: три соединённых изометрических блока. -->
   <symbol id="i-platform" viewBox="0 0 48 48">
-    <g stroke="#101820" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round">
-      <!-- Верхний модуль -->
-      <path d="M24 3 34 8.8 24 14.5 14 8.8Z" fill="#fff"/>
-      <path d="M14 8.8 24 14.5V26L14 20.3Z" fill="#fff"/>
-      <path d="M24 14.5 34 8.8V20.3L24 26Z" fill="#101820"/>
-      <!-- Левый нижний модуль -->
-      <path d="M13.4 20 23.4 25.7 13.4 31.5 3.4 25.7Z" fill="#fff"/>
-      <path d="M3.4 25.7 13.4 31.5V43L3.4 37.3Z" fill="#fff"/>
-      <path d="M13.4 31.5 23.4 25.7V37.3L13.4 43Z" fill="#101820"/>
-      <!-- Правый нижний модуль -->
-      <path d="M34.6 20 44.6 25.7 34.6 31.5 24.6 25.7Z" fill="#fff"/>
-      <path d="M24.6 25.7 34.6 31.5V43L24.6 37.3Z" fill="#fff"/>
-      <path d="M34.6 31.5 44.6 25.7V37.3L34.6 43Z" fill="#101820"/>
-    </g>
-  </symbol>
+  <!-- Изометрические блоки разных высот на двух слоях платформы -->
+  <g stroke="#f6f3ec" stroke-width="1.15" stroke-linejoin="round">
+    <path d="M4 31 24 42 44 31 44 36 24 47 4 36Z" fill="#34454e" stroke="none"/>
+    <path d="M4 26 24 37 44 26 44 31 24 42 4 31Z" fill="#d55b2e" stroke="none"/>
+    <path d="M4 23 24 34 44 23 44 27 24 38 4 27Z" fill="#657780" stroke="none"/>
+    <path d="M24 10 32 14.5 24 19 16 14.5Z" fill="#cad4d5"/>
+    <path d="M16 14.5 24 19 24 29 16 24.5Z" fill="#778d97"/>
+    <path d="M24 19 32 14.5 32 24.5 24 29Z" fill="#425964"/>
+    <path d="M11.5 19 19.5 23.5 11.5 28 3.5 23.5Z" fill="#c4ced0"/>
+    <path d="M3.5 23.5 11.5 28 11.5 33 3.5 28.5Z" fill="#7d9098"/>
+    <path d="M11.5 28 19.5 23.5 19.5 28.5 11.5 33Z" fill="#51636d"/>
+    <path d="M36.5 19 44.5 23.5 36.5 28 28.5 23.5Z" fill="#94a9b2"/>
+    <path d="M28.5 23.5 36.5 28 36.5 33 28.5 28.5Z" fill="#5d7783"/>
+    <path d="M36.5 28 44.5 23.5 44.5 28.5 36.5 33Z" fill="#344d5a"/>
+  </g>
+</symbol>
   <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-7h6v7"/></symbol>
   <symbol id="i-system" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6c-2-2-6-2-9-1v15c3-1 7-1 9 1 2-2 6-2 9-1V5c-3-1-7-1-9 1zM12 6v15"/></symbol>
@@ -288,10 +611,23 @@ body.focus-mode .audio-panel{right:0}
     <div class="theme-control">
       <button class="iconbtn theme-visible-btn" id="theme" title="Выбрать тему" aria-label="Выбрать тему" aria-expanded="false" aria-controls="theme-menu"><svg><use href="#i-moon"></use></svg></button>
       <div class="theme-menu" id="theme-menu" hidden>
-        <div class="theme-menu-title">Оформление</div>
-        <button type="button" data-choose-theme="dark">◐ &nbsp; Тёмная</button>
-        <button type="button" data-choose-theme="light">☀ &nbsp; Светлая</button>
-        <button type="button" data-choose-theme="dream"><span class="dream-dot"></span> Dream</button>
+        <div class="theme-menu-title">ДИЗАЙН ИНТЕРФЕЙСА</div>
+<div class="theme-picker-grid" role="group" aria-label="Восемь оформлений">
+<button type="button" data-choose-theme="dark" data-design="1"><span class="theme-swatch dark-one"></span><span>Тема 1<small>Тёмная</small></span></button>
+<button type="button" data-choose-theme="light" data-design="1"><span class="theme-swatch light-one"></span><span>Тема 1<small>Светлая</small></span></button>
+<button type="button" data-choose-theme="dark" data-design="2"><span class="theme-swatch dark-two"></span><span>Тема 2<small>Тёмная</small></span></button>
+<button type="button" data-choose-theme="light" data-design="2"><span class="theme-swatch light-two"></span><span>Тема 2<small>Светлая</small></span></button>
+<button type="button" data-choose-theme="dark" data-design="3"><span class="theme-swatch dark-three"></span><span>Тема 3<small>Тёмная</small></span></button>
+<button type="button" data-choose-theme="light" data-design="3"><span class="theme-swatch light-three"></span><span>Тема 3<small>Светлая</small></span></button>
+<button type="button" data-choose-theme="dark" data-design="4"><span class="theme-swatch dark-four"></span><span>Тема 4<small>Тёмная · закат</small></span></button>
+<button type="button" data-choose-theme="light" data-design="4"><span class="theme-swatch light-four"></span><span>Тема 4<small>Светлая · закат</small></span></button>
+</div>
+<div class="water-options"><div class="theme-menu-title">АНИМАЦИЯ</div>
+<button type="button" id="water-ripple-toggle" aria-pressed="true">≈ &nbsp; Мягкая рябь воды · вкл.</button></div>
+<div class="pattern-options"><div class="theme-menu-title">ФОНОВЫЙ ПАТТЕРН</div>
+<button type="button" data-choose-pattern="diagonal">╱ &nbsp; Диагонали</button>
+<button type="button" data-choose-pattern="grid">▦ &nbsp; Модульная сетка</button>
+<button type="button" data-choose-pattern="none">○ &nbsp; Без паттерна</button></div>
       </div>
     </div>
     <div class="audio-control" id="audio-control">
@@ -357,6 +693,17 @@ function renderHome(){
         </div>
         <div class="badge"><span class="dot"></span> Навигационный портал</div>
       </section>
+
+      <section class="architecture-home" aria-label="Схема экосистемы проектных решений">
+<div class="architecture-head"><span>01 / АРХИТЕКТУРА ПЛАТФОРМЫ</span><span>ВЗАИМОСВЯЗЬ ИНСТРУМЕНТОВ</span></div>
+<div class="architecture-diagram">
+<div class="architecture-node architecture-node-left"><span class="architecture-number">01</span><strong>КАТАЛОГ</strong><small>Квартиры и типовые решения</small></div>
+<div class="architecture-node architecture-node-mid"><span class="architecture-number">02</span><strong>КОНФИГУРАТОР</strong><small>Компоновка и параметры</small></div>
+<div class="architecture-node architecture-node-right"><span class="architecture-number">03</span><strong>МАССИНГ</strong><small>Объёмная модель проекта</small></div>
+<div class="architecture-node architecture-node-last"><span class="architecture-number">04</span><strong>АНАЛИТИКА</strong><small>Показатели и сравнение</small></div>
+</div>
+<div class="architecture-foot">Данные и проектные решения формируют связанную систему <span>МЕТА / ПЛАТФОРМА</span></div>
+</section>
 
       <section class="grid">
         <div class="panel">
@@ -437,24 +784,29 @@ document.addEventListener('click', (e)=>{
 $('back').onclick = ()=>{ audioStarted=true; if(pointer>0){ pointer--; current = historyStack[pointer]; render(); playSound('navigate'); } };
 $('forward').onclick = ()=>{ audioStarted=true; if(pointer<historyStack.length-1){ pointer++; current = historyStack[pointer]; render(); playSound('navigate'); } };
 
-const themes=['dark','light','dream'];
-function applyTheme(theme){
+const themes=['dark','light'];
+const DESIGN_STORAGE_KEY='platform-ui-design-v2';
+function applyTheme(theme, design=1){
  if(!themes.includes(theme))theme='dark';
+ design=[1,2,3,4].includes(Number(design))?Number(design):1;
  document.documentElement.dataset.theme=theme;
- $('theme').innerHTML=(theme==='dark'?icon('sun'):theme==='light'?icon('moon'):'<span style="font-weight:900;font-size:12px;color:#fff34e">D</span>')+'<span class="theme-label">ТЕМА ▾</span>';
- $('theme').title='Оформление: '+({dark:'Тёмная',light:'Светлая',dream:'Dream'}[theme]);
+ document.documentElement.dataset.design=String(design);
+ const label='ТЕМА '+design+(theme==='dark'?' / ТЁМНАЯ':' / СВЕТЛАЯ')+' ▾';
+ $('theme').innerHTML=(theme==='dark'?icon('sun'):icon('moon'))+'<span class="theme-label">'+label+'</span>';
+ $('theme').title='Тема '+design+' — '+(theme==='dark'?'тёмная':'светлая');
  $('theme').setAttribute('aria-label',$('theme').title);
- document.querySelectorAll('[data-choose-theme]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.chooseTheme===theme)));
- try{localStorage.setItem('platform-theme-v04',theme)}catch(e){}
+ document.querySelectorAll('[data-choose-theme]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.chooseTheme===theme && Number(b.dataset.design)===design)));
+ try{localStorage.setItem(DESIGN_STORAGE_KEY,JSON.stringify({theme,design}));}catch(e){}
 }
 $('theme').onclick=()=>{
- const menu=$('theme-menu');
- menu.hidden=!menu.hidden;
+ const menu=$('theme-menu'); menu.hidden=!menu.hidden;
  $('theme').setAttribute('aria-expanded',String(!menu.hidden));
 };
 document.querySelectorAll('[data-choose-theme]').forEach(button=>button.onclick=()=>{
- audioStarted=true;applyTheme(button.dataset.chooseTheme);
- $('theme-menu').hidden=true;$('theme').setAttribute('aria-expanded','false');playSound('theme');
+ audioStarted=true;
+ applyTheme(button.dataset.chooseTheme,Number(button.dataset.design));
+ $('theme-menu').hidden=true; $('theme').setAttribute('aria-expanded','false');
+ playSound('theme');
 });
 document.addEventListener('pointerdown',e=>{
  if(!e.target.closest('.theme-control')){$('theme-menu').hidden=true;$('theme').setAttribute('aria-expanded','false');}
@@ -590,7 +942,7 @@ document.addEventListener('keydown',e=>{
 });
 updateAudioUI();
 
-try{ applyTheme(localStorage.getItem('platform-theme-v04') || 'dark'); }catch(e){ applyTheme('dark'); }
+try{const saved=JSON.parse(localStorage.getItem(DESIGN_STORAGE_KEY)||'null');applyTheme(saved?.theme||'dark',saved?.design||1);}catch(e){applyTheme('dark',1);}
 updateFullscreenButton();
 // Cursor-responsive illumination inside panels; no background animation or GPU-heavy canvas.
 document.addEventListener('pointermove', e=>{
@@ -604,6 +956,36 @@ document.addEventListener('pointermove', e=>{
 render();
 </script>
 <script src="/rubrics.js?v=1.4"></script>
-</body>
+<script>
+(function(){
+ const key='platform-pattern-preview';
+ const picks=document.querySelectorAll('[data-choose-pattern]');
+ function setPattern(p){
+   document.body.classList.remove('pattern-diagonal','pattern-grid');
+   if(p!=='none')document.body.classList.add('pattern-'+p);
+   picks.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.choosePattern===p)));
+   try{localStorage.setItem(key,p)}catch(e){}
+ }
+ picks.forEach(b=>b.addEventListener('click',()=>{setPattern(b.dataset.choosePattern);document.getElementById('theme-menu').hidden=true;}));
+ let value='grid';try{value=localStorage.getItem(key)||'grid'}catch(e){}
+ setPattern(value);
+})();
+</script>
+<script>
+(function(){
+ const control=document.getElementById('water-ripple-toggle');
+ const key='meta-water-ripple-enabled';
+ let on=true;try{const saved=localStorage.getItem(key);if(saved!==null)on=saved==='true'}catch(e){}
+ function render(){
+   document.documentElement.dataset.ripple=on?'on':'off';
+   control.setAttribute('aria-pressed',String(on));
+   control.textContent='≈   Мягкая рябь воды · '+(on?'вкл.':'выкл.');
+ }
+ control.addEventListener('click',function(){
+   on=!on;try{localStorage.setItem(key,String(on))}catch(e){}
+   render();
+ });render();
+})();
+</script></body>
 </html>
 
