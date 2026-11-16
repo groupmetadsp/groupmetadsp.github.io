@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<base href="/">
+<title>ПЛАТФОРМА v1.4</title>
+<style>
+:root{
+  --bg:#e7ecf1;
+  --surface:#f6f8fb;
+  --surface2:#eef3f7;
+  --surface3:#e3eaf1;
+  --ink:#48627f;
+  --ink-strong:#3f5874;
+  --muted:#73879c;
+  --line:#d4dde6;
+  --accent:#16385c;
+  --accent-soft:#dbe7f4;
+  --shadow:0 12px 32px rgba(53,79,108,.08);
+  --sidebar:250px;
+  --top:66px;
+  --radius:18px;
+}
+:root[data-theme="dark"]{
+  --bg:#131c27;
+  --surface:#1d2b3a;
+  --surface2:#27394b;
+  --surface3:#30485e;
+  --ink:#d8e3ee;
+  --ink-strong:#ecf4fb;
+  --muted:#9db0c4;
+  --line:#354c60;
+  --accent:#88c5f5;
+  --accent-soft:#213d58;
+  --shadow:0 12px 35px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid rgba(22,56,92,.28);outline-offset:2px}
+body::before{
+  content:"";position:fixed;inset:auto 0 0 0;height:42vh;pointer-events:none;opacity:.9;
+  background:
+    radial-gradient(120% 75% at 68% 110%, rgba(194,206,219,.55) 0 46%, transparent 46.5%),
+    radial-gradient(135% 72% at 15% 112%, rgba(217,226,235,.8) 0 48%, transparent 48.5%),
+    linear-gradient(180deg, transparent 0%, rgba(221,229,236,.55) 100%);
+}
+body::after{
+  content:"";position:fixed;right:0;top:135px;width:min(58vw,840px);height:280px;pointer-events:none;opacity:.38;
+  background-repeat:no-repeat;background-size:contain;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 320'%3E%3Cg fill='none' stroke='%23bfd0df' stroke-linecap='round'%3E%3Cpath d='M115 208c120-102 405-170 720 8' stroke-width='18'/%3E%3Cpath d='M58 238h782' stroke-width='18'/%3E%3Cpath d='M204 208v-92M320 208V82M434 208V56M548 208V82M662 208v-92M776 208v-48' stroke-width='8'/%3E%3Cpath d='M70 258h22m34 0h22m34 0h22m34 0h22m34 0h22m34 0h22m34 0h22m34 0h22m34 0h22m34 0h22m34 0h22m34 0h22m34 0h22m34 0h22m34 0h22m34 0h22m34 0h22m34 0h22m34 0h22' stroke-width='5' stroke-dasharray='14 18'/%3E%3C/g%3E%3C/svg%3E");
+}
+header{
+  position:fixed;top:0;left:0;right:0;z-index:30;height:var(--top);
+  background:rgba(246,248,251,.9);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px 0 20px;
+}
+:root[data-theme="dark"] header{background:rgba(23,35,49,.94)}
+.brand{width:calc(var(--sidebar) - 20px);display:flex;align-items:center;gap:12px;min-width:0}
+.brand-mark{
+  width:40px;height:40px;border-radius:8px;background:transparent;display:grid;place-items:center;color:#101820;flex:0 0 auto;
+}
+.brand-mark svg{width:38px;height:38px;stroke:#101820;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
+.brand-title{font-size:17px;font-weight:800;letter-spacing:1.3px;color:var(--ink-strong)}
+.topname{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.2px}
+.actions{display:flex;align-items:center;gap:8px}
+.iconbtn{
+  height:36px;width:36px;border-radius:11px;border:1px solid var(--line);background:var(--surface);color:var(--ink-strong);
+  display:grid;place-items:center;transition:.16s;
+}
+.iconbtn:hover{background:var(--surface2);border-color:rgba(22,56,92,.22)}
+.iconbtn:disabled{opacity:.38;cursor:default}
+.iconbtn svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.separator{height:26px;width:1px;background:var(--line);margin:0 3px}
+.sidebar{
+  position:fixed;top:var(--top);left:0;bottom:0;z-index:20;width:var(--sidebar);overflow:auto;
+  background:rgba(246,248,251,.95);backdrop-filter:blur(10px);border-right:1px solid var(--line);
+  padding:22px 13px 16px;display:flex;flex-direction:column;
+}
+:root[data-theme="dark"] .sidebar{background:rgba(23,35,49,.95)}
+.side-label{padding:0 12px 12px;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.nav{display:grid;gap:6px}
+.nav button{
+  border:0;background:transparent;border-radius:12px;padding:13px 12px;text-align:left;display:flex;gap:12px;align-items:center;
+  color:var(--ink);font-size:13px;font-weight:700;position:relative;transition:.16s;
+}
+.nav button:hover{background:var(--surface2)}
+.nav button.active{background:var(--surface2);color:var(--accent)}
+.nav button.active::before{content:"";position:absolute;left:-13px;top:9px;bottom:9px;width:3px;border-radius:0 4px 4px 0;background:var(--accent)}
+.nav svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.85;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.side-bottom{margin-top:auto;border-top:1px solid var(--line);padding:18px 11px 4px}
+.version{font-size:11px;line-height:1.55;color:var(--muted)}
+.main{margin-left:var(--sidebar);padding:calc(var(--top) + 34px) clamp(24px,4vw,60px) 44px;min-height:100vh;position:relative;z-index:1}
+.wrap{max-width:1320px;margin:0 auto}
+.hero{display:flex;gap:18px;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+.eyebrow{margin:0 0 14px;font-size:11px;text-transform:uppercase;letter-spacing:2.6px;font-weight:800;color:#6f8ca9}
+.hero h1{margin:0;font-size:clamp(34px,4vw,58px);line-height:1.08;letter-spacing:-1.9px;font-weight:780;color:var(--ink-strong);max-width:860px}
+.lead{margin:20px 0 0;font-size:18px;line-height:1.65;color:var(--muted);max-width:700px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:var(--surface2);
+  border:1px solid var(--line);font-size:12px;font-weight:750;color:var(--ink-strong)
+}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(300px,.88fr);gap:22px}
+.panel{
+  background:rgba(246,248,251,.82);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;
+}
+:root[data-theme="dark"] .panel{background:rgba(29,43,58,.9)}
+.panel h2{margin:0 0 18px;font-size:22px;letter-spacing:-.4px;color:var(--ink-strong)}
+.panel p{margin:0;color:var(--muted);font-size:14px;line-height:1.7}
+.list{display:grid;gap:12px;margin-top:18px}
+.list .item{padding:14px 16px;border-radius:12px;background:var(--surface2);border:1px solid transparent;color:var(--ink-strong);font-size:14px;line-height:1.5}
+.mini-card{padding:18px;border-radius:15px;background:var(--surface2);border:1px solid var(--line);margin-top:14px}
+.mini-card b{display:block;margin-bottom:7px;color:var(--ink-strong);font-size:13px}
+.mini-card span{color:var(--muted);font-size:13px;line-height:1.55}
+.state{
+  display:grid;place-items:center;min-height:360px;text-align:left;background:rgba(246,248,251,.84);border:1px dashed var(--line);border-radius:26px;padding:36px;
+}
+:root[data-theme="dark"] .state{background:rgba(29,43,58,.82)}
+.state-inner{max-width:720px;width:100%}
+.state h2{margin:0 0 10px;font-size:34px;letter-spacing:-1px;color:var(--ink-strong)}
+.state p{margin:0 0 18px;color:var(--muted);font-size:16px;line-height:1.7}
+.label-work{display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;padding:10px 14px;border-radius:999px;background:var(--accent);color:#fff;font-size:12px;font-weight:800;letter-spacing:.4px}
+.worklist{display:grid;gap:10px;margin-top:18px}
+.worklist div{padding:14px 16px;border-radius:13px;background:var(--surface2);color:var(--ink-strong);font-size:14px;border:1px solid transparent}
+.worklist small{display:block;color:var(--muted);font-size:12px;line-height:1.55;margin-top:4px}
+.quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.quick button{
+  border:1px solid var(--line);background:var(--surface2);padding:17px 18px;border-radius:15px;text-align:left;color:var(--ink-strong);font-weight:750;transition:.16s
+}
+.quick button:hover{transform:translateY(-1px);background:var(--surface)}
+.quick button span{display:block;color:var(--muted);font-size:12px;font-weight:500;margin-top:6px;line-height:1.5}
+.footer{padding:22px 0 6px;text-align:center;color:var(--muted);font-size:11px}
+.path{font-size:11px;color:var(--muted);margin:0 0 10px}
+.hidden{display:none !important}
+body.focus-mode .sidebar{display:none}
+body.focus-mode .main{margin-left:0;padding-top:94px}
+body.focus-mode header{
+  left:auto;right:20px;top:18px;width:auto;height:auto;padding:8px 10px;border-radius:16px;box-shadow:var(--shadow)
+}
+body.focus-mode .brand, body.focus-mode .topname, body.focus-mode .separator{display:none}
+body.focus-mode .actions{gap:6px}
+@media (max-width:1050px){
+  :root{--sidebar:220px}
+  .grid{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  :root{--sidebar:72px;--top:60px}
+  .brand-title,.side-label,.nav span,.side-bottom,.topname{display:none}
+  .brand{width:42px}
+  .sidebar{padding:14px 8px}
+  .nav button{padding:13px 6px;justify-content:center}
+  .main{padding:calc(var(--top) + 20px) 14px 22px}
+  .hero h1{font-size:34px}
+  .lead{font-size:15px}
+  .quick{grid-template-columns:1fr}
+  header{padding:0 12px}
+}
+
+/* Звуковой интерфейс: компактная панель с настройками */
+.audio-control{position:relative}
+.audio-panel{position:absolute;top:calc(100% + 12px);right:0;width:286px;z-index:50;border-radius:16px;background:var(--surface);color:var(--ink-strong);border:1px solid var(--line);box-shadow:0 18px 54px rgba(0,0,0,.27);padding:18px;animation:audio-in .18s ease-out}
+.audio-panel[hidden]{display:none}
+.audio-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:17px;gap:8px}
+.audio-panel-head strong{font-size:14px}
+.audio-panel-head button{border:0;background:transparent;color:var(--ink);font-size:25px;line-height:1;padding:0 5px}
+.audio-switch{display:flex;align-items:center;gap:10px;font-size:13px;margin:13px 0;cursor:pointer}
+.audio-switch input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
+.audio-volume{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin:15px 0 8px}
+.audio-volume output{font-variant-numeric:tabular-nums;color:var(--ink-strong);font-weight:700}
+#sound-volume{width:100%;accent-color:var(--accent);cursor:pointer}
+.sound-test{display:block;width:100%;padding:10px;margin-top:15px;background:var(--surface2);color:var(--ink-strong);border:1px solid var(--line);border-radius:10px;font-size:12px;font-weight:700}
+.sound-test:hover{border-color:var(--edge-glow)}
+.audio-panel p{font-size:11px;line-height:1.5;color:var(--muted);margin:12px 0 0}
+@keyframes audio-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+body.focus-mode .audio-panel{right:0}
+@media(max-width:760px){.audio-panel{right:-50px;width:min(286px,calc(100vw - 24px))}}
+/* Технологичный интерфейс: мягкое свечение и движение без внешних библиотек */
+:root { --glow:rgba(72,138,193,.14); --edge-glow:rgba(57,124,178,.27); }
+:root[data-theme="dark"] { --glow:rgba(58,150,234,.19); --edge-glow:rgba(104,188,255,.38); }
+:root[data-theme="dark"] body::before{opacity:.26;filter:brightness(.63)}
+:root[data-theme="dark"] body::after{opacity:.09;filter:brightness(.7)}
+:root[data-theme="dark"] .brand-mark{background:#fff;padding:3px;border-radius:9px;box-shadow:0 0 0 1px rgba(255,255,255,.12)}
+:root[data-theme="dark"] .brand-mark svg{width:34px;height:34px}
+:root[data-theme="dark"] .label-work{color:#101d2a}
+.nav button{transition:background .22s,color .22s,transform .22s,box-shadow .22s}
+.nav button:hover{transform:translateX(3px);background:var(--surface2);box-shadow:inset 3px 0 var(--edge-glow),0 0 18px var(--glow)}
+.nav button.active{box-shadow:inset 0 0 0 1px var(--edge-glow),0 0 17px var(--glow)}
+.nav button.active::before{box-shadow:0 0 12px var(--accent)}
+.nav button.active svg{filter:drop-shadow(0 0 4px var(--edge-glow))}
+.iconbtn{transition:background .22s,border-color .22s,box-shadow .22s,transform .22s}
+.iconbtn:hover:not(:disabled){transform:translateY(-2px);border-color:var(--edge-glow);box-shadow:0 0 16px var(--glow)}
+.panel,.state,.quick button,.list .item,.worklist div{transition:box-shadow .28s,border-color .28s,transform .28s,background .28s}
+.panel,.state{position:relative;isolation:isolate;overflow:hidden}
+.panel::before,.state::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;z-index:-1;background:radial-gradient(390px circle at var(--mx,50%) var(--my,50%),var(--glow),transparent 75%);transition:opacity .25s}
+.panel:hover::before,.state:hover::before{opacity:1}
+.panel:hover,.state:hover{border-color:var(--edge-glow);box-shadow:var(--shadow),0 0 22px var(--glow)}
+.quick button:hover{box-shadow:0 0 19px var(--glow);border-color:var(--edge-glow)}
+.list .item:hover,.worklist div:hover{transform:translateX(4px);border-color:var(--edge-glow);box-shadow:0 0 14px var(--glow)}
+#content{animation:content-in .36s cubic-bezier(.18,.7,.23,1) both}
+@keyframes content-in{from{opacity:0;transform:translateY(11px)}to{opacity:1;transform:translateY(0)}}
+.brand-mark{transition:transform .25s,box-shadow .25s}
+.brand-mark:hover{transform:rotate(-5deg) scale(1.05);box-shadow:0 0 18px var(--glow)}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.slogan{font-weight:760;font-size:clamp(17px,2.1vw,27px);line-height:1.4;letter-spacing:.015em;max-width:850px;margin:22px 0 0;color:var(--ink-strong);text-wrap:balance;text-shadow:0 0 22px rgba(136,197,245,.14)}
+:root[data-theme="dark"] .slogan{background:linear-gradient(95deg,#eef5fb 0%,#a8c9e8 78%,#87b9e4 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+@media(max-width:760px){.slogan{font-size:17px}}
+:root[data-theme="dream"]{--bg:#cf527d;--surface:#d85f87;--surface2:#e77796;--surface3:#f39b9e;--ink:#fff1e8;--ink-strong:#fff9dc;--muted:#ffe0d6;--line:rgba(255,231,201,.34);--accent:#fff34e;--accent-soft:#a93f71;--shadow:0 16px 42px rgba(113,25,75,.25);--glow:rgba(255,237,92,.22);--edge-glow:rgba(255,245,95,.55)}
+:root[data-theme="dream"] body{background:linear-gradient(165deg,#d45a82,#e65f8a 40%,#f68b85 72%,#d94e89)}
+:root[data-theme="dream"] body::before{inset:0;height:100vh;opacity:.55;background:radial-gradient(ellipse 60% 35% at 77% 22%,rgba(255,232,84,.54),transparent 75%),radial-gradient(ellipse 60% 38% at 24% 65%,rgba(255,128,122,.4),transparent 80%),linear-gradient(180deg,rgba(255,210,104,.18),rgba(210,50,125,.12))}
+:root[data-theme="dream"] body::after{display:none}
+:root[data-theme="dream"] header,:root[data-theme="dream"] .sidebar{background:rgba(189,58,111,.83);border-color:rgba(255,229,191,.3);backdrop-filter:blur(18px)}
+:root[data-theme="dream"] .panel,:root[data-theme="dream"] .state{background:rgba(205,67,119,.58);border-color:rgba(255,230,179,.32);box-shadow:0 14px 44px rgba(126,32,85,.22),inset 0 1px rgba(255,246,212,.2)}
+:root[data-theme="dream"] .hero h1,:root[data-theme="dream"] .state h2{font-family:Impact,"Arial Narrow","Roboto Condensed",sans-serif;text-transform:uppercase;letter-spacing:.02em;color:#fff75c;text-shadow:0 3px 24px rgba(255,224,68,.25)}
+:root[data-theme="dream"] .eyebrow{color:#fff27a}
+:root[data-theme="dream"] .brand-mark{background:#fff7d6;border-radius:9px;padding:3px}
+:root[data-theme="dream"] .brand-mark svg{width:34px;height:34px}
+:root[data-theme="dream"] .nav button.active{color:#fff64c}
+:root[data-theme="dream"] .label-work{color:#83315f}
+:root[data-theme="dream"] .slogan{color:#fff8bd;text-shadow:0 0 24px rgba(255,239,84,.32)}
+:root[data-theme="dream"] .badge,:root[data-theme="dream"] .iconbtn{background:rgba(255,197,160,.16);border-color:rgba(255,235,177,.35)}
+@media(prefers-reduced-motion:no-preference){:root[data-theme="dream"] .hero h1{animation:dream-glow 5s ease-in-out infinite alternate}}
+@keyframes dream-glow{from{text-shadow:0 2px 16px rgba(255,230,82,.18)}to{text-shadow:0 2px 32px rgba(255,241,106,.52)}}
+.theme-control{position:relative}
+.theme-visible-btn{width:auto!important;min-width:94px!important;padding:0 11px!important;gap:7px;display:flex!important;align-items:center;justify-content:center;font-weight:800;font-size:11px;letter-spacing:.6px}
+.theme-visible-btn .theme-label{white-space:nowrap}
+.theme-menu{position:absolute;right:0;top:calc(100% + 12px);z-index:80;width:190px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 14px 44px rgba(0,0,0,.24);padding:8px}
+.theme-menu[hidden]{display:none}
+.theme-menu-title{padding:7px 10px 9px;font-size:11px;font-weight:800;letter-spacing:.6px;color:var(--muted)}
+.theme-menu button{display:flex;align-items:center;gap:7px;border:0;background:transparent;border-radius:9px;padding:11px 10px;width:100%;text-align:left;color:var(--ink-strong);font-weight:700;font-size:13px}
+.theme-menu button:hover,.theme-menu button[aria-pressed="true"]{background:var(--surface2);color:var(--accent)}
+.dream-dot{display:inline-block;width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,#ffe849,#ff986b,#d94d89);border:1px solid rgba(255,255,255,.7)}
+</style>
+<link rel="stylesheet" href="/tools.css?v=1.4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Roboto+Condensed:wght@500;600;700;800;900&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet">
+<style id="meta-restyle">
+
+/* МЕТА · альтернативный дизайн. Только представление, штатные скрипты сохранены. */
+:root{
+ --bg:#eee9df;--surface:#faf7f0;--surface2:#f1e8db;--surface3:#e8ddcc;
+ --ink:#414345;--ink-strong:#1e2327;--muted:#766f68;--line:#d5c9ba;
+ --accent:#cf5a28;--accent-soft:#f9dfcd;--shadow:0 15px 36px rgba(75,55,38,.10);
+ --glow:rgba(223,107,47,.13);--edge-glow:rgba(213,99,45,.49);
+}
+:root[data-theme="dark"]{
+ --bg:#10171a;--surface:#192126;--surface2:#232d32;--surface3:#2d393e;
+ --ink:#c3c9c9;--ink-strong:#f1f0e9;--muted:#9aa5a7;--line:#364247;
+ --accent:#ff793e;--accent-soft:#392a23;--shadow:0 15px 38px rgba(0,0,0,.36);
+ --glow:rgba(255,110,45,.17);--edge-glow:rgba(255,126,59,.54);
+}
+html,body{font-family:"Manrope","Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg)}
+body{background:var(--bg)!important}
+body::before{inset:0!important;height:100vh!important;opacity:1!important;filter:none!important;background:
+ radial-gradient(ellipse 75% 55% at 86% 94%,rgba(210,140,89,.085),transparent),
+ linear-gradient(var(--bg),var(--bg))!important;z-index:-2}
+body::after{display:none!important}
+:root[data-theme="dark"] body::before{background:
+ radial-gradient(ellipse 75% 65% at 90% 90%,rgba(237,104,49,.055),transparent),
+ linear-gradient(var(--bg),var(--bg))!important}
+body.pattern-diagonal{background-image:repeating-linear-gradient(135deg,transparent 0 125px,rgba(87,99,99,.10) 126px,transparent 128px)!important}
+:root[data-theme="dark"] body.pattern-diagonal{background-image:repeating-linear-gradient(135deg,transparent 0 125px,rgba(170,194,201,.075) 126px,transparent 128px)!important}
+body.pattern-grid{background-image:
+ linear-gradient(to right,rgba(120,119,107,.055) 1px,transparent 1px),
+ linear-gradient(to bottom,rgba(120,119,107,.055) 1px,transparent 1px),
+ linear-gradient(to right,rgba(120,119,107,.105) 1px,transparent 1px),
+ linear-gradient(to bottom,rgba(120,119,107,.105) 1px,transparent 1px)!important;
+ background-size:12px 12px,12px 12px,60px 60px,60px 60px!important}
+:root[data-theme="dark"] body.pattern-grid{background-image:
+ linear-gradient(to right,rgba(166,182,187,.032) 1px,transparent 1px),
+ linear-gradient(to bottom,rgba(166,182,187,.032) 1px,transparent 1px),
+ linear-gradient(to right,rgba(166,182,187,.10) 1px,transparent 1px),
+ linear-gradient(to bottom,rgba(166,182,187,.10) 1px,transparent 1px)!important}
+header,.sidebar{background:rgba(249,246,240,.94)!important;border-color:var(--line)!important;backdrop-filter:blur(18px)}
+:root[data-theme="dark"] header,:root[data-theme="dark"] .sidebar{background:rgba(19,27,31,.96)!important}
+.brand-title,.hero h1,.panel h2,.state h2,.slogan{font-family:"Roboto Condensed","Arial Narrow",Arial,sans-serif!important;font-weight:800!important;letter-spacing:-.025em!important}
+.brand-title{font-size:26px!important;letter-spacing:.035em!important}
+.hero h1{font-size:clamp(40px,5vw,72px);line-height:1.01;max-width:970px}
+.panel h2,.state h2{font-size:clamp(23px,2.1vw,31px)}
+.lead,.panel p,.state p{font-family:"PT Serif",Georgia,serif!important;line-height:1.7}
+.nav button,.quick button{font-family:"Manrope",sans-serif!important;font-weight:750!important}
+.nav button.active,.nav button:hover{color:var(--accent)!important}
+.nav svg,.quick svg,.iconbtn svg{stroke:var(--accent)!important}
+.eyebrow,.side-label{color:var(--accent)!important}
+.label-work,.badge{color:var(--accent)!important}
+.panel,.state,.quick button,.list .item,.worklist div,.iconbtn,.theme-menu,.audio-panel{background:var(--surface)!important;border-color:var(--line)!important;box-shadow:var(--shadow)}
+.panel:hover,.state:hover,.quick button:hover{border-color:var(--edge-glow)!important}
+.quick button{box-shadow:0 8px 0 rgba(71,61,52,.12),0 16px 24px rgba(45,38,33,.1);border-radius:17px!important}
+:root[data-theme="dark"] .quick button{box-shadow:0 8px 0 #0b1115,0 15px 28px rgba(0,0,0,.22)}
+.quick button:active{transform:translateY(5px)!important;box-shadow:0 3px 0 rgba(71,61,52,.14)}
+.theme-menu{width:214px}
+.theme-menu button[aria-pressed="true"]{background:var(--accent-soft)!important;color:var(--accent)!important}
+.theme-menu-title{color:var(--accent)}
+.pattern-options{margin:7px 0 2px;border-top:1px solid var(--line);padding:9px 5px 1px}
+.pattern-options .theme-menu-title{padding-left:7px}
+.pattern-options button{font-size:12px}
+.brand-mark{background:transparent!important;border-radius:0!important;box-shadow:none!important;padding:0!important}
+.brand-mark svg{width:42px!important;height:42px!important;stroke:none!important}
+:root[data-theme="dark"] .slogan{background:none!important;-webkit-background-clip:initial!important;background-clip:initial!important;color:var(--ink-strong)!important}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+</style>
+<style id="architecture-theme-styles">
+
+/* Вторая концепция: архитектурный минимализм. Первая остаётся неизменной. */
+.theme-visible-btn{min-width:184px!important}
+.theme-menu{width:332px!important;padding:11px!important}
+.theme-picker-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 11px}
+.theme-picker-grid button{border:1px solid var(--line)!important;border-radius:10px;padding:11px!important;align-items:center!important;display:flex!important;gap:9px!important;background:var(--surface2)!important;line-height:1.1;font-size:12px}
+.theme-picker-grid button[aria-pressed="true"]{border-color:var(--accent)!important;box-shadow:inset 0 0 0 1px var(--accent)}
+.theme-picker-grid button small{display:block;opacity:.75;font-weight:500;margin-top:5px;font-size:11px}
+.theme-swatch{display:inline-block;flex:0 0 27px;width:27px;height:27px;border-radius:7px;border:1px solid rgba(130,130,130,.25);box-shadow:inset 0 0 0 5px rgba(255,255,255,.035)}
+.dark-one{background:linear-gradient(135deg,#161e22 0 72%,#ff793e 72%)}
+.light-one{background:linear-gradient(135deg,#eee9df 0 72%,#cf5a28 72%)}
+.dark-two{background:linear-gradient(135deg,#0e1316 0 72%,#e36e34 72%)}
+.light-two{background:linear-gradient(135deg,#f3f0e9 0 72%,#b95228 72%)}
+.architecture-home{display:none}
+:root[data-design="2"]{
+ --sidebar:260px; --radius:11px;
+ --bg:#f3f0e9;--surface:#fcfaf6;--surface2:#ece8df;--surface3:#e7e0d5;
+ --ink:#474845;--ink-strong:#202827;--muted:#777770;--line:#d9d5cb;
+ --accent:#b95228;--accent-soft:#f3e0d3;
+ --shadow:0 7px 26px rgba(57,49,39,.055);--glow:rgba(185,82,40,.06);--edge-glow:rgba(185,82,40,.28);
+}
+:root[data-design="2"][data-theme="dark"]{
+ --bg:#10171a;--surface:#192125;--surface2:#222b2e;--surface3:#293539;
+ --ink:#b9c0bc;--ink-strong:#f1efe9;--muted:#99a5a1;--line:#364144;
+ --accent:#f47c43;--accent-soft:#32261f;
+ --shadow:0 8px 28px rgba(0,0,0,.16);--glow:rgba(244,124,67,.045);--edge-glow:rgba(244,124,67,.3);
+}
+:root[data-design="2"] header,:root[data-design="2"] .sidebar{box-shadow:none!important;border-color:var(--line)!important}
+:root[data-design="2"] .brand-title{font-family:"Roboto Condensed",sans-serif!important;letter-spacing:.075em!important;font-weight:800!important;font-size:23px!important}
+:root[data-design="2"] .main{padding-top:calc(var(--top) + 48px);padding-bottom:70px}
+:root[data-design="2"] .wrap{max-width:1240px}
+:root[data-design="2"] .hero{margin-bottom:35px}
+:root[data-design="2"] .hero h1{font-size:clamp(54px,7vw,94px)!important;line-height:.94!important;letter-spacing:-.045em!important}
+:root[data-design="2"] .eyebrow{font-size:10px;letter-spacing:3px}
+:root[data-design="2"] .lead{font-family:"Manrope",Arial,sans-serif!important;font-size:14px;line-height:1.78;max-width:620px}
+:root[data-design="2"] .slogan{font-family:"Roboto Condensed",sans-serif!important;font-weight:700;line-height:1.25;letter-spacing:.01em!important}
+:root[data-design="2"] .nav{gap:3px}
+:root[data-design="2"] .nav button{border-radius:6px;padding:12px 11px;font-weight:650}
+:root[data-design="2"] .nav button:hover{transform:none!important;box-shadow:none!important;background:var(--surface2)!important}
+:root[data-design="2"] .nav button.active{background:var(--surface2)!important;box-shadow:none!important;color:var(--ink-strong)!important}
+:root[data-design="2"] .nav button.active::before{left:-13px;top:8px;bottom:8px;width:3px;box-shadow:none;border-radius:0}
+:root[data-design="2"] .nav button:not(.active) svg{stroke:var(--muted)!important;filter:none!important}
+:root[data-design="2"] .nav button.active svg{stroke:var(--accent)!important;filter:none!important}
+:root[data-design="2"] .panel,:root[data-design="2"] .state,:root[data-design="2"] .quick button,
+:root[data-design="2"] .list .item,:root[data-design="2"] .worklist div{
+ border-radius:10px!important;box-shadow:none!important;border:1px solid var(--line)!important;
+}
+:root[data-design="2"] .panel{padding:clamp(20px,2vw,32px)}
+:root[data-design="2"] .panel:hover,:root[data-design="2"] .state:hover{box-shadow:none!important;border-color:var(--line)!important}
+:root[data-design="2"] .panel::before,:root[data-design="2"] .state::before{display:none}
+:root[data-design="2"] .panel h2,:root[data-design="2"] .state h2{font-family:"Roboto Condensed",Arial,sans-serif!important;font-size:clamp(26px,2.7vw,36px)!important;letter-spacing:-.025em!important}
+:root[data-design="2"] .panel p,:root[data-design="2"] .state p{font-family:"Manrope",Arial,sans-serif!important;font-size:13px;line-height:1.75}
+:root[data-design="2"] .quick button{padding:17px!important;font-size:14px;transition:background .17s,border-color .17s,transform .17s!important}
+:root[data-design="2"] .quick button:hover{transform:none!important;background:var(--surface2)!important;border-color:var(--accent)!important}
+:root[data-design="2"] .quick button:active{transform:translateY(1px)!important}
+:root[data-design="2"] .iconbtn{box-shadow:none!important;border-radius:7px}
+:root[data-design="2"] .brand-mark:hover{transform:none!important;box-shadow:none!important}
+:root[data-design="2"] .architecture-home{display:block;margin:0 0 24px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 24px 23px}
+:root[data-design="2"] .architecture-head,:root[data-design="2"] .architecture-foot{display:flex;justify-content:space-between;gap:14px;font-size:10px;letter-spacing:1.7px;font-weight:750;color:var(--muted)}
+:root[data-design="2"] .architecture-head span:first-child{color:var(--accent)}
+:root[data-design="2"] .architecture-diagram{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:30px;position:relative;margin:23px 0}
+:root[data-design="2"] .architecture-diagram::before{content:"";position:absolute;left:10%;right:10%;top:50%;height:1px;background:var(--accent);opacity:.5}
+:root[data-design="2"] .architecture-node{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;min-height:105px;padding:15px;background:var(--surface2);border:1px solid var(--line);border-radius:7px;gap:6px}
+:root[data-design="2"] .architecture-node strong{font-family:"Roboto Condensed",sans-serif;font-size:19px;color:var(--ink-strong);letter-spacing:.02em}
+:root[data-design="2"] .architecture-node small{font-size:10px;color:var(--muted);line-height:1.4}
+:root[data-design="2"] .architecture-number{font-size:10px;font-weight:800;color:var(--accent);letter-spacing:1px}
+:root[data-design="2"] .architecture-foot{border-top:1px solid var(--line);padding-top:14px;letter-spacing:.02em;text-transform:none;font-size:11px;font-weight:500}
+:root[data-design="2"] .architecture-foot span{font-weight:800;letter-spacing:1px;color:var(--accent)}
+:root[data-design="2"] .footer{opacity:.6}
+:root[data-design="2"] .badge{border-radius:5px}
+@media(max-width:1000px){
+ :root[data-design="2"] .architecture-diagram{gap:10px}
+ :root[data-design="2"] .architecture-node{padding:11px}
+ :root[data-design="2"] .architecture-node strong{font-size:16px}
+}
+@media(max-width:700px){
+ .theme-menu{width:min(332px,calc(100vw - 25px))!important;right:-16px!important}
+ .theme-visible-btn{min-width:118px!important}
+ :root[data-design="2"] .architecture-diagram{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ :root[data-design="2"] .architecture-diagram::before{display:none}
+ :root[data-design="2"] .architecture-head span:last-child{display:none}
+ :root[data-design="2"] .architecture-foot{display:block}
+ :root[data-design="2"] .architecture-foot span{display:block;margin-top:4px}
+}
+@media(prefers-reduced-motion:reduce){
+ :root[data-design="2"] *, :root[data-design="2"] *::before,:root[data-design="2"] *::after{animation:none!important;transition:none!important}
+}
+
+</style>
+</head>
+<body>
+<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+  <!-- Утвержденный знак №4 «Модули»: три соединённых изометрических блока. -->
+  <symbol id="i-platform" viewBox="0 0 48 48">
+  <!-- Изометрические блоки разных высот на двух слоях платформы -->
+  <g stroke="#f6f3ec" stroke-width="1.15" stroke-linejoin="round">
+    <path d="M4 31 24 42 44 31 44 36 24 47 4 36Z" fill="#34454e" stroke="none"/>
+    <path d="M4 26 24 37 44 26 44 31 24 42 4 31Z" fill="#d55b2e" stroke="none"/>
+    <path d="M4 23 24 34 44 23 44 27 24 38 4 27Z" fill="#657780" stroke="none"/>
+    <path d="M24 10 32 14.5 24 19 16 14.5Z" fill="#cad4d5"/>
+    <path d="M16 14.5 24 19 24 29 16 24.5Z" fill="#778d97"/>
+    <path d="M24 19 32 14.5 32 24.5 24 29Z" fill="#425964"/>
+    <path d="M11.5 19 19.5 23.5 11.5 28 3.5 23.5Z" fill="#c4ced0"/>
+    <path d="M3.5 23.5 11.5 28 11.5 33 3.5 28.5Z" fill="#7d9098"/>
+    <path d="M11.5 28 19.5 23.5 19.5 28.5 11.5 33Z" fill="#51636d"/>
+    <path d="M36.5 19 44.5 23.5 36.5 28 28.5 23.5Z" fill="#94a9b2"/>
+    <path d="M28.5 23.5 36.5 28 36.5 33 28.5 28.5Z" fill="#5d7783"/>
+    <path d="M36.5 28 44.5 23.5 44.5 28.5 36.5 33Z" fill="#344d5a"/>
+  </g>
+</symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-7h6v7"/></symbol>
+  <symbol id="i-system" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6c-2-2-6-2-9-1v15c3-1 7-1 9 1 2-2 6-2 9-1V5c-3-1-7-1-9 1zM12 6v15"/></symbol>
+  <symbol id="i-tool" viewBox="0 0 24 24"><path d="m14 7 3-3 3 3-3 3M3 21l11-11m0-6 6 6"/><path d="M7 14 3 18l3 3 4-4"/></symbol>
+  <symbol id="i-project" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 5V3h8v2M3 11h18M10 11v2h4v-2"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V9m8 11V4m8 16v-7"/><path d="M2 20h20"/></symbol>
+  <symbol id="i-archive" viewBox="0 0 24 24"><path d="M4 7h16v13H4z"/><path d="M3 7V4h18v3M10 12h4"/></symbol>
+  <symbol id="i-growth" viewBox="0 0 24 24"><path d="M3 17 9 11l4 4 8-8"/><path d="M15 7h6v6"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></symbol>
+  <symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6m2-9a8 8 0 0 1 0 12"/></symbol>
+  <symbol id="i-muted" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="m17 9 5 6m0-6-5 6"/></symbol>
+  <symbol id="i-full" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5"/></symbol>
+  <symbol id="i-exit" viewBox="0 0 24 24"><path d="M9 3H3v6M15 3h6v6M21 15v6h-6M3 15v6h6"/><path d="m8 8-5-5m13 5 5-5m0 18-5-5M3 21l5-5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="m4 20 4-.9L19 8a2 2 0 0 0-3-3L5 16zM14 7l3 3"/></symbol>
+</svg>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark"><svg><use href="#i-platform"></use></svg></div>
+    <div class="brand-title">ПЛАТФОРМА</div>
+  </div>
+  <div class="topname" id="topname">Главная / Обзор</div>
+  <div class="actions">
+    <button class="iconbtn" id="back" title="Назад" aria-label="Назад"><svg><use href="#i-left"></use></svg></button>
+    <button class="iconbtn" id="forward" title="Вперёд" aria-label="Вперёд"><svg><use href="#i-right"></use></svg></button>
+    <div class="separator"></div>
+    <div class="theme-control">
+      <button class="iconbtn theme-visible-btn" id="theme" title="Выбрать тему" aria-label="Выбрать тему" aria-expanded="false" aria-controls="theme-menu"><svg><use href="#i-moon"></use></svg></button>
+      <div class="theme-menu" id="theme-menu" hidden>
+        <div class="theme-menu-title">ДИЗАЙН ИНТЕРФЕЙСА</div>
+<div class="theme-picker-grid" role="group" aria-label="Четыре оформления">
+<button type="button" data-choose-theme="dark" data-design="1"><span class="theme-swatch dark-one"></span><span>Тема 1<small>Тёмная</small></span></button>
+<button type="button" data-choose-theme="light" data-design="1"><span class="theme-swatch light-one"></span><span>Тема 1<small>Светлая</small></span></button>
+<button type="button" data-choose-theme="dark" data-design="2"><span class="theme-swatch dark-two"></span><span>Тема 2<small>Тёмная</small></span></button>
+<button type="button" data-choose-theme="light" data-design="2"><span class="theme-swatch light-two"></span><span>Тема 2<small>Светлая</small></span></button>
+</div>
+<div class="pattern-options"><div class="theme-menu-title">ФОНОВЫЙ ПАТТЕРН</div>
+<button type="button" data-choose-pattern="diagonal">╱ &nbsp; Диагонали</button>
+<button type="button" data-choose-pattern="grid">▦ &nbsp; Модульная сетка</button>
+<button type="button" data-choose-pattern="none">○ &nbsp; Без паттерна</button></div>
+      </div>
+    </div>
+    <div class="audio-control" id="audio-control">
+      <button class="iconbtn" id="sound" title="Настройки звука" aria-label="Настройки звука" aria-expanded="false" aria-controls="audio-panel"><svg><use href="#i-volume"></use></svg></button>
+      <div class="audio-panel" id="audio-panel" hidden>
+        <div class="audio-panel-head"><strong>Звуки интерфейса</strong><button id="audio-close" aria-label="Закрыть настройки звука">×</button></div>
+        <label class="audio-switch"><input id="sound-enabled" type="checkbox" checked> Включить звуки</label>
+        <label class="audio-volume" for="sound-volume">Громкость <output id="volume-value">30%</output></label>
+        <input id="sound-volume" type="range" min="0" max="100" step="5" value="30" aria-label="Громкость звуков">
+        <label class="audio-switch"><input id="sound-hover" type="checkbox"> Звуки при наведении</label>
+        <button type="button" class="sound-test" id="sound-test">Проверить звук</button>
+        <p>Звуки работают без интернета. Настройки сохраняются в этом браузере.</p>
+      </div>
+    </div>
+    <button class="iconbtn" id="fullscreen" title="На весь экран" aria-label="На весь экран"><svg><use href="#i-full"></use></svg></button>
+  </div>
+</header>
+
+<aside class="sidebar">
+  <div class="side-label">Разделы</div>
+  <nav class="nav" id="nav"></nav>
+  <div class="side-bottom">
+    <div class="version">Концепция интерфейса<br>ПЛАТФОРМА · v1.4</div>
+  </div>
+</aside>
+
+<main class="main" id="content"></main>
+
+<script>
+const sections = [
+  {id:'home', name:'Главная', icon:'home', tag:'Обзор', desc:'Стартовый экран с общей логикой работы системы.', work:['Краткий обзор структуры системы','Быстрый переход в основные разделы','Фиксация статуса наполнения разделов']},
+  {id:'system', name:'Система', icon:'system', tag:'Организационная модель', desc:'Цели, функции, задачи, структура, роли и связи внутри Платформы.', work:['Цель и назначение Платформы','Функции, задачи и зоны ответственности','Организационная структура и роли']},
+  {id:'method', name:'Методология', icon:'book', tag:'Правила проектирования', desc:'Подходы, алгоритмы и стандарты, на которых строится работа Платформы.', work:['Алгоритм проектирования и параметризации','КЭП, квартирография, типы секций','Стандарты паркинга, АР, КР и инженерии']},
+  {id:'tools', name:'Инструменты', icon:'tool', tag:'Цифровые инструменты', desc:'Единый каталог приложений и расчетных модулей Платформы.', work:[]},
+  {id:'projects', name:'Проекты', icon:'project', tag:'Объекты и решения', desc:'Карточки объектов, исходные данные, проектные решения и результаты.', work:['Реестр проектов','Паспорта объектов и параметры','История принятых решений']},
+  {id:'analytics', name:'Аналитика', icon:'chart', tag:'Показатели эффективности', desc:'Аналитика эффективности решений, себестоимости, сроков и результатов.', work:['Показатели по площадям и КЭП','Себестоимость и экономический эффект','Сравнение вариантов решений']},
+  {id:'knowledge', name:'Стандарты', icon:'archive', tag:'Библиотека опыта', desc:'Нормативы, типовые решения, исследования и накопленные выводы.', work:['Типовые решения и модули','Нормативная база и мониторинги','Разборы проектов и технические выводы']},
+  {id:'development', name:'Развитие', icon:'growth', tag:'Дорожная карта', desc:'Направления развития Платформы, инициативы и версии инструментов.', work:['Дорожная карта развития','Реестр инициатив','Обновления, версии и улучшения']}
+];
+const $ = id => document.getElementById(id);
+const icon = name => `<svg><use href="#i-${name}"></use></svg>`;
+let current='home';
+let historyStack=['home'];
+let pointer=0;
+
+function navMarkup(){
+  return sections.map(s => `
+    <button data-go="${s.id}" class="${current===s.id?'active':''}" ${current===s.id?'aria-current="page"':''}>
+      ${icon(s.icon)}<span>${s.name}</span>
+    </button>
+  `).join('');
+}
+
+function renderHome(){
+  return `
+    <div class="wrap">
+      <section class="hero">
+        <div>
+          <div class="eyebrow">Стартовый экран</div>
+          <h1>ПЛАТФОРМА</h1>
+          <p class="slogan">НЕ ПРОЕКТИРУЕМ ЗДАНИЕ.<br>ВЫЧИСЛЯЕМ, КАКИМ ОНО ДОЛЖНО БЫТЬ.</p>
+          <p class="lead">Единая рабочая среда для методологии, инструментов, проектов и аналитики. Навигация всегда остается слева, а содержимое открывается в свободной рабочей области.</p>
+        </div>
+        <div class="badge"><span class="dot"></span> Навигационный портал</div>
+      </section>
+
+      <section class="architecture-home" aria-label="Схема экосистемы проектных решений">
+<div class="architecture-head"><span>01 / АРХИТЕКТУРА ПЛАТФОРМЫ</span><span>ВЗАИМОСВЯЗЬ ИНСТРУМЕНТОВ</span></div>
+<div class="architecture-diagram">
+<div class="architecture-node architecture-node-left"><span class="architecture-number">01</span><strong>КАТАЛОГ</strong><small>Квартиры и типовые решения</small></div>
+<div class="architecture-node architecture-node-mid"><span class="architecture-number">02</span><strong>КОНФИГУРАТОР</strong><small>Компоновка и параметры</small></div>
+<div class="architecture-node architecture-node-right"><span class="architecture-number">03</span><strong>МАССИНГ</strong><small>Объёмная модель проекта</small></div>
+<div class="architecture-node architecture-node-last"><span class="architecture-number">04</span><strong>АНАЛИТИКА</strong><small>Показатели и сравнение</small></div>
+</div>
+<div class="architecture-foot">Данные и проектные решения формируют связанную систему <span>МЕТА / ПЛАТФОРМА</span></div>
+</section>
+
+      <section class="grid">
+        <div class="panel">
+          <h2>Что уже зафиксировано</h2>
+          <p>Единая оболочка Платформы с самостоятельными каталогами материалов для каждого раздела.</p>
+          <div class="list">
+            <div class="item">Левая панель разделов и собственное меню внутри каждой рубрики</div>
+            <div class="item">Фиксированная верхняя панель управления</div>
+            <div class="item">Карточки материалов с названиями и ссылками на опубликованные страницы</div>
+            <div class="item">Полноэкранный режим только для рабочего экрана</div>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Быстрый переход</h2>
+          <p>В каждой рубрике можно создавать карточки, назначать ссылки и переходить к материалам.</p>
+          <div class="quick">
+            <button data-go="system">Система<span>Цели, функции, задачи и роли</span></button>
+            <button data-go="method">Методология<span>Правила проектирования</span></button>
+            <button data-go="tools">Инструменты<span>Каталог и подключение приложений</span></button>
+            <button data-go="projects">Проекты<span>Реестр объектов и решений</span></button>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">ПЛАТФОРМА · стартовая страница</div>
+    </div>
+  `;
+}
+
+function renderSection(section){
+  return `
+    <div class="wrap">
+      <div class="path">ПЛАТФОРМА / ${section.name}</div>
+      <section class="state">
+        <div class="state-inner">
+          <div class="label-work"><span class="dot" style="background:#fff"></span>В РАБОТЕ</div>
+          <h2>${section.name}</h2>
+          <p>${section.desc}</p>
+          <div class="worklist">
+            ${section.work.map(item => `<div>${item}<small>Здесь будет размещено согласованное содержимое раздела.</small></div>`).join('')}
+          </div>
+        </div>
+      </section>
+      <div class="footer">ПЛАТФОРМА · стартовая страница</div>
+    </div>
+  `;
+}
+
+function render(){
+  $('content').style.animation='none';
+  void $('content').offsetWidth;
+  $('content').style.animation='';
+  $('nav').innerHTML = navMarkup();
+  const section = sections.find(s=>s.id===current);
+  $('topname').textContent = section.name + ' / ' + section.tag;
+  $('back').disabled = pointer===0;
+  $('forward').disabled = pointer===historyStack.length-1;
+  $('content').innerHTML = current==='home' ? renderHome() : renderSection(section);
+}
+
+function navigate(id, record=true){
+  if(!sections.some(s => s.id===id)) return;
+  current = id;
+  if(record){
+    historyStack = historyStack.slice(0, pointer+1);
+    historyStack.push(id);
+    pointer++;
+  }
+  render();
+  if(audioStarted) playSound('navigate');
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+document.addEventListener('click', (e)=>{
+  const go = e.target.closest('[data-go]');
+  if(go){ if(!audioStarted){audioStarted=true;playSound('start');} navigate(go.dataset.go); }
+});
+$('back').onclick = ()=>{ audioStarted=true; if(pointer>0){ pointer--; current = historyStack[pointer]; render(); playSound('navigate'); } };
+$('forward').onclick = ()=>{ audioStarted=true; if(pointer<historyStack.length-1){ pointer++; current = historyStack[pointer]; render(); playSound('navigate'); } };
+
+const themes=['dark','light'];
+const DESIGN_STORAGE_KEY='platform-ui-design-v2';
+function applyTheme(theme, design=1){
+ if(!themes.includes(theme))theme='dark';
+ design=Number(design)===2?2:1;
+ document.documentElement.dataset.theme=theme;
+ document.documentElement.dataset.design=String(design);
+ const label='ТЕМА '+design+(theme==='dark'?' / ТЁМНАЯ':' / СВЕТЛАЯ')+' ▾';
+ $('theme').innerHTML=(theme==='dark'?icon('sun'):icon('moon'))+'<span class="theme-label">'+label+'</span>';
+ $('theme').title='Тема '+design+' — '+(theme==='dark'?'тёмная':'светлая');
+ $('theme').setAttribute('aria-label',$('theme').title);
+ document.querySelectorAll('[data-choose-theme]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.chooseTheme===theme && Number(b.dataset.design)===design)));
+ try{localStorage.setItem(DESIGN_STORAGE_KEY,JSON.stringify({theme,design}));}catch(e){}
+}
+$('theme').onclick=()=>{
+ const menu=$('theme-menu'); menu.hidden=!menu.hidden;
+ $('theme').setAttribute('aria-expanded',String(!menu.hidden));
+};
+document.querySelectorAll('[data-choose-theme]').forEach(button=>button.onclick=()=>{
+ audioStarted=true;
+ applyTheme(button.dataset.chooseTheme,Number(button.dataset.design));
+ $('theme-menu').hidden=true; $('theme').setAttribute('aria-expanded','false');
+ playSound('theme');
+});
+document.addEventListener('pointerdown',e=>{
+ if(!e.target.closest('.theme-control')){$('theme-menu').hidden=true;$('theme').setAttribute('aria-expanded','false');}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('theme-menu').hidden=true;$('theme').setAttribute('aria-expanded','false');}});
+
+async function toggleFullscreen(){
+  audioStarted=true;
+  const entering = !document.body.classList.contains('focus-mode');
+  document.body.classList.toggle('focus-mode', entering);
+  try{
+    if(entering){
+      if(document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen();
+    } else {
+      if(document.exitFullscreen) await document.exitFullscreen();
+    }
+  }catch(e){
+    // CSS focus mode works even if browser fullscreen is blocked.
+  }
+  updateFullscreenButton();
+  playSound(entering ? 'expand' : 'collapse');
+}
+function updateFullscreenButton(){
+  const active = document.fullscreenElement || document.body.classList.contains('focus-mode');
+  $('fullscreen').innerHTML = active ? icon('exit') : icon('full');
+  $('fullscreen').title = active ? 'Выйти из полноэкранного режима' : 'На весь экран';
+}
+$('fullscreen').onclick = toggleFullscreen;
+document.addEventListener('fullscreenchange', ()=>{
+  if(!document.fullscreenElement) document.body.classList.remove('focus-mode');
+  updateFullscreenButton();
+});
+
+
+// Короткие оригинальные синтезированные сигналы. Внешние аудиофайлы не нужны.
+const AUDIO_PREF_KEY='platform-audio-v06';
+const audioSettings={enabled:true,volume:30,hover:false};
+try{
+  const saved=JSON.parse(localStorage.getItem(AUDIO_PREF_KEY)||'{}');
+  if(typeof saved.enabled==='boolean') audioSettings.enabled=saved.enabled;
+  if(Number.isFinite(saved.volume)) audioSettings.volume=Math.max(0,Math.min(100,saved.volume));
+  if(typeof saved.hover==='boolean') audioSettings.hover=saved.hover;
+}catch(e){}
+let audioContext=null;
+let audioStarted=false;
+let lastHoverAt=0;
+function saveAudioSettings(){try{localStorage.setItem(AUDIO_PREF_KEY,JSON.stringify(audioSettings))}catch(e){}}
+function audioEngine(){
+  const Ctx=window.AudioContext||window.webkitAudioContext;
+  if(!Ctx) return null;
+  if(!audioContext) audioContext=new Ctx();
+  if(audioContext.state==='suspended') audioContext.resume().catch(()=>{});
+  return audioContext;
+}
+function playSound(type){
+  if(!audioSettings.enabled||audioSettings.volume<=0) return;
+  // По политике браузера звук возможен только после действия пользователя.
+  const ctx=audioEngine();
+  if(!ctx) return;
+  const patterns={
+    start:[[420,590,.13],[590,790,.17]],
+    navigate:[[480,580,.072]],
+    hover:[[520,570,.042]],
+    theme:[[410,520,.115],[620,760,.115]],
+    expand:[[390,560,.095],[560,735,.11]],
+    collapse:[[720,540,.095],[540,410,.11]],
+    error:[[240,210,.16],[210,170,.18]],
+    test:[[440,575,.12],[575,740,.15]]
+  };
+  try{
+    let when=ctx.currentTime+.008;
+    const volume=(audioSettings.volume/100)*.095;
+    for(const [from,to,duration] of (patterns[type]||patterns.navigate)){
+      const osc=ctx.createOscillator();
+      const gain=ctx.createGain();
+      osc.type='sine';
+      osc.frequency.setValueAtTime(from,when);
+      osc.frequency.exponentialRampToValueAtTime(to,when+duration);
+      gain.gain.setValueAtTime(0,when);
+      gain.gain.linearRampToValueAtTime(volume,when+.012);
+      gain.gain.exponentialRampToValueAtTime(.0001,when+duration);
+      osc.connect(gain);gain.connect(ctx.destination);
+      osc.start(when);osc.stop(when+duration+.01);
+      when+=duration*.76;
+    }
+  }catch(e){}
+}
+function updateAudioUI(){
+  $('sound-enabled').checked=audioSettings.enabled;
+  $('sound-hover').checked=audioSettings.hover;
+  $('sound-volume').value=audioSettings.volume;
+  $('volume-value').textContent=audioSettings.volume+'%';
+  $('sound').innerHTML=icon(audioSettings.enabled&&audioSettings.volume>0?'volume':'muted');
+  $('sound').title=audioSettings.enabled?'Звук включён — настройки':'Звук выключен — настройки';
+  $('sound').setAttribute('aria-label',$('sound').title);
+}
+function setAudioPanel(open){
+  $('audio-panel').hidden=!open;
+  $('sound').setAttribute('aria-expanded',String(open));
+}
+$('sound').onclick=()=>{
+  const open=$('audio-panel').hidden;
+  setAudioPanel(open);
+  if(open&&!audioStarted){audioStarted=true;playSound('start');}
+};
+$('audio-close').onclick=()=>setAudioPanel(false);
+$('sound-enabled').onchange=e=>{
+  audioSettings.enabled=e.target.checked;saveAudioSettings();updateAudioUI();
+  if(audioSettings.enabled) playSound('test');
+};
+$('sound-volume').oninput=e=>{
+  audioSettings.volume=Number(e.target.value);saveAudioSettings();updateAudioUI();
+};
+$('sound-volume').onchange=()=>playSound('test');
+$('sound-hover').onchange=e=>{
+  audioSettings.hover=e.target.checked;saveAudioSettings();updateAudioUI();
+  if(audioSettings.hover) playSound('hover');
+};
+$('sound-test').onclick=()=>playSound('test');
+document.addEventListener('pointerover',e=>{
+  if(!audioSettings.hover||e.pointerType==='touch') return;
+  const b=e.target.closest('.nav button,.quick button,.iconbtn');
+  if(!b||b.contains(e.relatedTarget)) return;
+  const now=performance.now();
+  if(now-lastHoverAt<110) return;
+  lastHoverAt=now;playSound('hover');
+});
+document.addEventListener('pointerdown',e=>{
+  if(!$('audio-control').contains(e.target)) setAudioPanel(false);
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') setAudioPanel(false);
+});
+updateAudioUI();
+
+try{const saved=JSON.parse(localStorage.getItem(DESIGN_STORAGE_KEY)||'null');applyTheme(saved?.theme||'dark',saved?.design||1);}catch(e){applyTheme('dark',1);}
+updateFullscreenButton();
+// Cursor-responsive illumination inside panels; no background animation or GPU-heavy canvas.
+document.addEventListener('pointermove', e=>{
+  if(e.pointerType==='touch') return;
+  const panel=e.target.closest('.panel,.state');
+  if(!panel) return;
+  const r=panel.getBoundingClientRect();
+  panel.style.setProperty('--mx',(e.clientX-r.left)+'px');
+  panel.style.setProperty('--my',(e.clientY-r.top)+'px');
+},{passive:true});
+render();
+</script>
+<script src="/rubrics.js?v=1.4"></script>
+<script>
+(function(){
+ const key='platform-pattern-preview';
+ const picks=document.querySelectorAll('[data-choose-pattern]');
+ function setPattern(p){
+   document.body.classList.remove('pattern-diagonal','pattern-grid');
+   if(p!=='none')document.body.classList.add('pattern-'+p);
+   picks.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.choosePattern===p)));
+   try{localStorage.setItem(key,p)}catch(e){}
+ }
+ picks.forEach(b=>b.addEventListener('click',()=>{setPattern(b.dataset.choosePattern);document.getElementById('theme-menu').hidden=true;}));
+ let value='grid';try{value=localStorage.getItem(key)||'grid'}catch(e){}
+ setPattern(value);
+})();
+</script>
+</body>
+</html>
+
