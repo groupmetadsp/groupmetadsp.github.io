@@ -224,6 +224,13 @@ body.focus-mode .audio-panel{right:0}
 :root[data-theme="dream"] .badge,:root[data-theme="dream"] .iconbtn{background:rgba(255,197,160,.16);border-color:rgba(255,235,177,.35)}
 @media(prefers-reduced-motion:no-preference){:root[data-theme="dream"] .hero h1{animation:dream-glow 5s ease-in-out infinite alternate}}
 @keyframes dream-glow{from{text-shadow:0 2px 16px rgba(255,230,82,.18)}to{text-shadow:0 2px 32px rgba(255,241,106,.52)}}
+.theme-control{position:relative}
+.theme-menu{position:absolute;right:0;top:calc(100% + 12px);z-index:80;width:190px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 14px 44px rgba(0,0,0,.24);padding:8px}
+.theme-menu[hidden]{display:none}
+.theme-menu-title{padding:7px 10px 9px;font-size:11px;font-weight:800;letter-spacing:.6px;color:var(--muted)}
+.theme-menu button{display:flex;align-items:center;gap:7px;border:0;background:transparent;border-radius:9px;padding:11px 10px;width:100%;text-align:left;color:var(--ink-strong);font-weight:700;font-size:13px}
+.theme-menu button:hover,.theme-menu button[aria-pressed="true"]{background:var(--surface2);color:var(--accent)}
+.dream-dot{display:inline-block;width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,#ffe849,#ff986b,#d94d89);border:1px solid rgba(255,255,255,.7)}
 </style>
 <link rel="stylesheet" href="/tools.css?v=1.4">
 </head>
@@ -276,7 +283,15 @@ body.focus-mode .audio-panel{right:0}
     <button class="iconbtn" id="back" title="Назад" aria-label="Назад"><svg><use href="#i-left"></use></svg></button>
     <button class="iconbtn" id="forward" title="Вперёд" aria-label="Вперёд"><svg><use href="#i-right"></use></svg></button>
     <div class="separator"></div>
-    <button class="iconbtn" id="theme" title="Сменить тему" aria-label="Сменить тему"><svg><use href="#i-moon"></use></svg></button>
+    <div class="theme-control">
+      <button class="iconbtn" id="theme" title="Выбрать тему" aria-label="Выбрать тему" aria-expanded="false" aria-controls="theme-menu"><svg><use href="#i-moon"></use></svg></button>
+      <div class="theme-menu" id="theme-menu" hidden>
+        <div class="theme-menu-title">Оформление</div>
+        <button type="button" data-choose-theme="dark">◐ &nbsp; Тёмная</button>
+        <button type="button" data-choose-theme="light">☀ &nbsp; Светлая</button>
+        <button type="button" data-choose-theme="dream"><span class="dream-dot"></span> Dream</button>
+      </div>
+    </div>
     <div class="audio-control" id="audio-control">
       <button class="iconbtn" id="sound" title="Настройки звука" aria-label="Настройки звука" aria-expanded="false" aria-controls="audio-panel"><svg><use href="#i-volume"></use></svg></button>
       <div class="audio-panel" id="audio-panel" hidden>
@@ -425,12 +440,24 @@ function applyTheme(theme){
  if(!themes.includes(theme))theme='dark';
  document.documentElement.dataset.theme=theme;
  $('theme').innerHTML=theme==='dark'?icon('sun'):theme==='light'?icon('moon'):'<span style="font-weight:900;font-size:12px;color:#fff34e">D</span>';
- const next=themes[(themes.indexOf(theme)+1)%themes.length];
- $('theme').title='Тема: '+({dark:'Тёмная',light:'Светлая',dream:'Dream'}[theme])+' · следующая: '+({dark:'Тёмная',light:'Светлая',dream:'Dream'}[next]);
+ $('theme').title='Оформление: '+({dark:'Тёмная',light:'Светлая',dream:'Dream'}[theme]);
  $('theme').setAttribute('aria-label',$('theme').title);
+ document.querySelectorAll('[data-choose-theme]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.chooseTheme===theme)));
  try{localStorage.setItem('platform-theme-v04',theme)}catch(e){}
 }
-$('theme').onclick=()=>{audioStarted=true;const current=document.documentElement.dataset.theme;applyTheme(themes[(themes.indexOf(current)+1)%themes.length]);playSound('theme')};
+$('theme').onclick=()=>{
+ const menu=$('theme-menu');
+ menu.hidden=!menu.hidden;
+ $('theme').setAttribute('aria-expanded',String(!menu.hidden));
+};
+document.querySelectorAll('[data-choose-theme]').forEach(button=>button.onclick=()=>{
+ audioStarted=true;applyTheme(button.dataset.chooseTheme);
+ $('theme-menu').hidden=true;$('theme').setAttribute('aria-expanded','false');playSound('theme');
+});
+document.addEventListener('pointerdown',e=>{
+ if(!e.target.closest('.theme-control')){$('theme-menu').hidden=true;$('theme').setAttribute('aria-expanded','false');}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('theme-menu').hidden=true;$('theme').setAttribute('aria-expanded','false');}});
 
 async function toggleFullscreen(){
   audioStarted=true;
