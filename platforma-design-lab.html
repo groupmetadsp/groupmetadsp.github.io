@@ -451,27 +451,51 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 </style>
 <style id="water-theme-styles">
 /* Theme 4: calm water-glass design. Ripples are behind the UI, never on text/cards. */
-.dark-four{background:linear-gradient(135deg,#09262e 0 70%,#8ad8d6 70%)}
-.light-four{background:linear-gradient(135deg,#e8f1ee 0 70%,#287e83 70%)}
+.dark-four{background:linear-gradient(155deg,#6b214c 0 55%,#ff4f97 55% 78%,#fff130 78%)}
+.light-four{background:linear-gradient(155deg,#fff52a 0 42%,#ff9a53 58%,#ff40a1 100%)}
 :root[data-design="4"]{
- --bg:#e8f1ee; --surface:#f7fbf9; --surface2:#dcece9; --surface3:#cce2e0;
- --ink:#3f6464; --ink-strong:#153b41; --muted:#628686; --line:#c4dad5;
- --accent:#287e83; --accent-soft:#d4e7e5; --shadow:0 10px 28px rgba(16,69,72,.07);
- --glow:rgba(54,141,146,.07); --edge-glow:rgba(40,126,131,.28);
+ --bg:#fff4c6; --surface:#fff9e4; --surface2:#ffe4ce; --surface3:#ffd7b5;
+ --ink:#75445c; --ink-strong:#3d2037; --muted:#965d73; --line:#f0b6b5;
+ --accent:#e32779; --accent-soft:#ffd8e3; --shadow:0 10px 28px rgba(181,47,111,.10);
+ --glow:rgba(245,57,132,.09); --edge-glow:rgba(227,39,121,.30);
 }
 :root[data-design="4"][data-theme="dark"]{
- --bg:#09262e; --surface:#11323a; --surface2:#1a4248; --surface3:#255057;
- --ink:#b6d5d5; --ink-strong:#edf7f2; --muted:#91b9b8; --line:#2a5358;
- --accent:#8ad8d6; --accent-soft:#214a50; --shadow:0 10px 28px rgba(0,15,20,.3);
- --glow:rgba(138,216,214,.08); --edge-glow:rgba(138,216,214,.33);
+ --bg:#462038; --surface:#57273f; --surface2:#6d2d4a; --surface3:#8e3b58;
+ --ink:#f6cbd2; --ink-strong:#fff7d4; --muted:#ecafbd; --line:#88415e;
+ --accent:#fff338; --accent-soft:#754356; --shadow:0 10px 28px rgba(31,4,22,.28);
+ --glow:rgba(255,239,63,.10); --edge-glow:rgba(255,243,56,.3);
 }
 :root[data-design="4"] header,:root[data-design="4"] .sidebar{
- background:rgba(245,251,248,.94)!important;border-color:var(--line)!important
+ background:rgba(255,243,215,.93)!important;border-color:var(--line)!important
 }
 :root[data-design="4"][data-theme="dark"] header,:root[data-design="4"][data-theme="dark"] .sidebar{
- background:rgba(8,30,37,.96)!important;border-color:var(--line)!important
+ background:rgba(66,22,48,.94)!important;border-color:var(--line)!important
 }
-:root[data-design="4"] body::before{background:linear-gradient(var(--bg),var(--bg))!important}
+:root[data-design="4"] body{
+ background:linear-gradient(167deg,#fff640 0%,#ffb64b 34%,#ff7a76 62%,#fa409c 100%)!important;
+ background-attachment:fixed!important;
+}
+:root[data-design="4"][data-theme="dark"] body{
+ background:linear-gradient(165deg,#6e274a 0%,#ab3464 42%,#ed4f8c 72%,#ff8b7c 100%)!important;
+ background-attachment:fixed!important;
+}
+:root[data-design="4"] body.pattern-grid,
+:root[data-design="4"] body.pattern-diagonal{background-blend-mode:multiply!important}
+:root[data-design="4"] body::before{
+ background:radial-gradient(ellipse 70% 48% at 13% 5%,rgba(255,247,71,.46),transparent 80%),
+ radial-gradient(ellipse 65% 65% at 82% 90%,rgba(242,37,134,.27),transparent 78%)!important;
+ opacity:1!important;filter:none!important;
+}
+:root[data-design="4"][data-theme="dark"] body::before{
+ background:radial-gradient(ellipse 55% 48% at 12% 4%,rgba(255,185,53,.21),transparent 80%),
+ radial-gradient(ellipse 70% 60% at 89% 86%,rgba(255,44,154,.25),transparent 80%)!important;
+ opacity:1!important;filter:none!important;
+}
+:root[data-design="4"][data-theme="light"] .hero h1,
+:root[data-design="4"][data-theme="light"] .slogan{color:#3d2037!important;text-shadow:none!important}
+:root[data-design="4"][data-theme="dark"] .hero h1{color:#fff33f!important;text-shadow:none!important}
+:root[data-design="4"][data-theme="dark"] .slogan{color:#fff4b1!important;text-shadow:none!important}
+
 :root[data-design="4"][data-theme="dark"] .slogan{
  color:var(--ink-strong)!important;background:none!important;
  -webkit-background-clip:initial!important;background-clip:initial!important
@@ -493,7 +517,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
  background:
  repeating-radial-gradient(ellipse at 53% 55%,
  transparent 0px,transparent 44px,
- rgba(63,138,142,.10) 45px,transparent 47px,transparent 93px);
+ rgba(255,251,202,.16) 45px,transparent 47px,transparent 93px);
  transform:scale(.9);
  will-change:transform,opacity;
  animation:meta-ripple-soft 18s ease-in-out infinite;
@@ -501,16 +525,16 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 #water-ripple-layer::after{
  background:repeating-radial-gradient(ellipse at 42% 48%,
  transparent 0px,transparent 65px,
- rgba(69,144,144,.075) 66px,transparent 69px,transparent 130px);
+ rgba(255,244,179,.12) 66px,transparent 69px,transparent 130px);
  animation-duration:24s;animation-delay:-8s;opacity:.65;
 }
 :root[data-design="4"][data-theme="dark"] #water-ripple-layer::before{
  background:repeating-radial-gradient(ellipse at 54% 57%,transparent 0px,transparent 44px,
- rgba(138,216,214,.11) 45px,transparent 47px,transparent 93px)
+ rgba(255,231,139,.12) 45px,transparent 47px,transparent 93px)
 }
 :root[data-design="4"][data-theme="dark"] #water-ripple-layer::after{
  background:repeating-radial-gradient(ellipse at 42% 48%,transparent 0px,transparent 65px,
- rgba(138,216,214,.065) 66px,transparent 69px,transparent 130px)
+ rgba(255,214,154,.08) 66px,transparent 69px,transparent 130px)
 }
 @keyframes meta-ripple-soft{
  0%{transform:scale(.88) translate3d(-1%,.5%,0);opacity:.28}
@@ -519,6 +543,18 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 }
 @media(prefers-reduced-motion:reduce){
  #water-ripple-layer::before,#water-ripple-layer::after{animation:none!important;transform:none!important;opacity:.22}
+}
+</style>
+<style id="headline-sizing-v2-v3">
+/* User-approved headline reduction: 1.5x smaller than preceding Theme 2 and 3. */
+:root[data-design="2"] .hero h1{
+ font-size:clamp(21.33px,3.067vw,37.33px)!important;
+ line-height:1.06!important;
+ letter-spacing:-.02em!important;
+}
+:root[data-design="3"] .hero h1{
+ font-size:clamp(36px,4.667vw,62.67px)!important;
+ line-height:1.02!important;
 }
 </style>
 </head>
@@ -583,8 +619,8 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 <button type="button" data-choose-theme="light" data-design="2"><span class="theme-swatch light-two"></span><span>Тема 2<small>Светлая</small></span></button>
 <button type="button" data-choose-theme="dark" data-design="3"><span class="theme-swatch dark-three"></span><span>Тема 3<small>Тёмная</small></span></button>
 <button type="button" data-choose-theme="light" data-design="3"><span class="theme-swatch light-three"></span><span>Тема 3<small>Светлая</small></span></button>
-<button type="button" data-choose-theme="dark" data-design="4"><span class="theme-swatch dark-four"></span><span>Тема 4<small>Тёмная · вода</small></span></button>
-<button type="button" data-choose-theme="light" data-design="4"><span class="theme-swatch light-four"></span><span>Тема 4<small>Светлая · вода</small></span></button>
+<button type="button" data-choose-theme="dark" data-design="4"><span class="theme-swatch dark-four"></span><span>Тема 4<small>Тёмная · закат</small></span></button>
+<button type="button" data-choose-theme="light" data-design="4"><span class="theme-swatch light-four"></span><span>Тема 4<small>Светлая · закат</small></span></button>
 </div>
 <div class="water-options"><div class="theme-menu-title">АНИМАЦИЯ</div>
 <button type="button" id="water-ripple-toggle" aria-pressed="true">≈ &nbsp; Мягкая рябь воды · вкл.</button></div>
