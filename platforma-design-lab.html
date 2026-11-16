@@ -262,8 +262,8 @@ body::after{display:none!important}
 :root[data-theme="dark"] body::before{background:
  radial-gradient(ellipse 75% 65% at 90% 90%,rgba(237,104,49,.055),transparent),
  linear-gradient(var(--bg),var(--bg))!important}
-body.pattern-diagonal{background-image:repeating-linear-gradient(135deg,transparent 0 125px,rgba(87,99,99,.10) 126px,transparent 128px)!important}
-:root[data-theme="dark"] body.pattern-diagonal{background-image:repeating-linear-gradient(135deg,transparent 0 125px,rgba(170,194,201,.075) 126px,transparent 128px)!important}
+body.pattern-diagonal{background-image:repeating-linear-gradient(135deg,transparent 0 49px,rgba(87,99,99,.10) 50px,transparent 51px)!important}
+:root[data-theme="dark"] body.pattern-diagonal{background-image:repeating-linear-gradient(135deg,transparent 0 49px,rgba(170,194,201,.075) 50px,transparent 51px)!important}
 body.pattern-grid{background-image:
  linear-gradient(to right,rgba(120,119,107,.055) 1px,transparent 1px),
  linear-gradient(to bottom,rgba(120,119,107,.055) 1px,transparent 1px),
@@ -332,67 +332,96 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
  --accent:#f47c43;--accent-soft:#32261f;
  --shadow:0 8px 28px rgba(0,0,0,.16);--glow:rgba(244,124,67,.045);--edge-glow:rgba(244,124,67,.3);
 }
-:root[data-design="2"] header,:root[data-design="2"] .sidebar{box-shadow:none!important;border-color:var(--line)!important}
-:root[data-design="2"] .brand-title{font-family:"Roboto Condensed",sans-serif!important;letter-spacing:.075em!important;font-weight:800!important;font-size:23px!important}
-:root[data-design="2"] .main{padding-top:calc(var(--top) + 48px);padding-bottom:70px}
-:root[data-design="2"] .wrap{max-width:1240px}
-:root[data-design="2"] .hero{margin-bottom:35px}
-:root[data-design="2"] .hero h1{font-size:clamp(54px,7vw,94px)!important;line-height:.94!important;letter-spacing:-.045em!important}
-:root[data-design="2"] .eyebrow{font-size:10px;letter-spacing:3px}
-:root[data-design="2"] .lead{font-family:"Manrope",Arial,sans-serif!important;font-size:14px;line-height:1.78;max-width:620px}
-:root[data-design="2"] .slogan{font-family:"Roboto Condensed",sans-serif!important;font-weight:700;line-height:1.25;letter-spacing:.01em!important}
-:root[data-design="2"] .nav{gap:3px}
-:root[data-design="2"] .nav button{border-radius:6px;padding:12px 11px;font-weight:650}
-:root[data-design="2"] .nav button:hover{transform:none!important;box-shadow:none!important;background:var(--surface2)!important}
-:root[data-design="2"] .nav button.active{background:var(--surface2)!important;box-shadow:none!important;color:var(--ink-strong)!important}
-:root[data-design="2"] .nav button.active::before{left:-13px;top:8px;bottom:8px;width:3px;box-shadow:none;border-radius:0}
-:root[data-design="2"] .nav button:not(.active) svg{stroke:var(--muted)!important;filter:none!important}
-:root[data-design="2"] .nav button.active svg{stroke:var(--accent)!important;filter:none!important}
-:root[data-design="2"] .panel,:root[data-design="2"] .state,:root[data-design="2"] .quick button,
-:root[data-design="2"] .list .item,:root[data-design="2"] .worklist div{
+:root:is([data-design="2"],[data-design="3"]) header,:root:is([data-design="2"],[data-design="3"]) .sidebar{box-shadow:none!important;border-color:var(--line)!important}
+:root:is([data-design="2"],[data-design="3"]) .brand-title{font-family:"Roboto Condensed",sans-serif!important;letter-spacing:.075em!important;font-weight:800!important;font-size:23px!important}
+:root:is([data-design="2"],[data-design="3"]) .main{padding-top:calc(var(--top) + 48px);padding-bottom:70px}
+:root:is([data-design="2"],[data-design="3"]) .wrap{max-width:1240px}
+:root:is([data-design="2"],[data-design="3"]) .hero{margin-bottom:35px}
+:root:is([data-design="2"],[data-design="3"]) .hero h1{font-size:clamp(54px,7vw,94px)!important;line-height:.94!important;letter-spacing:-.045em!important}
+:root:is([data-design="2"],[data-design="3"]) .eyebrow{font-size:10px;letter-spacing:3px}
+:root:is([data-design="2"],[data-design="3"]) .lead{font-family:"Manrope",Arial,sans-serif!important;font-size:14px;line-height:1.78;max-width:620px}
+:root:is([data-design="2"],[data-design="3"]) .slogan{font-family:"Roboto Condensed",sans-serif!important;font-weight:700;line-height:1.25;letter-spacing:.01em!important}
+:root:is([data-design="2"],[data-design="3"]) .nav{gap:3px}
+:root:is([data-design="2"],[data-design="3"]) .nav button{border-radius:6px;padding:12px 11px;font-weight:650}
+:root:is([data-design="2"],[data-design="3"]) .nav button:hover{transform:none!important;box-shadow:none!important;background:var(--surface2)!important}
+:root:is([data-design="2"],[data-design="3"]) .nav button.active{background:var(--surface2)!important;box-shadow:none!important;color:var(--ink-strong)!important}
+:root:is([data-design="2"],[data-design="3"]) .nav button.active::before{left:-13px;top:8px;bottom:8px;width:3px;box-shadow:none;border-radius:0}
+:root:is([data-design="2"],[data-design="3"]) .nav button:not(.active) svg{stroke:var(--muted)!important;filter:none!important}
+:root:is([data-design="2"],[data-design="3"]) .nav button.active svg{stroke:var(--accent)!important;filter:none!important}
+:root:is([data-design="2"],[data-design="3"]) .panel,:root:is([data-design="2"],[data-design="3"]) .state,:root:is([data-design="2"],[data-design="3"]) .quick button,
+:root:is([data-design="2"],[data-design="3"]) .list .item,:root:is([data-design="2"],[data-design="3"]) .worklist div{
  border-radius:10px!important;box-shadow:none!important;border:1px solid var(--line)!important;
 }
-:root[data-design="2"] .panel{padding:clamp(20px,2vw,32px)}
-:root[data-design="2"] .panel:hover,:root[data-design="2"] .state:hover{box-shadow:none!important;border-color:var(--line)!important}
-:root[data-design="2"] .panel::before,:root[data-design="2"] .state::before{display:none}
-:root[data-design="2"] .panel h2,:root[data-design="2"] .state h2{font-family:"Roboto Condensed",Arial,sans-serif!important;font-size:clamp(26px,2.7vw,36px)!important;letter-spacing:-.025em!important}
-:root[data-design="2"] .panel p,:root[data-design="2"] .state p{font-family:"Manrope",Arial,sans-serif!important;font-size:13px;line-height:1.75}
-:root[data-design="2"] .quick button{padding:17px!important;font-size:14px;transition:background .17s,border-color .17s,transform .17s!important}
-:root[data-design="2"] .quick button:hover{transform:none!important;background:var(--surface2)!important;border-color:var(--accent)!important}
-:root[data-design="2"] .quick button:active{transform:translateY(1px)!important}
-:root[data-design="2"] .iconbtn{box-shadow:none!important;border-radius:7px}
-:root[data-design="2"] .brand-mark:hover{transform:none!important;box-shadow:none!important}
-:root[data-design="2"] .architecture-home{display:block;margin:0 0 24px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 24px 23px}
-:root[data-design="2"] .architecture-head,:root[data-design="2"] .architecture-foot{display:flex;justify-content:space-between;gap:14px;font-size:10px;letter-spacing:1.7px;font-weight:750;color:var(--muted)}
-:root[data-design="2"] .architecture-head span:first-child{color:var(--accent)}
-:root[data-design="2"] .architecture-diagram{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:30px;position:relative;margin:23px 0}
-:root[data-design="2"] .architecture-diagram::before{content:"";position:absolute;left:10%;right:10%;top:50%;height:1px;background:var(--accent);opacity:.5}
-:root[data-design="2"] .architecture-node{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;min-height:105px;padding:15px;background:var(--surface2);border:1px solid var(--line);border-radius:7px;gap:6px}
-:root[data-design="2"] .architecture-node strong{font-family:"Roboto Condensed",sans-serif;font-size:19px;color:var(--ink-strong);letter-spacing:.02em}
-:root[data-design="2"] .architecture-node small{font-size:10px;color:var(--muted);line-height:1.4}
-:root[data-design="2"] .architecture-number{font-size:10px;font-weight:800;color:var(--accent);letter-spacing:1px}
-:root[data-design="2"] .architecture-foot{border-top:1px solid var(--line);padding-top:14px;letter-spacing:.02em;text-transform:none;font-size:11px;font-weight:500}
-:root[data-design="2"] .architecture-foot span{font-weight:800;letter-spacing:1px;color:var(--accent)}
-:root[data-design="2"] .footer{opacity:.6}
-:root[data-design="2"] .badge{border-radius:5px}
+:root:is([data-design="2"],[data-design="3"]) .panel{padding:clamp(20px,2vw,32px)}
+:root:is([data-design="2"],[data-design="3"]) .panel:hover,:root:is([data-design="2"],[data-design="3"]) .state:hover{box-shadow:none!important;border-color:var(--line)!important}
+:root:is([data-design="2"],[data-design="3"]) .panel::before,:root:is([data-design="2"],[data-design="3"]) .state::before{display:none}
+:root:is([data-design="2"],[data-design="3"]) .panel h2,:root:is([data-design="2"],[data-design="3"]) .state h2{font-family:"Roboto Condensed",Arial,sans-serif!important;font-size:clamp(26px,2.7vw,36px)!important;letter-spacing:-.025em!important}
+:root:is([data-design="2"],[data-design="3"]) .panel p,:root:is([data-design="2"],[data-design="3"]) .state p{font-family:"Manrope",Arial,sans-serif!important;font-size:13px;line-height:1.75}
+:root:is([data-design="2"],[data-design="3"]) .quick button{padding:17px!important;font-size:14px;transition:background .17s,border-color .17s,transform .17s!important}
+:root:is([data-design="2"],[data-design="3"]) .quick button:hover{transform:none!important;background:var(--surface2)!important;border-color:var(--accent)!important}
+:root:is([data-design="2"],[data-design="3"]) .quick button:active{transform:translateY(1px)!important}
+:root:is([data-design="2"],[data-design="3"]) .iconbtn{box-shadow:none!important;border-radius:7px}
+:root:is([data-design="2"],[data-design="3"]) .brand-mark:hover{transform:none!important;box-shadow:none!important}
+:root:is([data-design="2"],[data-design="3"]) .architecture-home{display:block;margin:0 0 24px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 24px 23px}
+:root:is([data-design="2"],[data-design="3"]) .architecture-head,:root:is([data-design="2"],[data-design="3"]) .architecture-foot{display:flex;justify-content:space-between;gap:14px;font-size:10px;letter-spacing:1.7px;font-weight:750;color:var(--muted)}
+:root:is([data-design="2"],[data-design="3"]) .architecture-head span:first-child{color:var(--accent)}
+:root:is([data-design="2"],[data-design="3"]) .architecture-diagram{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:30px;position:relative;margin:23px 0}
+:root:is([data-design="2"],[data-design="3"]) .architecture-diagram::before{content:"";position:absolute;left:10%;right:10%;top:50%;height:1px;background:var(--accent);opacity:.5}
+:root:is([data-design="2"],[data-design="3"]) .architecture-node{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;min-height:105px;padding:15px;background:var(--surface2);border:1px solid var(--line);border-radius:7px;gap:6px}
+:root:is([data-design="2"],[data-design="3"]) .architecture-node strong{font-family:"Roboto Condensed",sans-serif;font-size:19px;color:var(--ink-strong);letter-spacing:.02em}
+:root:is([data-design="2"],[data-design="3"]) .architecture-node small{font-size:10px;color:var(--muted);line-height:1.4}
+:root:is([data-design="2"],[data-design="3"]) .architecture-number{font-size:10px;font-weight:800;color:var(--accent);letter-spacing:1px}
+:root:is([data-design="2"],[data-design="3"]) .architecture-foot{border-top:1px solid var(--line);padding-top:14px;letter-spacing:.02em;text-transform:none;font-size:11px;font-weight:500}
+:root:is([data-design="2"],[data-design="3"]) .architecture-foot span{font-weight:800;letter-spacing:1px;color:var(--accent)}
+:root:is([data-design="2"],[data-design="3"]) .footer{opacity:.6}
+:root:is([data-design="2"],[data-design="3"]) .badge{border-radius:5px}
 @media(max-width:1000px){
- :root[data-design="2"] .architecture-diagram{gap:10px}
- :root[data-design="2"] .architecture-node{padding:11px}
- :root[data-design="2"] .architecture-node strong{font-size:16px}
+ :root:is([data-design="2"],[data-design="3"]) .architecture-diagram{gap:10px}
+ :root:is([data-design="2"],[data-design="3"]) .architecture-node{padding:11px}
+ :root:is([data-design="2"],[data-design="3"]) .architecture-node strong{font-size:16px}
 }
 @media(max-width:700px){
  .theme-menu{width:min(332px,calc(100vw - 25px))!important;right:-16px!important}
  .theme-visible-btn{min-width:118px!important}
- :root[data-design="2"] .architecture-diagram{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
- :root[data-design="2"] .architecture-diagram::before{display:none}
- :root[data-design="2"] .architecture-head span:last-child{display:none}
- :root[data-design="2"] .architecture-foot{display:block}
- :root[data-design="2"] .architecture-foot span{display:block;margin-top:4px}
+ :root:is([data-design="2"],[data-design="3"]) .architecture-diagram{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ :root:is([data-design="2"],[data-design="3"]) .architecture-diagram::before{display:none}
+ :root:is([data-design="2"],[data-design="3"]) .architecture-head span:last-child{display:none}
+ :root:is([data-design="2"],[data-design="3"]) .architecture-foot{display:block}
+ :root:is([data-design="2"],[data-design="3"]) .architecture-foot span{display:block;margin-top:4px}
 }
 @media(prefers-reduced-motion:reduce){
- :root[data-design="2"] *, :root[data-design="2"] *::before,:root[data-design="2"] *::after{animation:none!important;transition:none!important}
+ :root:is([data-design="2"],[data-design="3"]) *, :root:is([data-design="2"],[data-design="3"]) *::before,:root:is([data-design="2"],[data-design="3"]) *::after{animation:none!important;transition:none!important}
 }
 
+
+/* Theme 3 — midnight blue / ice blue, in dark and light modes */
+.dark-three{background:linear-gradient(135deg,#101c2a 0 72%,#78d8f3 72%)}
+.light-three{background:linear-gradient(135deg,#eff5f6 0 72%,#126685 72%)}
+:root[data-design="3"]{
+ --bg:#eff5f6;--surface:#ffffff;--surface2:#dcebf0;--surface3:#d2e4ea;
+ --ink:#38546a;--ink-strong:#152a38;--muted:#627d8d;--line:#c9dce3;
+ --accent:#126685;--accent-soft:#d5e8ed;--shadow:0 8px 28px rgba(19,58,79,.07);
+ --glow:rgba(18,102,133,.08);--edge-glow:rgba(18,102,133,.3);
+}
+:root[data-design="3"][data-theme="dark"]{
+ --bg:#101c2a;--surface:#172a38;--surface2:#1b3445;--surface3:#263f50;
+ --ink:#b9d0dd;--ink-strong:#edf5f7;--muted:#8faebc;--line:#304c5e;
+ --accent:#78d8f3;--accent-soft:#183d51;--shadow:0 10px 30px rgba(0,0,0,.23);
+ --glow:rgba(120,216,243,.07);--edge-glow:rgba(120,216,243,.35);
+}
+:root[data-design="3"] header,:root[data-design="3"] .sidebar{
+ background:rgba(249,253,254,.96)!important;border-color:var(--line)!important
+}
+:root[data-design="3"][data-theme="dark"] header,:root[data-design="3"][data-theme="dark"] .sidebar{
+ background:rgba(14,29,42,.97)!important;border-color:var(--line)!important
+}
+:root[data-design="3"] body::before{background:linear-gradient(var(--bg),var(--bg))!important}
+:root[data-design="3"][data-theme="dark"] .slogan{
+ color:var(--ink-strong)!important;background:none!important;
+ -webkit-background-clip:initial!important;background-clip:initial!important
+}
+:root[data-design="3"] .architecture-diagram::before{background:var(--accent)}
+:root[data-design="3"] .architecture-number{color:var(--accent)}
 </style>
 </head>
 <body>
@@ -449,11 +478,13 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
       <button class="iconbtn theme-visible-btn" id="theme" title="Выбрать тему" aria-label="Выбрать тему" aria-expanded="false" aria-controls="theme-menu"><svg><use href="#i-moon"></use></svg></button>
       <div class="theme-menu" id="theme-menu" hidden>
         <div class="theme-menu-title">ДИЗАЙН ИНТЕРФЕЙСА</div>
-<div class="theme-picker-grid" role="group" aria-label="Четыре оформления">
+<div class="theme-picker-grid" role="group" aria-label="Шесть оформлений">
 <button type="button" data-choose-theme="dark" data-design="1"><span class="theme-swatch dark-one"></span><span>Тема 1<small>Тёмная</small></span></button>
 <button type="button" data-choose-theme="light" data-design="1"><span class="theme-swatch light-one"></span><span>Тема 1<small>Светлая</small></span></button>
 <button type="button" data-choose-theme="dark" data-design="2"><span class="theme-swatch dark-two"></span><span>Тема 2<small>Тёмная</small></span></button>
 <button type="button" data-choose-theme="light" data-design="2"><span class="theme-swatch light-two"></span><span>Тема 2<small>Светлая</small></span></button>
+<button type="button" data-choose-theme="dark" data-design="3"><span class="theme-swatch dark-three"></span><span>Тема 3<small>Тёмная</small></span></button>
+<button type="button" data-choose-theme="light" data-design="3"><span class="theme-swatch light-three"></span><span>Тема 3<small>Светлая</small></span></button>
 </div>
 <div class="pattern-options"><div class="theme-menu-title">ФОНОВЫЙ ПАТТЕРН</div>
 <button type="button" data-choose-pattern="diagonal">╱ &nbsp; Диагонали</button>
@@ -619,7 +650,7 @@ const themes=['dark','light'];
 const DESIGN_STORAGE_KEY='platform-ui-design-v2';
 function applyTheme(theme, design=1){
  if(!themes.includes(theme))theme='dark';
- design=Number(design)===2?2:1;
+ design=[1,2,3].includes(Number(design))?Number(design):1;
  document.documentElement.dataset.theme=theme;
  document.documentElement.dataset.design=String(design);
  const label='ТЕМА '+design+(theme==='dark'?' / ТЁМНАЯ':' / СВЕТЛАЯ')+' ▾';
