@@ -422,6 +422,32 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 }
 :root[data-design="3"] .architecture-diagram::before{background:var(--accent)}
 :root[data-design="3"] .architecture-number{color:var(--accent)}
+
+/* Theme 2: compact typography and rhythm (dark + light only). */
+:root[data-design="2"] .hero h1{
+ font-size:clamp(32px,4.6vw,56px)!important;
+ line-height:1.02!important;
+ letter-spacing:-.035em!important;
+}
+:root[data-design="2"] .slogan{
+ font-size:clamp(18px,1.9vw,24px)!important;
+ line-height:1.22!important;
+ margin-top:20px!important;
+}
+:root[data-design="2"] .lead{
+ font-size:12px!important;
+ line-height:1.7!important;
+ max-width:560px!important;
+ margin-top:15px!important;
+}
+:root[data-design="2"] .hero{margin-bottom:22px!important}
+:root[data-design="2"] .panel h2,
+:root[data-design="2"] .state h2{
+ font-size:clamp(22px,2.1vw,30px)!important;
+}
+:root[data-design="2"] .architecture-home{padding:17px 21px 19px}
+:root[data-design="2"] .architecture-diagram{margin:17px 0}
+:root[data-design="2"] .architecture-node{min-height:94px}
 </style>
 </head>
 <body>
