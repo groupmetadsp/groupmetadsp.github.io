@@ -280,3 +280,62 @@
   .rubric-material-card .material-symbols{gap:4px}
 }
 
+
+
+/* ПЛАТФОРМА v1.4 — длинные названия подразделов без разрыва слов */
+@media(min-width:761px){
+  .nav .rubric-nav-row{
+    display:grid;
+    grid-template-columns:18px minmax(0,1fr) 28px 28px;
+    grid-template-rows:auto 29px;
+    column-gap:3px;
+    row-gap:0;
+    align-items:center;
+    padding:2px 2px 4px;
+    min-width:0;
+  }
+  .nav .rubric-nav-row .rubric-drag-handle{
+    grid-column:1;
+    grid-row:1;
+    align-self:center;
+  }
+  .nav .rubric-nav-row .rubric-nav-item{
+    grid-column:2 / -1;
+    grid-row:1;
+    display:flex;
+    justify-content:flex-start;
+    gap:9px;
+    width:100%;
+    min-width:0;
+    padding:11px 8px;
+    line-height:1.4;
+    white-space:normal;
+    overflow-wrap:normal;
+    word-break:normal;
+    hyphens:none;
+  }
+  .nav .rubric-nav-row .rubric-nav-item svg{flex:0 0 18px}
+  .nav .rubric-nav-row .rubric-nav-item span{
+    display:block;
+    flex:1 1 auto;
+    min-width:0;
+    white-space:normal;
+    word-break:normal;
+    overflow-wrap:normal;
+    hyphens:none;
+    text-align:left;
+  }
+  .nav .rubric-nav-row .rubric-nav-edit{
+    grid-column:3;
+    grid-row:2;
+    justify-self:center;
+  }
+  .nav .rubric-nav-row .rubric-nav-delete{
+    grid-column:4;
+    grid-row:2;
+    justify-self:center;
+  }
+}
+@media(max-width:760px){
+  .nav .rubric-nav-row .rubric-nav-item span{display:none}
+}
