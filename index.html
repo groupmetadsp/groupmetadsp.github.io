@@ -225,6 +225,8 @@ body.focus-mode .audio-panel{right:0}
 @media(prefers-reduced-motion:no-preference){:root[data-theme="dream"] .hero h1{animation:dream-glow 5s ease-in-out infinite alternate}}
 @keyframes dream-glow{from{text-shadow:0 2px 16px rgba(255,230,82,.18)}to{text-shadow:0 2px 32px rgba(255,241,106,.52)}}
 .theme-control{position:relative}
+.theme-visible-btn{width:auto!important;min-width:94px!important;padding:0 11px!important;gap:7px;display:flex!important;align-items:center;justify-content:center;font-weight:800;font-size:11px;letter-spacing:.6px}
+.theme-visible-btn .theme-label{white-space:nowrap}
 .theme-menu{position:absolute;right:0;top:calc(100% + 12px);z-index:80;width:190px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 14px 44px rgba(0,0,0,.24);padding:8px}
 .theme-menu[hidden]{display:none}
 .theme-menu-title{padding:7px 10px 9px;font-size:11px;font-weight:800;letter-spacing:.6px;color:var(--muted)}
@@ -284,7 +286,7 @@ body.focus-mode .audio-panel{right:0}
     <button class="iconbtn" id="forward" title="Вперёд" aria-label="Вперёд"><svg><use href="#i-right"></use></svg></button>
     <div class="separator"></div>
     <div class="theme-control">
-      <button class="iconbtn" id="theme" title="Выбрать тему" aria-label="Выбрать тему" aria-expanded="false" aria-controls="theme-menu"><svg><use href="#i-moon"></use></svg></button>
+      <button class="iconbtn theme-visible-btn" id="theme" title="Выбрать тему" aria-label="Выбрать тему" aria-expanded="false" aria-controls="theme-menu"><svg><use href="#i-moon"></use></svg></button>
       <div class="theme-menu" id="theme-menu" hidden>
         <div class="theme-menu-title">Оформление</div>
         <button type="button" data-choose-theme="dark">◐ &nbsp; Тёмная</button>
@@ -439,7 +441,7 @@ const themes=['dark','light','dream'];
 function applyTheme(theme){
  if(!themes.includes(theme))theme='dark';
  document.documentElement.dataset.theme=theme;
- $('theme').innerHTML=theme==='dark'?icon('sun'):theme==='light'?icon('moon'):'<span style="font-weight:900;font-size:12px;color:#fff34e">D</span>';
+ $('theme').innerHTML=(theme==='dark'?icon('sun'):theme==='light'?icon('moon'):'<span style="font-weight:900;font-size:12px;color:#fff34e">D</span>')+'<span class="theme-label">ТЕМА ▾</span>';
  $('theme').title='Оформление: '+({dark:'Тёмная',light:'Светлая',dream:'Dream'}[theme]);
  $('theme').setAttribute('aria-label',$('theme').title);
  document.querySelectorAll('[data-choose-theme]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.chooseTheme===theme)));
