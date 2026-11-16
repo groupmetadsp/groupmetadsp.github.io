@@ -500,49 +500,54 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
  color:var(--ink-strong)!important;background:none!important;
  -webkit-background-clip:initial!important;background-clip:initial!important
 }
-.water-options{padding:8px 5px;border-top:1px solid var(--line)}
-.water-options button{font-size:12px}
-#water-ripple-toggle[aria-pressed="true"]{background:var(--accent-soft)!important;color:var(--accent)!important}
-#water-ripple-toggle[aria-pressed="false"]{color:var(--muted)!important}
+/* Always-on subtle water shimmer for yellow/pink Theme 4; no toggle or localStorage dependency. */
 #water-ripple-layer{
- position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
- opacity:0;visibility:hidden;contain:layout paint;
+ position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;
+ opacity:0;visibility:hidden;isolation:isolate;
 }
-:root[data-design="4"][data-ripple="on"] #water-ripple-layer{
+:root[data-design="4"] #water-ripple-layer{
  opacity:1;visibility:visible;
 }
-#water-ripple-layer::before,#water-ripple-layer::after{
- content:"";position:absolute;inset:-35%;
+:root[data-design="4"] .main{z-index:3}
+#water-ripple-layer::before,
+#water-ripple-layer::after{
+ content:"";position:absolute;inset:-27%;pointer-events:none;
  border-radius:50%;
- background:
- repeating-radial-gradient(ellipse at 53% 55%,
- transparent 0px,transparent 44px,
- rgba(255,251,202,.16) 45px,transparent 47px,transparent 93px);
- transform:scale(.9);
- will-change:transform,opacity;
- animation:meta-ripple-soft 18s ease-in-out infinite;
+ background:repeating-radial-gradient(ellipse at 49% 53%,
+ transparent 0 35px,rgba(255,254,214,.24) 38px,
+ transparent 43px,transparent 77px,
+ rgba(192,44,112,.12) 80px,transparent 85px,transparent 120px);
+ animation:meta-ripple-soft 15s ease-in-out infinite;
+ transform-origin:52% 55%;will-change:transform,opacity;
 }
 #water-ripple-layer::after{
- background:repeating-radial-gradient(ellipse at 42% 48%,
- transparent 0px,transparent 65px,
- rgba(255,244,179,.12) 66px,transparent 69px,transparent 130px);
- animation-duration:24s;animation-delay:-8s;opacity:.65;
+ inset:-33%;
+ background:repeating-radial-gradient(ellipse at 47% 44%,
+ transparent 0 60px,rgba(255,241,211,.19) 64px,
+ transparent 70px,transparent 118px);
+ animation-duration:21s;animation-delay:-7s;
+ transform-origin:43% 46%;
 }
 :root[data-design="4"][data-theme="dark"] #water-ripple-layer::before{
- background:repeating-radial-gradient(ellipse at 54% 57%,transparent 0px,transparent 44px,
- rgba(255,231,139,.12) 45px,transparent 47px,transparent 93px)
+ background:repeating-radial-gradient(ellipse at 49% 53%,
+ transparent 0 35px,rgba(255,227,126,.22) 38px,
+ transparent 43px,transparent 77px,
+ rgba(255,133,182,.15) 80px,transparent 85px,transparent 120px);
 }
 :root[data-design="4"][data-theme="dark"] #water-ripple-layer::after{
- background:repeating-radial-gradient(ellipse at 42% 48%,transparent 0px,transparent 65px,
- rgba(255,214,154,.08) 66px,transparent 69px,transparent 130px)
+ background:repeating-radial-gradient(ellipse at 47% 44%,
+ transparent 0 60px,rgba(255,214,180,.17) 64px,
+ transparent 70px,transparent 118px);
 }
 @keyframes meta-ripple-soft{
- 0%{transform:scale(.88) translate3d(-1%,.5%,0);opacity:.28}
- 50%{transform:scale(1.08) translate3d(1%,-.5%,0);opacity:.72}
- 100%{transform:scale(.88) translate3d(-1%,.5%,0);opacity:.28}
+ 0%{transform:scale(.82) translate3d(-.5%,.5%,0);opacity:.48}
+ 50%{transform:scale(1.1) translate3d(.5%,-.5%,0);opacity:.78}
+ 100%{transform:scale(.82) translate3d(-.5%,.5%,0);opacity:.48}
 }
 @media(prefers-reduced-motion:reduce){
- #water-ripple-layer::before,#water-ripple-layer::after{animation:none!important;transform:none!important;opacity:.22}
+ #water-ripple-layer::before,#water-ripple-layer::after{
+ animation:none!important;transform:scale(.95)!important;opacity:.42!important
+ }
 }
 </style>
 <style id="headline-sizing-v2-v3">
@@ -691,8 +696,6 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 <button type="button" data-choose-theme="dark" data-design="4"><span class="theme-swatch dark-four"></span><span>Тема 4<small>Тёмная · закат</small></span></button>
 <button type="button" data-choose-theme="light" data-design="4"><span class="theme-swatch light-four"></span><span>Тема 4<small>Светлая · закат</small></span></button>
 </div>
-<div class="water-options"><div class="theme-menu-title">АНИМАЦИЯ</div>
-<button type="button" id="water-ripple-toggle" aria-pressed="true">≈ &nbsp; Мягкая рябь воды · вкл.</button></div>
 <div class="pattern-options"><div class="theme-menu-title">ФОНОВЫЙ ПАТТЕРН</div>
 <button type="button" data-choose-pattern="diagonal">╱ &nbsp; Диагонали</button>
 <button type="button" data-choose-pattern="grid">▦ &nbsp; Модульная сетка</button>
@@ -1040,21 +1043,6 @@ render();
  setPattern(value);
 })();
 </script>
-<script>
-(function(){
- const control=document.getElementById('water-ripple-toggle');
- const key='meta-water-ripple-enabled';
- let on=true;try{const saved=localStorage.getItem(key);if(saved!==null)on=saved==='true'}catch(e){}
- function render(){
-   document.documentElement.dataset.ripple=on?'on':'off';
-   control.setAttribute('aria-pressed',String(on));
-   control.textContent='≈   Мягкая рябь воды · '+(on?'вкл.':'выкл.');
- }
- control.addEventListener('click',function(){
-   on=!on;try{localStorage.setItem(key,String(on))}catch(e){}
-   render();
- });render();
-})();
-</script></body>
+</body>
 </html>
 
