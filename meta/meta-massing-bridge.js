@@ -75,10 +75,15 @@ metrics=function(){
  result.apts=buildings.reduce(function(total,o){return total+buildingApartmentCount(o);},0);
  return result;
 };
-var metaPreviousRefreshPanel=refreshPanel;
-refreshPanel=function(){
- metaPreviousRefreshPanel();
- var s=scope(),apts=s.objects.reduce(function(total,o){return total+buildingApartmentCount(o);},0);
+/* The quarter panel lives inside the v0.38 IIFE.  It is intentionally exposed
+   through window.quarter38; using that public API avoids a startup crash while
+   leaving the calculation and editing algorithms unchanged. */
+var metaQuarterApi=window.quarter38||{};
+var metaScope=metaQuarterApi.scope;
+var metaPreviousRefreshPanel=metaQuarterApi.refreshPanel;
+var metaRefreshPanel=function(){
+ if(typeof metaPreviousRefreshPanel==="function")metaPreviousRefreshPanel();
+ var s=typeof metaScope==="function"?metaScope():{title:"Проект",objects:[]},apts=s.objects.reduce(function(total,o){return total+buildingApartmentCount(o);},0);
  var apartmentArea=s.objects.reduce(function(total,o){return total+buildingSale(o);},0);
  var commercialArea=s.objects.reduce(function(total,o){return total+buildingCommercial(o);},0);
  var stat=by("scopeMetrics38");
@@ -228,11 +233,11 @@ function resetNewProject(){
  if(typeof resizeSite==="function")resizeSite();else if(typeof renderAll==="function")renderAll();
 }
 var css=document.createElement("style");
-css.textContent="#metaStartOverlay{position:fixed;inset:0;z-index:999999;background:rgba(12,27,39,.8);display:flex;align-items:center;justify-content:center;padding:18px}"+
- "#metaStartCard{max-width:530px;width:100%;background:#fff;border-radius:14px;padding:26px;box-shadow:0 20px 65px #0005;color:#203247}"+
- "#metaStartCard h2{font-size:21px;margin:0 0 9px}#metaStartCard p{font-size:13px;line-height:1.5;color:#667988}"+
- ".meta-start-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.meta-start-buttons button{padding:15px;min-height:95px;text-align:left;border:1px solid #cbd6dd;background:#fff;border-radius:9px;cursor:pointer;font-weight:700}"+
- ".meta-start-buttons button:first-child{background:#1768d4;border-color:#1768d4;color:#fff}"+
+css.textContent="#metaStartOverlay{position:fixed;inset:0;z-index:999999;background:rgba(243,240,233,.84);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:18px}"+
+ "#metaStartCard{max-width:530px;width:100%;background:rgba(252,250,246,.97);border:1px solid #d9d5cb;border-radius:12px;padding:26px;box-shadow:0 20px 55px rgba(57,49,39,.14);color:#474845}"+
+ "#metaStartCard h2{font-family:'Roboto Condensed','Arial Narrow',Arial,sans-serif;font-size:28px;color:#202827;margin:0 0 9px}#metaStartCard p{font-size:13px;line-height:1.5;color:#777770}"+
+ ".meta-start-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.meta-start-buttons button{padding:15px;min-height:95px;text-align:left;border:1px solid #d9d5cb;background:#fffdf9;color:#474845;border-radius:8px;cursor:pointer;font-family:Manrope,'Segoe UI',Arial,sans-serif;font-weight:700}"+
+ ".meta-start-buttons button:first-child{background:#b95228;border-color:#b95228;color:#fff}"+
  ".meta-start-buttons button:disabled{opacity:.4;cursor:not-allowed}.meta-start-buttons small{display:block;font-weight:400;font-size:11px;margin-top:8px;line-height:1.4}";
 document.head.appendChild(css);
 var overlay=document.createElement("div");overlay.id="metaStartOverlay";
