@@ -23,6 +23,9 @@ const isRubric=id=>IDS.includes(id);
 const sectionInfo=id=>sections.find(s=>s.id===id);
 const empty=()=>Object.fromEntries(IDS.map(id=>[id,[]]));
 let published=empty();
+// On a fresh load all computers show the same GitHub-published catalog.
+// Existing browser drafts stay intact and become visible only during local editing.
+let localEditingSession=false;
 let drafts=empty();
 let removed=Object.fromEntries(IDS.map(id=>[id,{subsections:[],materials:{}}]));
 let chosen=Object.fromEntries(IDS.map(id=>[id,null]));
@@ -80,10 +83,12 @@ function materialOrder(rubric,subId){
   return Array.isArray(ordering.materials[rubric]?.[subId])?ordering.materials[rubric][subId]:[];
 }
 function saveOrdering(){
+  localEditingSession=true;
   try{localStorage.setItem(ORDER_KEY,JSON.stringify(ordering));return true;}
   catch(e){alert('Не удалось сохранить порядок в памяти браузера.');return false;}
 }
-function persist(){
+function persist(activateLocal=true){
+  if(activateLocal)localEditingSession=true;
   try{
     localStorage.setItem(STORAGE,JSON.stringify(drafts));
     localStorage.setItem(DELETED_KEY,JSON.stringify(removed));
@@ -143,10 +148,14 @@ function migrateLegacy(){
       dirty=true;
     }
   }
-  if(dirty)persist();
+  if(dirty)persist(false);
 }
 migrateLegacy();
 function mergedSections(rubric){
+  if(!localEditingSession){
+    // Do not let stale local deletions, renames or sorting mask the GitHub version.
+    return published[rubric]||[];
+  }
   const map=new Map();
   (published[rubric]||[]).forEach(s=>map.set(s.id,{...s,published:true}));
   (drafts[rubric]||[]).forEach(s=>{
@@ -644,7 +653,7 @@ function removeCopies(){
       return !p || JSON.stringify({name:s.name,materials:s.materials})!==JSON.stringify({name:p.name,materials:p.materials});
     });
   }
-  persist();
+  persist(false);
 }
 async function fetchData(path){
   try{
