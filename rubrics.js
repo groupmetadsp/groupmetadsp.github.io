@@ -11,7 +11,7 @@ const PLATFORM_TOOLS=[
   {id:'building-height',name:'06 · Калькулятор этажности и высоты здания',url:'/tools/building-height/',status:'verified'},
   {id:'surface-parking-configurator',name:'07 · Конфигуратор наземного паркинга',url:'/tools/surface-parking-configurator/',status:'verified'},
   {id:'massing-platforms',name:'08 · Платформы для массинга · LITE / FULL',url:'/tools/massing-platforms/',status:'verified'},
-  {id:'meta-korobka',name:'09 · МЕТАКОРОБКА',url:'/metakorobka.html',status:'development'}
+  {id:'meta-korobka',name:'09 · МЕТАКОРОБКА',url:'/metakorobka.html?v=20261117-nav2',status:'development'}
 ];
 const STORAGE='platform-hierarchy-v2';
 const DELETED_KEY='platform-hierarchy-deleted-v1';
