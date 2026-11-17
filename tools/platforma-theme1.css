@@ -69,3 +69,30 @@ body:has(#spans) .badge,body:has(#spans) .cost-stat,body:has(#spans) .floorrow,b
 body:has(#spans) tr.total{background:#eee8dc}
 body:has(#spans) a{color:#b95228}
 @media print{body:has(#spans) header{background:#fff}}
+
+/* Massing Platforms v13 · Theme 1 LIGHT · visual overrides only.
+   LITE/FULL, calculations, 3D dragging and scenario storage untouched. */
+:root:has(#fullRoot){color-scheme:light;--pf-bg:#f3f0e9;--pf-surface:#fcfaf6;--pf-accent:#b95228}
+body:has(#fullRoot){background:#f3f0e9;color:#333b38;font:12px/1.5 Manrope,"Segoe UI",Arial,sans-serif}
+body:has(#fullRoot) header.app-header{background:#fcfaf6;color:#333b38;padding:10px 18px;border-bottom:1px solid #d9d5cb}
+body:has(#fullRoot) .app-header h1,body:has(#fullRoot) h1,body:has(#fullRoot) h2,body:has(#fullRoot) h3,body:has(#fullRoot) .metric strong,body:has(#fullRoot) .hero strong{font-family:"Roboto Condensed","Arial Narrow",Arial,sans-serif;font-weight:800}
+body:has(#fullRoot) .app-header h1{font-size:19px}
+body:has(#fullRoot) .app-header p{color:#777770}
+body:has(#fullRoot) .mode-switch{background:#eee8df;border-color:#d9d5cb}
+body:has(#fullRoot) .mode-switch button{color:#777770;background:transparent;font-family:Manrope,Arial,sans-serif}
+body:has(#fullRoot) .mode-switch button.selected{background:#b95228;color:#fff;box-shadow:none}
+body:has(#fullRoot) #fullRoot,body:has(#fullRoot) #liteRoot{color:#333b38}
+body:has(#fullRoot) section,body:has(#fullRoot) .full-panel,body:has(#fullRoot) .metric,body:has(#fullRoot) .scenario-card{background:#fcfaf6;border-color:#d9d5cb;border-radius:9px}
+body:has(#fullRoot) button,body:has(#fullRoot) input,body:has(#fullRoot) select{font-family:Manrope,"Segoe UI",Arial,sans-serif;accent-color:#b95228}
+body:has(#fullRoot) #fullRoot button.primary,body:has(#fullRoot) #fullRoot button.gold,body:has(#fullRoot) #liteRoot button{background:#b95228;border:1px solid #b95228;color:#fff}
+body:has(#fullRoot) #fullRoot button.plain{background:#fffdf9;color:#333b38;border:1px solid #d9d5cb}
+body:has(#fullRoot) #fullRoot input,body:has(#fullRoot) #fullRoot select{border-color:#d9d5cb;color:#333b38;background:#fffdf9}
+body:has(#fullRoot) .full-top .tabs{background:#ece8df}
+body:has(#fullRoot) .full-top .tabs button{color:#777770}
+body:has(#fullRoot) .full-top .tabs button.selected{background:#fffdf9;color:#b95228}
+body:has(#fullRoot) .metric.emphasis,body:has(#fullRoot) .hero,body:has(#fullRoot) .scenario-card.current{background:#f3e0d3;border-color:#dfbda9}
+body:has(#fullRoot) .full-svg{background:linear-gradient(160deg,#fffdf9,#f3f0e9);border-color:#d9d5cb}
+body:has(#fullRoot) .full-svg text,body:has(#fullRoot) svg text{font-family:Manrope,"Segoe UI",Arial,sans-serif}
+body:has(#fullRoot) #fullRoot th{background:#ece8df;color:#777770}
+body:has(#fullRoot) .pin-tag,body:has(#fullRoot) .reverse-stats span{background:#f3e0d3;color:#824528;border-color:#dfbda9}
+@media print{body:has(#fullRoot) header.app-header{background:white;color:#333b38}}
