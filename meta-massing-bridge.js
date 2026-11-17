@@ -49,7 +49,7 @@ function metaBlockAverageApartmentArea(o){
 }
 var metaPreviousBuildingSale=buildingSale;
 buildingSale=function(o){
- if(!o||o.kind!=="building")return 0;
+ if(!o||o.kind!=="building"||o.surrounding)return 0;
  if(o.type!=="BLOK")return metaPreviousBuildingSale(o);
  var floors=Math.max(0,Math.floor(Number(o.floors)||0)),sale=Math.max(0,Number(o.saleFloor)||0);
  if(!floors)return 0;
@@ -58,11 +58,11 @@ buildingSale=function(o){
 };
 var metaPreviousBuildingCommercial=buildingCommercial;
 buildingCommercial=function(o){
- if(o&&o.kind==="building"&&o.type==="BLOK"&&o.groundFloorUse==="commercial")return Math.max(0,Number(o.saleFloor||0)-60);
+ if(o&&o.kind==="building"&&!o.surrounding&&o.type==="BLOK"&&o.groundFloorUse==="commercial")return Math.max(0,Number(o.saleFloor||0)-60);
  return metaPreviousBuildingCommercial(o);
 };
 function buildingApartmentCount(o){
- if(!o||o.kind!=="building")return 0;
+ if(!o||o.kind!=="building"||o.surrounding)return 0;
  if(o.type!=="BLOK")return Math.floor(buildingSale(o)/(Number(o.avgApt)||product().avg));
  var floors=Math.max(0,Math.floor(Number(o.floors)||0));
  if(!floors)return 0;
