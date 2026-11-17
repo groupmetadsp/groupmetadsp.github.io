@@ -7,7 +7,8 @@ const PLATFORM_TOOLS=[
   {id:'floor-configurator',name:'02 · Конфигуратор этажа',url:'/tools/floor-configurator/',status:'verified'},
   {id:'meta-massing',name:'03 · Мета Массинг',url:'/tools/meta-massing/',status:'verified'},
   {id:'above-ground-parking',name:'04 · Мета Паркинг',url:'/tools/meta-parking/',status:'verified'},
-  {id:'parking-comparison',name:'05 · Сравнение паркингов',url:'/tools/parking-comparison/',status:'verified'}
+  {id:'parking-comparison',name:'05 · Сравнение паркингов',url:'/tools/parking-comparison/',status:'verified'},
+  {id:'building-height',name:'06 · Калькулятор этажности и высоты здания',url:'/tools/building-height/',status:'verified'}
 ];
 const STORAGE='platform-hierarchy-v2';
 const DELETED_KEY='platform-hierarchy-deleted-v1';
