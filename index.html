@@ -233,8 +233,14 @@ body.focus-mode .audio-panel{right:0}
 .theme-menu button{display:flex;align-items:center;gap:7px;border:0;background:transparent;border-radius:9px;padding:11px 10px;width:100%;text-align:left;color:var(--ink-strong);font-weight:700;font-size:13px}
 .theme-menu button:hover,.theme-menu button[aria-pressed="true"]{background:var(--surface2);color:var(--accent)}
 .dream-dot{display:inline-block;width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,#ffe849,#ff986b,#d94d89);border:1px solid rgba(255,255,255,.7)}
+
+/* v1.5 — компактный тезис справа от названия */
+.home-title-line{display:flex;align-items:center;gap:clamp(18px,3vw,42px);flex-wrap:wrap}
+.home-title-line h1{flex:0 0 auto}
+.home-title-line .slogan{margin:0;max-width:420px;flex:0 1 420px;font-size:clamp(11px,1.05vw,14px)!important;line-height:1.48;letter-spacing:.025em!important;font-family:"Manrope","Segoe UI",Arial,sans-serif!important;font-weight:750!important;text-shadow:none!important}
+@media(max-width:960px){.home-title-line{gap:12px}.home-title-line .slogan{flex-basis:100%;font-size:12px!important}}
 </style>
-<link rel="stylesheet" href="/tools.css?v=1.4">
+<link rel="stylesheet" href="/tools.css?v=1.5.1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Roboto+Condensed:wght@500;600;700;800;900&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet">
@@ -770,8 +776,7 @@ function renderHome(){
       <section class="hero">
         <div>
           <div class="eyebrow">Стартовый экран</div>
-          <h1>ПЛАТФОРМА</h1>
-          <p class="slogan">НЕ ПРОЕКТИРУЕМ ЗДАНИЕ.<br>ВЫЧИСЛЯЕМ, КАКИМ ОНО ДОЛЖНО БЫТЬ.</p>
+          <div class="home-title-line"><h1>ПЛАТФОРМА</h1><p class="slogan">НЕ ПРОЕКТИРУЕМ ЗДАНИЕ.<br>ВЫЧИСЛЯЕМ, КАКИМ ОНО ДОЛЖНО БЫТЬ.</p></div>
           <p class="lead">Единая рабочая среда для методологии, инструментов, проектов и аналитики. Навигация всегда остается слева, а содержимое открывается в свободной рабочей области.</p>
         </div>
         <div class="badge"><span class="dot"></span> Навигационный портал</div>
@@ -1043,7 +1048,7 @@ document.addEventListener('pointermove', e=>{
 },{passive:true});
 render();
 </script>
-<script src="/rubrics.js?v=1.7-metakorobka-20261117"></script>
+<script src="/rubrics.js?v=1.5.1"></script>
 <script>
 (function(){
  const key='platform-pattern-preview';
