@@ -272,6 +272,25 @@ document.addEventListener("change",later,true);
 document.addEventListener("click",later,true);
 window.addEventListener("pagehide",store);
 document.addEventListener("visibilitychange",function(){if(document.visibilityState==="hidden")store();});
+/* Consume a single explicit choice made on /tools/meta-massing/ BEFORE
+   starting the heavy Massing iframe. Direct /meta/ launches retain this menu. */
+try{
+ var launchRaw=sessionStorage.getItem("platforma-massing-launch-v1");
+ if(launchRaw){
+  sessionStorage.removeItem("platforma-massing-launch-v1");
+  var launchRequest=JSON.parse(launchRaw);
+  if(launchRequest&&
+     (launchRequest.mode==="new"||launchRequest.mode==="previous")&&
+     Date.now()-Number(launchRequest.created)<120000&&
+     Date.now()-Number(launchRequest.created)>=0){
+   if(launchRequest.mode==="new"||snapshot){
+    activate(launchRequest.mode==="previous");
+   }
+   /* If there is no previous project, leave the native menu available. */
+   if(window.top!==window)window.top.postMessage({type:"PLATFORMA_MASSING_ACTIVATED"},location.origin);
+  }
+ }
+}catch(launchError){console.warn("Режим запуска: используется штатное меню",launchError);}
 if(parent!==window)parent.postMessage({type:"META_MASSING_READY"},location.origin);
 })();
 
