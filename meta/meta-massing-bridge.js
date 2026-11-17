@@ -71,7 +71,7 @@ function buildingApartmentCount(o){
 }
 var metaPreviousMetrics=metrics;
 metrics=function(){
- var result=metaPreviousMetrics(),buildings=state.objects.filter(function(o){return o.kind==="building";});
+ var result=metaPreviousMetrics(),buildings=state.objects.filter(function(o){return o.kind==="building"&&!o.surrounding;});
  result.apts=buildings.reduce(function(total,o){return total+buildingApartmentCount(o);},0);
  return result;
 };
@@ -100,7 +100,7 @@ var metaRefreshPanel=function(){
 };
 var metaPreviousCalloutStatsHtml=calloutStatsHtml;
 calloutStatsHtml=function(o){
- if(!o||o.kind!=="building")return metaPreviousCalloutStatsHtml(o);
+ if(!o||o.kind!=="building"||o.surrounding)return metaPreviousCalloutStatsHtml(o);
  var bc=o.blockCalc||{},saleApts=buildingSale(o),saleCommercial=buildingCommercial(o);
  return "Площадь пятна: <b>"+fmt(bc.footprint!=null?bc.footprint:objArea(o))+" м²</b> · КЭП типового этажа: <b>"+fmt(o.kep,4)+"</b><br>S прод. квартиры (на дом): <b>"+fmt(saleApts)+" м²</b><br>Квартир (на дом): <b>"+fmt(buildingApartmentCount(o))+"</b><br>S прод. коммерция (на дом): <b>"+fmt(saleCommercial)+" м²</b>";
 };
@@ -151,7 +151,14 @@ renderInspector=function(){
   root.querySelector("#fixedTitle").textContent=o.label+" · "+o.id;
   root.querySelector("#metaFixedFloors").onchange=function(){var v=Number(this.value);if(!Number.isInteger(v)||v<1||v>100){this.value=o.floors;return;}checkpoint();o.floors=v;renderAll();later();};
  }
- var configureBtn=root.querySelector("#metaConfigureSectionBtn");
+ if(o.metaFixed){
+   var control=document.createElement("div");control.innerHTML='<div class="frow"><label>Окружающая застройка (не учитывается в ТЭП)</label><input id="metaFixedSurrounding" type="checkbox" '+(o.surrounding?'checked':'')+'></div><div class="frow"><label>Этап</label><input id="metaFixedStage" type="number" min="1" step="1" value="'+(o.stage||1)+'"></div>';
+   root.appendChild(control);
+   control.querySelector("#metaFixedSurrounding").onchange=function(){checkpoint();o.surrounding=this.checked;renderAll();later();};
+   control.querySelector("#metaFixedStage").onchange=function(){checkpoint();o.stage=Math.max(1,Math.round(Number(this.value)||1));renderAll();later();};
+   if(o.surrounding){Array.from(root.querySelectorAll(".statusline")).forEach(function(el){if(/На здание|ТЭП закреплены/.test(el.textContent))el.innerHTML="<b>Окружающая застройка. Не учитывается в ТЭП.</b>";});}
+  }
+  var configureBtn=root.querySelector("#metaConfigureSectionBtn");
  if(configureBtn)configureBtn.onclick=function(){try{metaSendSectionToConfigurator(o);}catch(e){alert(e.message||e);}};
 };
 var previousRenderObj=renderObj;
@@ -254,6 +261,47 @@ if(snapshot&&meaningfulProject(snapshot)){try{localStorage.setItem(ARCHIVE,JSON.
 resetNewProject();
 document.documentElement.classList.remove("meta-start-pending");
 overlay.querySelector("#metaPrev").disabled=!snapshot;
+ // Паркинг: переносит полную компоновку и рассчитанные ММ, не заменяя ее приближением м²/ММ.
+ var PARKING_TRANSFER="meta-parking-massing-transfer-v1";
+ function parkingTransferToMassing(p){
+  if(!active)return;
+  if(!p||p.direction!=="to-massing"||!p.layout||!Array.isArray(p.layout.items))return;
+  var source=p.sourceId?state.objects.find(function(o){return String(o.id)===String(p.sourceId);}):null;
+  if(p.sourceId&&(!source||source.kind!=="parking"))throw Error("Исходный паркинг не найден. Выберите предыдущий проект для возвращения редактируемого паркинга.");
+  var w=Number(p.w),h=Number(p.h);if(!(w>0&&h>0&&w<10000&&h<10000))throw Error("Некорректные габариты паркинга");
+  checkpoint();
+  var o=source;
+  if(!o){
+   var x=Number.isFinite(Number(p.x))?Number(p.x):state.siteW*.5,y=Number.isFinite(Number(p.y))?Number(p.y):state.siteH*.5;
+   o=add("P_AG",x,y,{w:w,h:h,levels:Math.max(1,Math.round(+p.floors||1)),stage:Math.max(1,Math.round(+p.stage||1))});
+  }
+  o.w=w;o.h=h;o.levels=Math.max(1,Math.round(+p.floors||1));o.stage=Math.max(1,Math.round(+p.stage||1));
+  o.label="МЕТА ПАРКИНГ";o.metaParking={spaces:Math.max(0,Math.round(+p.spaces||0)),area_m2:Math.max(0,+p.area_m2||0),excluded_area_m2:Math.max(0,+p.excluded_area_m2||0),layout:p.layout};
+  if(o.kind==="parking"&&Array.isArray(o.points))o.points=defaultPolyPoints(w,h);
+  if(Number.isFinite(+p.rot))o.rot=+p.rot;
+  state.selected=o.id;state.calloutId=null;state.armed=null;
+  localStorage.removeItem(PARKING_TRANSFER);renderAll();later();
+ }
+ var previousParkingInspector=renderInspector;
+ renderInspector=function(){
+  previousParkingInspector();
+  var o=selected();if(!o||o.kind!=="parking")return;
+  var root=document.getElementById("inspector");
+  if(o.metaParking){
+   var el=document.createElement("div");el.className="statusline";el.innerHTML="<b>По компоновке Мета Паркинг:</b> "+fmt(o.metaParking.spaces)+" ММ · S паркинга "+fmt(o.metaParking.area_m2)+" м² · исключаемая площадь "+fmt(o.metaParking.excluded_area_m2)+" м²";
+   root.appendChild(el);
+  }
+  var btn=document.createElement("button");btn.type="button";btn.className="btn primary";btn.style.cssText="width:100%;margin-top:10px";btn.textContent="Открыть в Мета Паркинг →";
+  btn.onclick=function(){
+   var data={direction:"to-parking",created:Date.now(),source:{id:o.id,x:o.x,y:o.y,rot:o.rot||0,w:o.w,h:o.h,levels:o.levels,stage:o.stage,area_m2:o.metaParking&&o.metaParking.area_m2||objArea(o)},layout:o.metaParking&&o.metaParking.layout||null};
+   localStorage.setItem(PARKING_TRANSFER,JSON.stringify(data));store();
+   window.top.location.href="/tools/meta-parking/";
+  };
+  root.appendChild(btn);
+ };
+ function readParkingTransfer(){try{var p=JSON.parse(localStorage.getItem(PARKING_TRANSFER)||"null");return p&&p.direction==="to-massing"&&Date.now()-Number(p.created)<86400000?p:null;}catch(e){return null;}}
+
+
 function activate(usePrevious){
  overlay.remove();active=true;
  if(usePrevious&&snapshot){
@@ -262,6 +310,7 @@ function activate(usePrevious){
   resetNewProject();
  }
  if(queued){var p=queued;queued=null;setTimeout(function(){try{importSection(p);}catch(e){alert("Ошибка передачи секции: "+e.message);}},usePrevious?250:25);}
+ var parking=readParkingTransfer();if(parking)setTimeout(function(){try{parkingTransferToMassing(parking);}catch(e){alert("Ошибка передачи паркинга: "+e.message);}},usePrevious?350:80);
 }
 overlay.querySelector("#metaNew").onclick=function(){activate(false);};
 overlay.querySelector("#metaPrev").onclick=function(){activate(true);};
