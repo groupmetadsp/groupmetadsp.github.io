@@ -1,5 +1,5 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><!-- Обновление 13.11.2026: высота из Атрибутивная модель (5).xlsx / Этажность; расчётные сценарии из ЯДРО МЕТАКОРОБКА. -->
-<title>МЕТАСЕБЕС Коробка · версия 1.0</title><style>
+<title>МЕТАСЕБЕС Коробка · 17.11.2026 · модули</title><style>
 :root{
   --bg:#e7ecf1;
   --surface:#f6f8fb;
@@ -757,6 +757,30 @@ body.modules-mode .tech-detail{overflow:visible}
 .foundation-table td:first-child{min-width:195px}
 .technical-actionbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:12px 0}
 @media(max-width:700px){.foundation-fields{grid-template-columns:minmax(0,1fr)}.todo-modal{padding:10px}.todo-toolbar{justify-content:flex-start}.foundation-table{max-width:100%}}
+
+/* МЕТАКОРОБКА — всегда видимые быстрые переходы и отдельный реестр Доделать */
+#nav .direct-module-link{border-left:3px solid var(--accent);margin:2px 0 2px 9px;padding-left:10px;min-height:38px;font-size:12px;line-height:1.3}
+#nav .direct-module-link.active{border-left-color:var(--ink-strong);background:var(--accent-soft)}
+#nav .todo-nav-link{border:1px solid rgba(233,64,79,.6);background:rgba(207,38,52,.1);color:#ff626d;box-shadow:inset 0 0 8px rgba(207,38,52,.10),0 0 12px rgba(207,38,52,.12);font-weight:700}
+#nav .todo-nav-link svg{color:#ff626d}
+.todo-page{display:flex;flex-direction:column;gap:15px}
+.todo-page-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.todo-page-top h1{margin:5px 0 8px;font-size:clamp(24px,3vw,35px);color:var(--ink-strong)}
+.todo-page-top p{margin:0;max-width:750px;color:var(--muted)}
+.todo-page-stats{display:flex;gap:8px;flex-wrap:wrap}
+.todo-page-count{border:1px solid var(--line);background:var(--surface2);padding:9px 12px;border-radius:10px;font-variant-numeric:tabular-nums}
+.todo-page-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:12px}
+.todo-page-group{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:16px;min-width:0;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.todo-page-group-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.todo-page-group h2{font-size:17px;margin:0;color:var(--ink-strong);overflow-wrap:anywhere}
+.todo-page-group p{font-size:12px;line-height:1.5;color:var(--muted);margin:0;overflow-wrap:anywhere}
+.todo-page-group button{align-self:start;margin-top:auto}
+.todo-page-points{display:flex;flex-direction:column;gap:8px}
+.todo-page-point{display:flex;gap:8px;font-size:13px;line-height:1.5;align-items:flex-start;overflow-wrap:anywhere}
+.todo-page-point span{flex:1;min-width:0}
+.todo-page-point.done{opacity:.45;text-decoration:line-through}
+@media(max-width:770px){.todo-page-grid{grid-template-columns:1fr}#nav .direct-module-link{margin-left:2px}}
+
 </style></head><body><header><div class="brand"><div class="brand-mark brand-vector"><svg class="ui-icon " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h2m4 0h2M8 10h2m4 0h2M8 14h2m4 0h2M10 22v-4h4v4"/></svg></div><div class="brand-title">МЕТАСЕБЕС Коробка <small style="opacity:.6">1.0</small></div></div><div class="topname" id="topname"></div><div class="actions"><button class="iconbtn" id="back" title="Назад" aria-label="Назад"><svg class="ui-icon " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7M5 12h14"/></svg></button><button class="iconbtn" id="next" title="Вперёд" aria-label="Вперёд"><svg class="ui-icon " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 5 7 7-7 7M19 12H5"/></svg></button><button class="btn primary" id="save" title="Сохранить расчёт"><svg class="ui-icon " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v6h9V3"/></svg><span>Сохранить</span></button><div class="theme-picker" id="theme-picker"><button class="iconbtn" id="theme" title="Выбрать тему" aria-label="Выбрать тему" aria-haspopup="true" aria-controls="theme-panel"><svg class="ui-icon " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg></button><div class="theme-panel" id="theme-panel" hidden role="group" aria-label="Оформление"><button type="button" data-theme-select="dark"><svg class="ui-icon " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/></svg><span>Тёмная</span></button><button type="button" data-theme-select="light"><svg class="ui-icon " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Светлая</span></button><button type="button" data-theme-select="sheets"><svg class="ui-icon " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg><span>Google Таблицы</span></button></div></div><div class="audio-control"><button class="iconbtn" id="sound" title="Звуки" aria-label="Звуки"><svg class="ui-icon " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="M16 9a4 4 0 0 1 0 6m2-9a8 8 0 0 1 0 12"/></svg></button><div class="audio-panel" id="audio-panel" hidden><div class="audio-panel-head"><strong>Звуки интерфейса</strong><button id="audio-close">×</button></div><label class="audio-switch"><input type="checkbox" id="sound-enabled"> Включить звуки</label><div class="audio-volume">Громкость <output id="volume-value">30%</output></div><input id="sound-volume" type="range" min="0" max="100" step="5"><label class="audio-switch"><input type="checkbox" id="sound-hover"> Звуки при наведении</label><button class="sound-test" id="sound-test">Проверить звук</button></div></div><button class="iconbtn" id="fullscreen" title="На весь экран" aria-label="На весь экран"><svg class="ui-icon " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button></div></header><aside class="sidebar"><div class="side-label">Разделы</div><nav class="nav" id="nav"></nav><div class="side-bottom"><div class="version">МЕТАСЕБЕС Коробка · 1.0<br>ЯДРО МЕТАКОРОБКА<br>193 позиции · 15 групп</div></div></aside><main class="main" id="content"></main><div id="toast" role="status"></div><script>'use strict';
 const ICON_MARKUP={"home":"<path d=\"m3 10 9-7 9 7v10H3V10Z\"/><path d=\"M9 20v-6h6v6\"/>","calculator":"<rect x=\"4\" y=\"2\" width=\"16\" height=\"20\" rx=\"2\"/><path d=\"M8 6h8M8 11h2m4 0h2M8 15h2m4 0h2M8 19h2m4 0h2\"/>","folder-open":"<path d=\"M3 7V5a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v2\"/><path d=\"m3 10 3 10h12l3-10H3Z\"/>","settings":"<path d=\"M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z\"/><path d=\"M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.8 1.8-.06-.06A1.7 1.7 0 0 0 16.06 18a1.7 1.7 0 0 0-1.06 1.57V20h-6v-.43A1.7 1.7 0 0 0 7.94 18a1.7 1.7 0 0 0-1.88.34L6 18.4l-1.8-1.8.06-.06A1.7 1.7 0 0 0 4.6 14.6 1.7 1.7 0 0 0 3 13.54V11a1.7 1.7 0 0 0 1.6-1.06 1.7 1.7 0 0 0-.34-1.88L4.2 8l1.8-1.8.06.06A1.7 1.7 0 0 0 7.94 6.6 1.7 1.7 0 0 0 9 5.03V4h6v1.03a1.7 1.7 0 0 0 1.06 1.57 1.7 1.7 0 0 0 1.88-.34l.06-.06 1.8 1.8-.06.06a1.7 1.7 0 0 0-.34 1.88A1.7 1.7 0 0 0 21 11v2.54a1.7 1.7 0 0 0-1.6 1.46Z\"/>","database":"<ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\"/><path d=\"M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5M3 12c0 1.7 4 3 9 3s9-1.3 9-3\"/>","table":"<rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18M3 15h18M9 3v18M15 3v18\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42\"/>","moon":"<path d=\"M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z\"/>","volume":"<path d=\"M4 9v6h4l5 4V5L8 9H4Z\"/><path d=\"M16 9a4 4 0 0 1 0 6m2-9a8 8 0 0 1 0 12\"/>","maximize":"<path d=\"M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5\"/>","minimize":"<path d=\"M3 9h6V3M21 9h-6V3M3 15h6v6M21 15h-6v6\"/>","arrow-left":"<path d=\"m12 19-7-7 7-7M5 12h14\"/>","arrow-right":"<path d=\"m12 5 7 7-7 7M19 12H5\"/>","save":"<path d=\"M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z\"/><path d=\"M17 21v-8H7v8M7 3v6h9V3\"/>","chevron-down":"<path d=\"m6 9 6 6 6-6\"/>","chevron-right":"<path d=\"m9 18 6-6-6-6\"/>","collapse":"<rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M7 12h10\"/>","expand":"<rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M7 12h10m-5-5v10\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4m0-4h.01\"/>","external-link":"<path d=\"M13 5h6v6m0-6-9 9\"/><path d=\"M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6\"/>","layers":"<path d=\"m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5\"/>","building":"<rect x=\"4\" y=\"2\" width=\"16\" height=\"20\" rx=\"2\"/><path d=\"M8 6h2m4 0h2M8 10h2m4 0h2M8 14h2m4 0h2M10 22v-4h4v4\"/>"};
 function svgIcon(name){const content=ICON_MARKUP[name]||ICON_MARKUP.info;return `<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${content}</svg>`;}
@@ -1780,4 +1804,58 @@ document.addEventListener('change',event=>{
 },true);
 // Render once with modules, TODO controls and Platform palettes available.
 render();
+
+// 17.11.2026 hotfix: modules must be immediately visible, not hidden in picker.
+const _fixedNavBase=_techOriginalNav;
+navItems=function(){
+  let menu=_fixedNavBase();
+  const active=(group)=>view==='modules'&&moduleGroup===group?' active':'';
+  const shortcut=(group,label,tip)=>`<button class="direct-module-link${active(group)}" data-module-quick="${esc(group)}" title="${esc(tip)}"><span class="navicon">${svgIcon('calculator')}</span><span>${esc(label)}</span></button>`;
+  const shortcuts=shortcut(ADDON_BAL,'Балконы и лоджии','Открыть самостоятельный расчётный модуль балконов')
+    +shortcut(ADDON_FND,'Усиление + сваи','Открыть самостоятельный модуль усиления и свай');
+  menu=menu.replace(/(<button[^>]*data-go="create"[^>]*>[\s\S]*?<\/button>)/,'$1'+shortcuts);
+  menu=menu.replace(/(<button[^>]*data-go="open"[^>]*>[\s\S]*?<\/button>)/,
+    `<button data-go="todo" class="todo-nav-link${view==='todo'?' active':''}" title="Блокнот замечаний и задач по всем группам"><span class="navicon">${svgIcon('clipboard-list')}</span><span>Доделать</span><b style="margin-left:auto">${Object.values(todoData).reduce((n,a)=>n+a.filter(x=>!x.done).length,0)}</b></button>$1`);
+  // Existing façade and hydro shortcuts stay underneath the expanded module menu.
+  menu=menu.replace(/(<button[^>]+data-go="modules"[^>]*>[\s\S]*?<\/button>)/,
+    '$1<button data-tech-open="envelope" class="tech-nav-sub">Фасад + остекление</button><button data-tech-open="hydro" class="tech-nav-sub">Гидроизоляция</button>');
+  return menu;
+};
+function todoOverview(){
+ const keys=Object.keys(todoData),total=keys.reduce((n,k)=>n+todoData[k].length,0),open=keys.reduce((n,k)=>n+todoCount(k),0);
+ const groups=keys.map(k=>{
+  const notes=todoData[k]||[];
+  const points=notes.map(x=>`<div class="todo-page-point ${x.done?'done':''}"><span>${esc(x.text)}</span></div>`).join('');
+  return `<section class="todo-page-group"><div class="todo-page-group-head"><h2>${esc(k)}</h2><span class="todo-page-count">${todoCount(k)} / ${notes.length}</span></div><div class="todo-page-points">${points||'<p>Пока нет записей.</p>'}</div><button class="todo-launch" data-todo-open="${esc(k)}">Открыть блокнот</button></section>`;
+ }).join('');
+ return `<div class="todo-page"><div class="todo-page-top"><div><div class="eyebrow">МЕТАСЕБЕС / КОНТРОЛЬ ЗАМЕЧАНИЙ</div><h1>Доделать</h1><p>Общий реестр замечаний по всем группам. Красная кнопка внутри каждого раздела открывает тот же блокнот, без дублирования данных.</p></div><div class="todo-page-stats"><span class="todo-page-count">Открыто: <b>${open}</b></span><span class="todo-page-count">Всего: <b>${total}</b></span></div></div><div class="todo-page-grid">${groups}</div></div>`;
+}
+const _navFixedRender=render;
+render=function(){
+ _navFixedRender();
+ if(view==='todo'){
+   $('content').innerHTML='<div class="wrap app">'+todoOverview()+'</div>';
+   $('nav').innerHTML=navItems();
+   $('topname').textContent='Доделать';
+   document.body.classList.remove('inputs-mode');
+ }
+};
+// Capture module shortcuts before the generic click dispatcher.
+document.addEventListener('click',e=>{
+  const shortcut=e.target.closest('[data-module-quick]');
+  if(!shortcut)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  moduleGroup=shortcut.dataset.moduleQuick;
+  modulePage=0;
+  moduleStage='parameters';
+  if(moduleGroup===ADDON_BAL){addonSettings.balconyStep=0;addonStore()}
+  if(moduleGroup===ADDON_FND){addonSettings.reinforceStep=0;addonStore()}
+  expand=true;
+  go('modules');
+},true);
+// Keep TODO dashboard in sync after notebook changes, including update/delete.
+const _navFixedTodoModal=todoModal;
+todoModal=function(group){_navFixedTodoModal(group);if(view==='todo')$('nav').innerHTML=navItems()};
+render();
+
 </script></body></html>
