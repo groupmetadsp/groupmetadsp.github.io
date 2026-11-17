@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Калькулятор этажности и высоты здания</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: light-dark(#f4f6f8, #11151a);
+      --panel: light-dark(#ffffff, #1b2128);
+      --panel-2: light-dark(#f7f9fb, #222a33);
+      --text: light-dark(#17202a, #e8edf2);
+      --muted: light-dark(#65717e, #a6b1bc);
+      --line: light-dark(#dce2e8, #38434f);
+      --blue: light-dark(#3478c9, #65a8f2);
+      --blue-soft: light-dark(#dcecff, #193b60);
+      --green: light-dark(#2f8a62, #5bc392);
+      --green-soft: light-dark(#dff3e9, #183f31);
+      --amber: light-dark(#a86400, #ffbd5e);
+      --amber-soft: light-dark(#fff0cf, #4e3717);
+      --red: light-dark(#b44444, #ff7a7a);
+      --commercial: light-dark(#9a6ac7, #be8bea);
+      --underground: light-dark(#7c8793, #8492a1);
+      --shadow: 0 12px 34px rgba(20,32,44,.09);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .app { max-width: 1240px; margin: 0 auto; padding: 28px 22px 44px; }
+    h1 { margin: 0; font-size: clamp(25px, 3vw, 38px); line-height: 1.15; font-weight: 650; letter-spacing: -.025em; }
+    h2 { margin: 0 0 16px; font-size: 18px; font-weight: 650; }
+    p { margin: 0; }
+    .subtitle { margin-top: 8px; color: var(--muted); max-width: 820px; line-height: 1.5; }
+    .layout { display: grid; grid-template-columns: minmax(340px, 430px) 1fr; gap: 22px; margin-top: 24px; align-items: start; }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); }
+    .controls { padding: 20px; }
+    .control-section + .control-section { border-top: 1px solid var(--line); margin-top: 20px; padding-top: 20px; }
+    .section-title { font-size: 13px; font-weight: 650; letter-spacing: .02em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+    .fields { display: grid; grid-template-columns: 1fr 112px; gap: 10px 12px; align-items: center; }
+    label { font-size: 14px; line-height: 1.3; }
+    .unit-field { display: grid; grid-template-columns: 1fr 23px; align-items: center; gap: 5px; }
+    input, select { width: 100%; min-height: 38px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel-2); color: var(--text); padding: 7px 9px; font: inherit; font-variant-numeric: tabular-nums; }
+    input:focus, select:focus { outline: 2px solid color-mix(in srgb, var(--blue) 45%, transparent); outline-offset: 1px; }
+    .unit { color: var(--muted); font-size: 13px; }
+    .check-row { display: flex; align-items: center; gap: 8px; }
+    .check-row input { width: 18px; min-height: 18px; accent-color: var(--blue); }
+    .main { display: grid; gap: 18px; }
+    .metrics { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+    .metric { padding: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+    .metric-label { color: var(--muted); font-size: 12px; line-height: 1.25; min-height: 30px; }
+    .metric-value { margin-top: 8px; font-size: 25px; font-weight: 650; font-variant-numeric: tabular-nums; }
+    .metric-value small { font-size: 13px; color: var(--muted); font-weight: 500; }
+    .metric-note { margin-top: 4px; font-size: 12px; color: var(--muted); }
+    .diagram-panel { padding: 18px; }
+    .diagram-head { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; margin-bottom: 10px; }
+    .diagram-head span { color: var(--muted); font-size: 12px; }
+    #buildingSvg { width: 100%; height: 610px; display: block; background: var(--panel-2); border-radius: 12px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 12px 18px; margin-top: 12px; color: var(--muted); font-size: 12px; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .swatch { width: 18px; height: 8px; border-radius: 2px; display: inline-block; }
+    .s-apartment { background: var(--blue); }
+    .s-first { background: var(--commercial); }
+    .s-underground { background: var(--underground); }
+    .s-limit { background: var(--red); height: 2px; }
+    .status { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--green-soft); color: var(--text); font-size: 13px; line-height: 1.4; }
+    .status.warn { background: var(--amber-soft); }
+    .status.error { background: color-mix(in srgb, var(--red) 14%, var(--panel)); }
+    details { margin-top: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    summary { padding: 15px 18px; font-weight: 650; cursor: pointer; }
+    .table-wrap { overflow-x: auto; border-top: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; background: var(--panel-2); }
+    td:nth-child(3), td:nth-child(4) { font-variant-numeric: tabular-nums; }
+    code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; }
+    .footnote { margin-top: 14px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    @media (max-width: 920px) {
+      .layout { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      #buildingSvg { height: 560px; }
+    }
+    @media (max-width: 520px) {
+      .app { padding: 20px 12px 32px; }
+      .metrics { grid-template-columns: 1fr; }
+      .fields { grid-template-columns: 1fr 105px; }
+      #buildingSvg { height: 520px; }
+    }
+  </style>
+  <link rel="stylesheet" href="/tools/platforma-theme1.css?v=2">
+</head>
+<body>
+  <main class="app">
+    <h1>Калькулятор этажности и высоты здания</h1>
+    <p class="subtitle">Расчёт повторяет зависимости исходной книги Excel. Изменение параметров сразу обновляет этажность, высоты, остаток до пожарного ограничения и графический разрез.</p>
+
+    <div class="layout">
+      <section class="panel controls" aria-label="Исходные параметры">
+        <h2>Параметры</h2>
+
+        <div class="control-section">
+          <div class="section-title">Общие ограничения</div>
+          <div class="fields">
+            <label for="fireHeight">Пожарно-техническая высота</label>
+            <div class="unit-field"><input id="fireHeight" type="number" min="5" max="200" step="0.01" value="75"><span class="unit">м</span></div>
+
+            <label for="roofHeight">Верх здания над верхним этажом</label>
+            <div class="unit-field"><input id="roofHeight" type="number" min="0" max="15" step="0.05" value="2.5"><span class="unit">м</span></div>
+
+            <label for="absoluteMark">Абсолютная отметка 0.000</label>
+            <div class="unit-field"><input id="absoluteMark" type="number" step="0.01" placeholder="не задана"><span class="unit">м</span></div>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <div class="section-title">Верхний и типовой этажи</div>
+          <div class="fields">
+            <label for="topHeight">Высота верхнего этажа</label>
+            <div class="unit-field"><select id="topHeight"><option>3.3</option><option>3.45</option><option>3.6</option><option selected>3.9</option></select><span class="unit">м</span></div>
+
+            <label for="openingHeight">Проём верхнего этажа от пола</label>
+            <div class="unit-field"><select id="openingHeight"><option selected>0.9</option><option>1.2</option></select><span class="unit">м</span></div>
+
+            <label for="typicalHeight">Высота типового этажа</label>
+            <div class="unit-field"><select id="typicalHeight"><option>2.86</option><option selected>2.92</option><option>2.93</option><option>2.95</option><option>3</option><option>3.15</option><option>3.3</option><option>3.6</option></select><span class="unit">м</span></div>
+
+            <label for="slab">Толщина плиты</label>
+            <div class="unit-field"><select id="slab"><option>0.16</option><option selected>0.18</option><option>0.2</option><option>0.22</option><option>0.24</option><option>0.3</option></select><span class="unit">м</span></div>
+
+            <label for="floorBuild">Пол: звукоизоляция и стяжка</label>
+            <div class="unit-field"><input id="floorBuild" type="number" min="0" max="0.5" step="0.01" value="0.08"><span class="unit">м</span></div>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <div class="section-title">Первый этаж</div>
+          <div class="fields">
+            <label for="firstPurpose">Назначение</label>
+            <select id="firstPurpose"><option selected>МОП/Коммерция</option><option>МОП/Квартиры</option><option>МОП/Квартиры/Коммерция</option></select>
+
+            <label for="firstHeight">Высота от пола до пола</label>
+            <div class="unit-field"><select id="firstHeight"><option>2.86</option><option>3</option><option>3.3</option><option>3.6</option><option selected>3.9</option><option>4.2</option></select><span class="unit">м</span></div>
+
+            <label for="levelDiff">Перепад проезд / первый этаж</label>
+            <div class="unit-field"><input id="levelDiff" type="number" min="0" max="3" step="0.01" value="0.1"><span class="unit">м</span></div>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <div class="section-title">Подземные этажи и УГВ</div>
+          <div class="fields">
+            <label class="check-row" for="useBasement1"><input id="useBasement1" type="checkbox" checked> −1 этаж</label>
+            <div class="unit-field"><input id="basement1" type="number" min="0" max="10" step="0.1" value="3.6"><span class="unit">м</span></div>
+
+            <label class="check-row" for="useBasement2"><input id="useBasement2" type="checkbox" checked> −2 этаж</label>
+            <div class="unit-field"><input id="basement2" type="number" min="0" max="10" step="0.1" value="3"><span class="unit">м</span></div>
+
+            <label for="groundwater">Уровень грунтовых вод</label>
+            <div class="unit-field"><input id="groundwater" type="number" min="0" max="100" step="0.1" value="7"><span class="unit">м</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="main">
+        <div class="metrics" aria-live="polite">
+          <article class="metric"><div class="metric-label">Надземная этажность</div><div class="metric-value" id="mAbove">26 <small>эт.</small></div><div class="metric-note">по пожарной высоте</div></article>
+          <article class="metric"><div class="metric-label">Жилых этажей</div><div class="metric-value" id="mResidential">25 <small>эт.</small></div><div class="metric-note" id="mPurpose">1-й этаж: коммерция</div></article>
+          <article class="metric"><div class="metric-label">Общее количество этажей</div><div class="metric-value" id="mTotal">28 <small>эт.</small></div><div class="metric-note">включая подземные</div></article>
+          <article class="metric"><div class="metric-label">Фактическая пожарная высота</div><div class="metric-value" id="mFireActual">74,98 <small>м</small></div><div class="metric-note" id="mRemainder">остаток 0,02 м</div></article>
+          <article class="metric"><div class="metric-label">Свободно до заданной ПТВ</div><div class="metric-value" id="mFreeHeight">0,02 <small>м</small></div><div class="metric-note" id="mNextFloor">до следующего этажа не хватает 2,90 м</div></article>
+          <article class="metric"><div class="metric-label">Архитектурная высота</div><div class="metric-value" id="mArchitectural">83,40 <small>м</small></div><div class="metric-note">по формуле книги</div></article>
+          <article class="metric"><div class="metric-label">Квартира / МОП в чистоте</div><div class="metric-value" id="mClear">2,66 / 2,49 <small>м</small></div><div class="metric-note" id="mStair">индивидуальный марш</div></article>
+        </div>
+
+        <section class="panel diagram-panel">
+          <div class="diagram-head"><h2>Графический разрез</h2><span>масштаб по высоте</span></div>
+          <svg id="buildingSvg" viewBox="0 0 700 610" role="img" aria-label="Динамический разрез здания по этажам"></svg>
+          <div class="legend">
+            <span><i class="swatch s-apartment"></i> жилые этажи</span>
+            <span><i class="swatch s-first"></i> первый этаж</span>
+            <span><i class="swatch s-underground"></i> подземные этажи</span>
+            <span><i class="swatch s-limit"></i> пожарное ограничение</span>
+          </div>
+          <div id="status" class="status" aria-live="polite"></div>
+        </section>
+      </section>
+    </div>
+
+    <details>
+      <summary>Зависимости и формулы</summary>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Результат</th><th>Зависит от</th><th>Подстановка</th><th>Значение</th></tr></thead>
+          <tbody id="dependencyRows"></tbody>
+        </table>
+      </div>
+    </details>
+
+    <p class="footnote">Модель воспроизводит логику листа «Этажность». В исходной книге верхний этаж обозначен как высота «от пола до потолка», но используется в формулах и графике как высота этажа; это поведение сохранено. Перед применением в проекте проверьте принятую методику определения пожарно-технической и архитектурной высоты.</p>
+  </main>
+
+  <script>
+    (() => {
+      const $ = id => document.getElementById(id);
+      const inputIds = ["fireHeight","roofHeight","absoluteMark","topHeight","openingHeight","typicalHeight","slab","floorBuild","firstPurpose","firstHeight","levelDiff","useBasement1","basement1","useBasement2","basement2","groundwater"];
+      const n = id => Number($(id).value) || 0;
+      const fmt = (value, digits=2) => value.toLocaleString("ru-RU", {minimumFractionDigits: digits, maximumFractionDigits: digits});
+      const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+
+      function calculate() {
+        const fire = n("fireHeight"), roof = n("roofHeight"), top = n("topHeight"), opening = n("openingHeight");
+        const typical = n("typicalHeight"), slab = n("slab"), floorBuild = n("floorBuild");
+        const first = n("firstHeight"), diff = n("levelDiff"), purpose = $("firstPurpose").value;
+        // Максимально возможная этажность: добавляем этажи, пока фактическая
+        // пожарная высота не превысит заданный предел. Эпсилон защищает
+        // граничные значения от ошибок двоичной арифметики JavaScript.
+        const eps = 1e-9;
+        let above = 2;
+        const fireHeightFor = floors => diff + first + typical * Math.max(0, floors - 2) + opening;
+        if (typical > 0) {
+          above = Math.max(2, Math.floor((fire - diff - first - opening + eps) / typical) + 2);
+          while (fireHeightFor(above + 1) <= fire + eps) above += 1;
+          while (above > 2 && fireHeightFor(above) > fire + eps) above -= 1;
+        }
+        const firstHasApartments = purpose.includes("Квартиры");
+        const residential = Math.max(0, above - 1 + (firstHasApartments ? 1 : 0));
+        const b1 = $("useBasement1").checked, b2 = $("useBasement2").checked;
+        const total = above + (b1 ? 1 : 0) + (b2 ? 1 : 0);
+        const actualFire = diff + first + typical * (above - 2) + opening;
+        const remainder = fire - actualFire;
+        const missingForNext = Math.max(0, typical - remainder);
+        const architectural = diff + first + typical * residential + top + roof;
+        const clearApartment = typical - slab - floorBuild;
+        const clearMop = clearApartment - 0.15 - 0.02;
+        const firstClear = first - 0.25;
+        const stair = [3,3.15,3.3,3.6].some(x => Math.abs(typical-x)<0.001) ? "серийный марш" : "индивидуальное изготовление марша";
+        return {fire,roof,top,opening,typical,slab,floorBuild,first,diff,purpose,above,residential,total,b1,b2,actualFire,remainder,missingForNext,architectural,clearApartment,clearMop,firstClear,stair,groundwater:n("groundwater"), basement1:n("basement1"), basement2:n("basement2"), absoluteMark:$("absoluteMark").value};
+      }
+
+      function setMetric(id, value, unit) { $(id).innerHTML = `${value} <small>${unit}</small>`; }
+
+      function renderMetrics(d) {
+        setMetric("mAbove", d.above, "эт.");
+        setMetric("mResidential", d.residential, "эт.");
+        setMetric("mTotal", d.total, "эт.");
+        setMetric("mFireActual", fmt(d.actualFire), "м");
+        setMetric("mFreeHeight", fmt(Math.max(0,d.remainder)), "м");
+        setMetric("mArchitectural", fmt(d.architectural), "м");
+        $("mClear").innerHTML = `${fmt(d.clearApartment)} / ${fmt(d.clearMop)} <small>м</small>`;
+        $("mPurpose").textContent = `1-й этаж: ${d.purpose.toLowerCase()}`;
+        $("mRemainder").textContent = `${d.remainder >= 0 ? "остаток" : "превышение"} ${fmt(Math.abs(d.remainder))} м`;
+        $("mNextFloor").textContent = d.remainder >= d.typical
+          ? "достаточно для ещё одного типового этажа"
+          : `до следующего этажа не хватает ${fmt(d.missingForNext)} м`;
+        $("mStair").textContent = d.stair;
+      }
+
+      function renderDiagram(d) {
+        const svg = $("buildingSvg");
+        const W=700,H=610, baseY=470, x=245, bw=220, maxAbove=390, maxBelow=90;
+        const abovePhysical = d.first + d.typical * Math.max(0,d.above-2) + d.top;
+        const basementPhysical = (d.b1?d.basement1:0)+(d.b2?d.basement2:0);
+        const aboveScale = maxAbove / Math.max(abovePhysical+d.roof, d.fire+4, 10);
+        const belowScale = basementPhysical ? Math.min(maxBelow/basementPhysical, aboveScale) : aboveScale;
+        const pieces=[];
+        let y=baseY;
+
+        const line=(x1,y1,x2,y2,stroke,width=1,dash="") => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${width}" ${dash?`stroke-dasharray="${dash}"`:""}/>`;
+        const text=(tx,ty,s,anchor="start",fill="var(--text)") => `<text x="${tx}" y="${ty}" text-anchor="${anchor}" fill="${fill}" font-size="12" font-family="system-ui,sans-serif">${esc(s)}</text>`;
+        const rect=(rx,ry,rw,rh,fill) => `<rect x="${rx}" y="${ry}" width="${rw}" height="${Math.max(1,rh)}" fill="${fill}" stroke="var(--line)" stroke-width=".8"/>`;
+
+        pieces.push(`<rect x="0" y="0" width="${W}" height="${H}" fill="var(--panel-2)"/>`);
+        pieces.push(line(65,baseY,635,baseY,"var(--text)",1.5));
+        pieces.push(text(65,baseY-8,"±0.000 / уровень земли"));
+
+        const firstH=d.first*aboveScale;
+        y-=firstH;
+        pieces.push(rect(x,y,bw,firstH,"var(--commercial)"));
+        pieces.push(text(x+bw/2,y+Math.max(15,firstH/2+4),`1 · ${fmt(d.first)} м · ${d.purpose}`,"middle","white"));
+
+        for(let floor=2; floor<=d.above; floor++){
+          const isTop=floor===d.above;
+          const fh=(isTop?d.top:d.typical)*aboveScale;
+          y-=fh;
+          pieces.push(rect(x,y,bw,fh,isTop?"var(--green)":"var(--blue)"));
+          if (fh>=10 || floor===2 || isTop || floor%5===0) pieces.push(text(x+bw+10,y+Math.min(14,fh-2),`${floor} этаж`,"start","var(--muted)"));
+        }
+        const roofH=d.roof*aboveScale;
+        y-=roofH;
+        pieces.push(`<path d="M${x-12},${y+roofH} L${x+bw/2},${y} L${x+bw+12},${y+roofH} Z" fill="var(--amber-soft)" stroke="var(--amber)" stroke-width="1.2"/>`);
+        pieces.push(text(x+bw/2,y+Math.min(18,roofH*.65),`верх +${fmt(d.roof,1)} м`,"middle","var(--text)"));
+
+        let by=baseY;
+        if(d.b1){ const h=d.basement1*belowScale; pieces.push(rect(x,by,bw,h,"var(--underground)")); pieces.push(text(x+bw/2,by+h/2+4,`−1 · ${fmt(d.basement1,1)} м`,"middle","white")); by+=h; }
+        if(d.b2){ const h=d.basement2*belowScale; pieces.push(rect(x,by,bw,h,"var(--underground)")); pieces.push(text(x+bw/2,by+h/2+4,`−2 · ${fmt(d.basement2,1)} м`,"middle","white")); by+=h; }
+
+        const limitY=baseY-d.fire*aboveScale;
+        const actualY=baseY-d.actualFire*aboveScale;
+        pieces.push(line(92,limitY,590,limitY,"var(--red)",2,"7 5"));
+        pieces.push(text(96,limitY-8,`Предел ${fmt(d.fire)} м`,"start","var(--red)"));
+        pieces.push(line(215,actualY,235,actualY,"var(--green)",3));
+        pieces.push(text(205,actualY+4,`${fmt(d.actualFire)} м`,"end","var(--green)"));
+        if (d.remainder > 0.005) {
+          const dimX = 585;
+          pieces.push(line(dimX,limitY,dimX,actualY,"var(--amber)",2));
+          pieces.push(line(dimX-7,limitY,dimX+7,limitY,"var(--amber)",2));
+          pieces.push(line(dimX-7,actualY,dimX+7,actualY,"var(--amber)",2));
+          pieces.push(text(dimX-10,(limitY+actualY)/2+4,`свободно ${fmt(d.remainder)} м`,"end","var(--amber)"));
+        }
+
+        if(d.groundwater>0){
+          const gy=baseY+d.groundwater*belowScale;
+          if(gy<H-15){ pieces.push(line(75,gy,625,gy,"var(--blue)",1.5,"4 4")); pieces.push(text(625,gy-6,`УГВ −${fmt(d.groundwater,1)} м`,"end","var(--blue)")); }
+        }
+        pieces.push(text(610,42,`Арх. высота: ${fmt(d.architectural)} м`,"end"));
+        if(d.absoluteMark){ pieces.push(text(610,62,`Абс. отметка верха: ${fmt(Number(d.absoluteMark)+d.architectural)} м`,"end","var(--muted)")); }
+        svg.innerHTML=pieces.join("");
+      }
+
+      function renderDependencies(d){
+        const floorApartment = d.purpose.includes("Квартиры") ? 1 : 0;
+        const undergroundCount=(d.b1?1:0)+(d.b2?1:0);
+        const rows=[
+          ["Надземная этажность","пожарная высота, перепад, 1-й этаж, проём, типовой этаж",`floor((${fmt(d.fire)} − ${fmt(d.diff)} − ${fmt(d.first)} − ${fmt(d.opening)}) / ${fmt(d.typical)}) + 2`,`${d.above} эт.`],
+          ["Жилые этажи","надземная этажность, назначение 1-го этажа",`${d.above} − 1 + ${floorApartment}`,`${d.residential} эт.`],
+          ["Общее количество этажей","надземная этажность, заполненные подземные этажи",`${d.above} + ${undergroundCount}`,`${d.total} эт.`],
+          ["Фактическая пожарная высота","перепад, 1-й этаж, типовые этажи, проём",`${fmt(d.diff)} + ${fmt(d.first)} + ${fmt(d.typical)} × (${d.above} − 2) + ${fmt(d.opening)}`,`${fmt(d.actualFire)} м`],
+          ["Остаток по высоте","предел и фактическая пожарная высота",`${fmt(d.fire)} − ${fmt(d.actualFire)}`,`${fmt(d.remainder)} м`],
+          ["Архитектурная высота","перепад, 1-й этаж, жилые этажи, верхний этаж, верх здания",`${fmt(d.diff)} + ${fmt(d.first)} + ${fmt(d.typical)} × ${d.residential} + ${fmt(d.top)} + ${fmt(d.roof)}`,`${fmt(d.architectural)} м`],
+          ["Квартира в чистоте","типовой этаж, плита, конструкция пола",`${fmt(d.typical)} − ${fmt(d.slab)} − ${fmt(d.floorBuild)}`,`${fmt(d.clearApartment)} м`],
+          ["МОП в чистоте","квартира в чистоте, потолок 0,15 м, отделка пола 0,02 м",`${fmt(d.clearApartment)} − 0,15 − 0,02`,`${fmt(d.clearMop)} м`],
+          ["Первый этаж в чистоте","высота первого этажа, конструктивный вычет 0,25 м",`${fmt(d.first)} − 0,25`,`${fmt(d.firstClear)} м`]
+        ];
+        $("dependencyRows").innerHTML=rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td><code>${esc(r[2])}</code></td><td>${esc(r[3])}</td></tr>`).join("");
+      }
+
+      function renderStatus(d){
+        const el=$("status");
+        el.className="status";
+        if(d.remainder < -0.0001){ el.classList.add("error"); el.textContent=`Пожарная высота превышена на ${fmt(Math.abs(d.remainder))} м. Уменьшите этажность или высоты этажей.`; }
+        else if(d.remainder < d.typical){ el.classList.add("warn"); el.textContent=`Принята максимальная этажность: ${d.above} надземных этажей. До ПТВ ${fmt(d.fire)} м свободно ${fmt(d.remainder)} м; для ещё одного типового этажа не хватает ${fmt(d.missingForNext)} м.`; }
+        else { el.textContent=`Свободной высоты достаточно для дополнительного этажа; этажность пересчитана автоматически.`; }
+        if(d.clearApartment<=0 || d.clearMop<=0){ el.className="status error"; el.textContent="Некорректные конструктивные параметры: высота в чистоте получилась неположительной."; }
+      }
+
+      function update(){ const d=calculate(); renderMetrics(d); renderDiagram(d); renderDependencies(d); renderStatus(d); }
+      inputIds.forEach(id=>{ $(id).addEventListener("input",update); $(id).addEventListener("change",update); });
+      update();
+    })();
+  </script>
+</body>
+</html>
