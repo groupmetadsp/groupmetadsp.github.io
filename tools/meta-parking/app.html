@@ -1113,6 +1113,42 @@ input[type=range]{padding:0}
   }
   refreshVersionList();
   requestAnimationFrame(fit);
+
+  // Связка с МЕТА Массингом. Алгоритмы парковки и штатный JSON не изменяются.
+  const MASSING_PARKING_TRANSFER="meta-parking-massing-transfer-v1";
+  let massingParkingContext=null;
+  const transferBtn=document.createElement("button");
+  transferBtn.id="sendMetaParkingToMassing";
+  transferBtn.type="button";
+  transferBtn.textContent="Передать в МЕТА Массинг →";
+  transferBtn.title="Передать текущую компоновку, габариты и расчетные машиноместа";
+  transferBtn.style.cssText="border:1px solid #10a19a;border-radius:6px;padding:7px 11px;color:#fff;background:#087c78;font-weight:700";
+  (document.querySelector(".top-actions")||document.querySelector(".topbar")||document.body).appendChild(transferBtn);
+  try{
+    const raw=JSON.parse(localStorage.getItem(MASSING_PARKING_TRANSFER)||"null");
+    if(raw&&raw.direction==="to-parking"&&raw.source){
+      massingParkingContext=raw.source;
+      if(raw.layout&&Array.isArray(raw.layout.items))applyLayoutData(raw.layout,"Из МЕТА Массинга",true);
+      else{
+        document.getElementById("parkingArea").value=Number(raw.source.area_m2)||0;
+        document.getElementById("excludedArea").value=0;updateMetrics();
+      }
+      localStorage.removeItem(MASSING_PARKING_TRANSFER);
+    }
+  }catch(e){console.warn("Не удалось загрузить данные из Массинга",e);}
+  transferBtn.onclick=function(){
+    const d=exportData(),source=massingParkingContext||{};
+    const count=items.filter(i=>TYPE[i.type]&&TYPE[i.type].parking).length;
+    const p=Number(PX_PER_M)||1;
+    const pts=Array.isArray(parkingContour)?parkingContour.map(q=>Array.isArray(q)?[+q[0]/p,+q[1]/p]:[(+q.x||0)/p,(+q.y||0)/p]).filter(q=>q.every(Number.isFinite)):[];
+    let width=Number(source.w)||0,height=Number(source.h)||0;
+    if(pts.length>=3){const xs=pts.map(q=>q[0]),ys=pts.map(q=>q[1]);width=Math.max(...xs)-Math.min(...xs);height=Math.max(...ys)-Math.min(...ys);}
+    const area=Number(document.getElementById("parkingArea").value)||Math.max(0,width*height);
+    if(!(width>0&&height>0)){width=Math.sqrt(Math.max(1,area)*1.5);height=Math.max(1,area/width);}
+    const payload={direction:"to-massing",created:Date.now(),sourceId:source.id||null,stage:Math.max(1,Math.round(Number(source.stage)||1)),floors:Math.max(1,Math.round(Number(source.levels)||1)),x:Number(source.x),y:Number(source.y),rot:Number(source.rot)||0,w:width,h:height,area_m2:area,excluded_area_m2:Number(document.getElementById("excludedArea").value)||0,spaces:count,layout:d};
+    localStorage.setItem(MASSING_PARKING_TRANSFER,JSON.stringify(payload));
+    window.top.location.href="/tools/meta-massing/?parking-transfer=1";
+  };
 })();
 </script>
 </body>
