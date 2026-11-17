@@ -3,10 +3,11 @@
 'use strict';
 const IDS=['system','method','tools','projects','analytics','knowledge','development'];
 const PLATFORM_TOOLS=[
-  {id:'apartment-catalog',name:'01 · Каталог квартир',url:'/meta/#catalog',status:'verified'},
-  {id:'floor-configurator',name:'02 · Конфигуратор этажа',url:'/meta/#configurator',status:'verified'},
-  {id:'meta-massing',name:'03 · Мета Массинг',url:'/meta/#massing',status:'verified'},
-  {id:'above-ground-parking',name:'04 · Надземный паркинг',url:'/meta/#massing',status:'verified'}
+  {id:'apartment-catalog',name:'01 · Каталог квартир',url:'/tools/apartment-catalog/',status:'verified'},
+  {id:'floor-configurator',name:'02 · Конфигуратор этажа',url:'/tools/floor-configurator/',status:'verified'},
+  {id:'meta-massing',name:'03 · Мета Массинг',url:'/tools/meta-massing/',status:'verified'},
+  {id:'above-ground-parking',name:'04 · Мета Паркинг',url:'/tools/meta-parking/',status:'verified'},
+  {id:'parking-comparison',name:'05 · Сравнение паркингов',url:'/tools/parking-comparison/',status:'verified'}
 ];
 const STORAGE='platform-hierarchy-v2';
 const DELETED_KEY='platform-hierarchy-deleted-v1';
