@@ -288,10 +288,13 @@ function renderRubric(rubric){
       +'<div><p class="rubric-kicker">Подраздел</p>'
       +'<h2>'+esc(selected.name)+'</h2>'
       +'<p class="tool-count">Материалов: '+selected.materials.length+'</p></div>'
-      +'<button type="button" class="tool-primary" data-new-material>'+icon('plus')+' Добавить материал</button>'
       +'</div>'
-      +(selected.materials.length?'':'<div class="tools-empty"><strong>Здесь пока нет материалов</strong>Нажмите «Добавить материал» — элемент будет создан внутри подраздела «'+esc(selected.name)+'».</div>')
-      +'<div class="tool-grid">'+cards+'</div>';
+      +'<div class="tool-grid">'+cards
+      +'<button type="button" class="tool-card rubric-add-card" data-new-material aria-label="Добавить материал">'
+      +'<span class="rubric-add-icon" aria-hidden="true">'+icon('plus')+'</span>'
+      +'<span class="rubric-add-title">Добавить материал</span>'
+      +'<span class="rubric-add-hint">Создать новую карточку</span>'
+      +'</button></div>';
   }
   return '<div class="wrap">'
     +'<div class="path">ПЛАТФОРМА / '+esc(section.name)+(selected?' / '+esc(selected.name):'')+'</div>'
