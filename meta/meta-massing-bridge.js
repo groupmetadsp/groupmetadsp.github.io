@@ -290,6 +290,9 @@ overlay.querySelector("#metaPrev").disabled=!snapshot;
   var o=selected();if(!o||o.kind!=="parking")return;
   var root=document.getElementById("inspector");
   if(o.metaParking){
+   // Конфигурация и ёмкость перенесённого паркинга редактируются только исходным инструментом.
+   Array.from(root.querySelectorAll('[data-mm],[data-area],[data-k="w"],[data-k="h"],[data-k="levels"],[data-k="m2mm"]')).forEach(function(el){el.disabled=true;el.title="Параметр управляется конфигуратором Мета Паркинг";});
+   var apply=root.querySelector("#applyInspector");if(apply)apply.style.display="none";
    var el=document.createElement("div");el.className="statusline";el.innerHTML="<b>По компоновке Мета Паркинг:</b> "+fmt(o.metaParking.spaces)+" ММ · S паркинга "+fmt(o.metaParking.area_m2)+" м² · исключаемая площадь "+fmt(o.metaParking.excluded_area_m2)+" м²";
    root.appendChild(el);
   }
