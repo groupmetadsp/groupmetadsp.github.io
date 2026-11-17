@@ -69,6 +69,7 @@ function buildingApartmentCount(o){
  var typical=metaBlockTypicalCount(o);
  return Math.max(0,floors-1)*typical+(o.groundFloorUse==="commercial"?0:Math.max(0,typical-1));
 }
+window.metaMassingApartmentCount=buildingApartmentCount;
 var metaPreviousMetrics=metrics;
 metrics=function(){
  var result=metaPreviousMetrics(),buildings=state.objects.filter(function(o){return o.kind==="building"&&!o.surrounding;});
@@ -153,6 +154,7 @@ renderInspector=function(){
    control.querySelector("#metaFixedStage").onchange=function(){checkpoint();o.stage=Math.max(1,Math.round(Number(this.value)||1));renderAll();later();};
    if(o.surrounding){Array.from(root.querySelectorAll(".statusline")).forEach(function(el){if(/На здание|ТЭП закреплены/.test(el.textContent))el.innerHTML="<b>Окружающая застройка. Не учитывается в ТЭП.</b>";});}
   }
+  if(o.surrounding){Array.from(root.querySelectorAll(".statusline")).forEach(function(el){if(/Площадь пятна|КЭП|Квартир|S прод|На здание|жилой/.test(el.textContent))el.innerHTML="<b>Окружающая застройка — не учитывается в ТЭП.</b>";});}
   var configureBtn=root.querySelector("#metaConfigureSectionBtn");
  if(configureBtn)configureBtn.onclick=function(){try{metaSendSectionToConfigurator(o);}catch(e){alert(e.message||e);}};
 };
