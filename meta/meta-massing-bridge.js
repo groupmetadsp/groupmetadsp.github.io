@@ -279,7 +279,7 @@ overlay.querySelector("#metaPrev").disabled=!snapshot;
   }
   o.w=w;o.h=h;o.levels=Math.max(1,Math.round(+p.floors||1));o.stage=Math.max(1,Math.round(+p.stage||1));
   o.label="МЕТА ПАРКИНГ";o.metaParking={spaces:Math.max(0,Math.round(+p.spaces||0)),area_m2:Math.max(0,+p.area_m2||0),excluded_area_m2:Math.max(0,+p.excluded_area_m2||0),layout:p.layout};
-  if(o.kind==="parking"&&Array.isArray(o.points))o.points=defaultPolyPoints(w,h);
+  if(o.kind==="parking"&&Array.isArray(o.points))o.points=Array.isArray(p.contour_m)&&p.contour_m.length>=3?p.contour_m.map(function(q){return [Number(q[0])||0,Number(q[1])||0];}):defaultPolyPoints(w,h);
   if(Number.isFinite(+p.rot))o.rot=+p.rot;
   state.selected=o.id;state.calloutId=null;state.armed=null;
   localStorage.removeItem(PARKING_TRANSFER);renderAll();later();
