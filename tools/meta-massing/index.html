@@ -2,5 +2,62 @@
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><title>Мета Массинг · ПЛАТФОРМА</title><link rel="stylesheet" href="/tools/platforma-theme1.css?v=2"></head>
 <body class="pf-page"><header class="pf-bar"><a class="pf-logo" href="/" aria-label="ПЛАТФОРМА — главная"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m12 2 9 5v10l-9 5-9-5V7zM3 7l9 5 9-5M12 12v10M7 9l10-5"/></svg></a><a class="pf-brand" href="/">ПЛАТФОРМА</a><span class="pf-location">Инструменты / Мета Массинг</span><a class="pf-home" href="/">На главную ↗</a></header>
 <nav class="pf-tabs" aria-label="Инструменты ПЛАТФОРМЫ"><a class="pf-tab" href="/tools/apartment-catalog/">01 Каталог квартир</a><a class="pf-tab" href="/tools/floor-configurator/">02 Конфигуратор этажа</a><a class="pf-tab" href="/tools/meta-massing/" aria-current="page">03 Мета Массинг</a><a class="pf-tab" href="/tools/meta-parking/">04 Мета Паркинг</a><a class="pf-tab" href="/tools/parking-comparison/">05 Сравнение паркингов</a><a class="pf-tab" href="/tools/building-height/">06 Калькулятор этажности</a></nav>
-<main class="pf-stage"><iframe title="Мета Массинг" src="/meta/#massing" allow="clipboard-read; clipboard-write" loading="eager"></iframe></main>
+<main class="pf-stage">
+<section class="pf-massing-gate" id="pfMassingGate" role="dialog" aria-modal="true" aria-labelledby="pfMassingGateTitle">
+ <div class="pf-massing-card">
+  <div class="pf-massing-label">ПЛАТФОРМА / ИНСТРУМЕНТЫ</div>
+  <h1 id="pfMassingGateTitle">МЕТА МАССИНГ</h1>
+  <p>Выберите, с какого проекта начать работу. Сам Массинг загрузится только после выбора.</p>
+  <div class="pf-massing-options">
+   <button type="button" id="pfMassingNew"><strong>＋ Новый проект</strong><small>Открыть чистое рабочее поле</small></button>
+   <button type="button" id="pfMassingPrevious"><strong>↩ Предыдущий проект</strong><small>Восстановить последний проект или сценарий, если он сохранён</small></button>
+  </div>
+  <p class="pf-massing-hint" id="pfMassingStatus" role="status" aria-live="polite"></p>
+ </div>
+</section>
+<iframe id="pfMassingFrame" title="Мета Массинг" data-src="/meta/#massing" allow="clipboard-read; clipboard-write" loading="lazy" hidden></iframe>
+</main>
+<style id="pf-massing-gate-style">
+.pf-massing-gate{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:#f3f0e9;padding:22px;font-family:Manrope,"Segoe UI",Arial,sans-serif}
+.pf-massing-card{width:min(540px,100%);background:#fcfaf6;border:1px solid #d9d5cb;border-radius:12px;padding:28px;box-shadow:0 18px 46px rgba(62,50,35,.08)}
+.pf-massing-label{font-size:10px;letter-spacing:.14em;font-weight:800;color:#b95228}
+.pf-massing-card h1{font:800 29px/1.1 "Roboto Condensed","Arial Narrow",sans-serif;margin:9px 0 11px;color:#333b38}
+.pf-massing-card p{color:#777770;font-size:12px;line-height:1.55;margin:0}
+.pf-massing-options{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:22px 0 13px}
+.pf-massing-options button{min-height:95px;border:1px solid #d9d5cb;border-radius:8px;padding:15px 12px;text-align:left;background:#fffdf9;color:#333b38;font-family:Manrope,"Segoe UI",Arial,sans-serif;cursor:pointer}
+.pf-massing-options button:first-child{background:#b95228;border-color:#b95228;color:white}
+.pf-massing-options button strong{display:block;font-size:13px;font-weight:800}
+.pf-massing-options button small{display:block;font-size:10px;line-height:1.5;font-weight:500;margin-top:8px;opacity:.85}
+.pf-massing-options button:disabled{cursor:wait;opacity:.55}
+.pf-massing-card .pf-massing-hint{min-height:17px;font-size:11px;color:#8e5c40}
+@media(max-width:600px){.pf-massing-card{padding:20px}.pf-massing-options{grid-template-columns:1fr}}
+</style>
+<script>
+/* Launch gate only. Mассинг engine and its algorithms remain in /meta/massing.html. */
+(function(){
+ "use strict";
+ const gate=document.getElementById("pfMassingGate");
+ const frame=document.getElementById("pfMassingFrame");
+ const status=document.getElementById("pfMassingStatus");
+ const buttons=[document.getElementById("pfMassingNew"),document.getElementById("pfMassingPrevious")];
+ let started=false;
+ function launch(mode){
+  if(started)return;
+  started=true;
+  buttons.forEach(function(button){button.disabled=true;});
+  status.textContent=mode==="previous"?"Открывается предыдущий проект…":"Создаётся новый проект…";
+  try{
+   sessionStorage.setItem("platforma-massing-launch-v1",JSON.stringify({mode:mode,created:Date.now()}));
+  }catch(err){console.warn("Не удалось сохранить выбор запуска",err);}
+  frame.hidden=false;
+  frame.setAttribute("src",frame.dataset.src);
+ }
+ buttons[0].addEventListener("click",function(){launch("new");});
+ buttons[1].addEventListener("click",function(){launch("previous");});
+ window.addEventListener("message",function(event){
+  if(event.origin!==location.origin||!event.data||event.data.type!=="PLATFORMA_MASSING_ACTIVATED")return;
+  gate.remove();
+ });
+})();
+</script>
 </body></html>
