@@ -138,6 +138,7 @@ body{background:var(--bg)}
         </div>
         <div class="statusline" id="blkPreview">—</div>
         <button class="btn primary" id="addBlockBtn" style="width:100%;margin-top:7px">Добавить блок на площадку</button>
+        <p class="note">Нажмите «Добавить блок на площадку» для размещения в центре видимой области либо перетащите карточку «Жилой дом» на точное место на плане.</p>
         <p class="note">Формулы и опорные значения — из спецификации «Мета-район: зависимости ТЭП». ТЭП блока считаются от текущей геометрии (площадь пятна × КЭП комбинации/класса) — после размещения тяните точки/углы/рёбра блока на поле, показатели пересчитываются. Число лифтов по этажности — пока только 4 опорные точки, не полная кривая ГОСТ; при несовпадении с выбранным типом МОП показывается предупреждение.</p>
         </div>
         </div>
@@ -1227,10 +1228,9 @@ $('module2T').onclick=()=>addModule('2T');$('moduleTH').onclick=()=>addModule('T
  elCombo.addEventListener('change',()=>{resetDefaults();toggleShapeFields();updatePreview()});
  [elClass,elFloors,elGround,elW,elL,elLegWidth,elLeg1,elLeg2].forEach(el=>el.addEventListener('input',updatePreview));
  resetDefaults();toggleShapeFields();updatePreview();
- $('addBlockBtn').onclick=()=>{
-  checkpoint();
+ // Restore both workflows: click = centre of visible 2D field; drag "Жилой дом" = exact drop point.
+ function createResidentialAt(cx,cy){
   const floors=Math.max(1,Number(elFloors.value)||1),type=currentType();
-  const cx=state.siteW*.25+Math.random()*state.siteW*.5,cy=state.siteH*.25+Math.random()*state.siteH*.5;
   const extra={avgApt:Math.max(40,Math.min(60,Number(elClass.value)||50)),comboKey:type.comboKey,floors,groundFloorUse:elGround.value==='commercial'?'commercial':'residential',shape:type.shape};
   if(type.shape==='bend'){
    extra.legWidth=Number(elLegWidth.value)||currentCombo().maxW;
@@ -1241,10 +1241,38 @@ $('module2T').onclick=()=>addModule('2T');$('moduleTH').onclick=()=>addModule('T
    extra.w=Number(elL.value)||currentCombo().maxW*2.4;
    extra.h=Number(elW.value)||currentCombo().maxW;
   }
+  if(![cx,cy].every(Number.isFinite))throw Error('Некорректное место размещения секции');
+  checkpoint();
   const o=add('BLOK',cx,cy,extra);
-  syncBlockMetrics(o);
-  renderAll();
+  try{syncBlockMetrics(o);renderAll();}
+  catch(err){state.objects=state.objects.filter(item=>item.id!==o.id);state.selected=null;renderAll();throw err;}
+  return o;
+ }
+ function visibleFieldCentre(){
+  const rect=svg.getBoundingClientRect();
+  if(rect.width>0&&rect.height>0){
+   const p=svgPoint({clientX:rect.left+rect.width/2,clientY:rect.top+rect.height/2});
+   if(Number.isFinite(p.x)&&Number.isFinite(p.y))return p;
+  }
+  return{x:state.siteW/2,y:state.siteH/2};
+ }
+ $('addBlockBtn').onclick=()=>{
+  try{const p=visibleFieldCentre();createResidentialAt(p.x,p.y);}
+  catch(err){console.error('Не удалось поставить секцию',err);alert('Ошибка размещения секции: '+(err.message||err));}
  };
+ const residentialButton=$('toggleResBldg');
+ residentialButton.draggable=true;
+ residentialButton.title='Кликните для настройки или перетащите на поле, чтобы поставить секцию';
+ residentialButton.addEventListener('dragstart',e=>{
+  if(!e.dataTransfer)return;
+  e.dataTransfer.setData('text/plain','section:residential');e.dataTransfer.effectAllowed='copy';
+ });
+ svg.addEventListener('drop',e=>{
+  if(!e.dataTransfer||e.dataTransfer.getData('text/plain')!=='section:residential')return;
+  e.preventDefault();
+  try{const p=svgPoint(e);createResidentialAt(p.x,p.y);}
+  catch(err){console.error('Не удалось поставить секцию перетаскиванием',err);alert('Ошибка размещения секции: '+(err.message||err));}
+ });
 })();
 
 function dayOfYear(date){const start=new Date(Date.UTC(date.getUTCFullYear(),0,0));return Math.floor((date-start)/86400000)}
