@@ -1145,7 +1145,7 @@ input[type=range]{padding:0}
     if(pts.length>=3){const xs=pts.map(q=>q[0]),ys=pts.map(q=>q[1]);width=Math.max(...xs)-Math.min(...xs);height=Math.max(...ys)-Math.min(...ys);}
     const area=Number(document.getElementById("parkingArea").value)||Math.max(0,width*height);
     if(!(width>0&&height>0)){width=Math.sqrt(Math.max(1,area)*1.5);height=Math.max(1,area/width);}
-    const payload={direction:"to-massing",created:Date.now(),sourceId:source.id||null,stage:Math.max(1,Math.round(Number(source.stage)||1)),floors:Math.max(1,Math.round(Number(source.levels)||1)),x:Number(source.x),y:Number(source.y),rot:Number(source.rot)||0,w:width,h:height,area_m2:area,excluded_area_m2:Number(document.getElementById("excludedArea").value)||0,spaces:count,layout:d};
+    const payload={direction:"to-massing",created:Date.now(),sourceId:source.id||null,stage:Math.max(1,Math.round(Number(source.stage)||1)),floors:Math.max(1,Math.round(Number(source.levels)||1)),x:Number(source.x),y:Number(source.y),rot:Number(source.rot)||0,w:width,h:height,contour_m:pts.length>=3?pts.map(q=>[q[0]-Math.min(...pts.map(v=>v[0]))-width/2,q[1]-Math.min(...pts.map(v=>v[1]))-height/2]):null,area_m2:area,excluded_area_m2:Number(document.getElementById("excludedArea").value)||0,spaces:count,layout:d};
     localStorage.setItem(MASSING_PARKING_TRANSFER,JSON.stringify(payload));
     window.top.location.href="/tools/meta-massing/?parking-transfer=1";
   };
