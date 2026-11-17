@@ -53,6 +53,12 @@ body{background:var(--bg)}
 #view3d{border-radius:8px;overflow:hidden;background:#dce7ea}
 @media(max-width:1300px){.shell{grid-template-columns:280px minmax(0,1fr) 310px}}
 
+
+/* Visible underlay-scale control points, without modifying massing geometry. */
+.underlayCalibPoint{fill:#fff;stroke:#b95228;stroke-width:2px;vector-effect:non-scaling-stroke;filter:drop-shadow(0 1px 2px #0005)}
+.underlayCalibLine{stroke:#b95228;stroke-width:2px;stroke-dasharray:6 3;vector-effect:non-scaling-stroke}
+.underlayCalibLabel{font-size:11px;font-weight:800;fill:#b95228;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
+#underlayCalibQuickBtn{border-color:#d4a186;color:#b95228;background:#fff8f1}
 </style>
 </head>
 <body>
@@ -229,6 +235,7 @@ body{background:var(--bg)}
         <button class="btn" id="deleteBtn">Удалить</button><button class="btn" id="duplicateBtn">Дублировать</button>
         <button class="btn" id="rotateBtn">↻ 90°</button>
         <button class="btn soft" id="rulerBtn">📏 Линейка</button>
+        <button class="btn soft" id="underlayCalibQuickBtn" title="Калибровка загруженной подложки по двум опорным точкам">◎ Масштаб · 2 точки</button>
         <button class="btn soft" id="pinRulerBtn" style="display:none">📌 Закрепить размер</button>
         <button class="btn soft" id="sunBtn">☀ Инсоляция: вкл</button>
         <span class="mode" id="modeLabel">Режим: выбор</span><span class="stagechip" id="zoomLabel">100%</span><span class="stagechip" id="rulerLabel" style="display:none">Σ 0,0 м</span>
@@ -241,7 +248,7 @@ body{background:var(--bg)}
         <svg id="canvas" viewBox="0 0 800 574" aria-label="Поле массинга">
           <defs><pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" class="gridLine"/></pattern><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><rect width="50" height="50" fill="url(#smallGrid)"/><path d="M 50 0 L 0 0 0 50" fill="none" class="gridLine gridMajor"/></pattern></defs>
           <rect id="siteRect" x="-3000" y="-3000" width="6800" height="6800" fill="url(#grid)" class="siteBorder"/>
-          <g id="underlayLayer"></g>
+          <g id="underlayLayer"></g><g id="underlayCalibrationLayer" pointer-events="none"></g>
           <g id="rules"></g><g id="shadows"></g><g id="objects"></g><g id="siteDrawLayer"></g><g id="rulerLayer"></g><g id="dimChainsLayer"></g><g id="calloutLeaders"></g>
           <g id="northMark"><line x1="770" y1="52" x2="770" y2="20" stroke="#263e45" stroke-width="2"/><path d="M770 13 L764 25 L776 25 Z" fill="#263e45"/><text x="770" y="10" text-anchor="middle" class="north">N</text></g>
         </svg>
@@ -807,7 +814,7 @@ let roadDraw=null;
 function roadConfigFromUI(){const side=(p,en)=>({enabled:$(en).checked,perp:$(p+'Perp').checked,parallel:$(p+'Parallel').checked,green:$(p+'Green').checked,greenW:Number($(p+'GreenW').value)||1.6,bike:$(p+'Bike').checked,sidewalk:$(p+'Sidewalk').checked,sidewalkW:Number($(p+'SidewalkW').value)||1.8});return {laneWidth:Number($('roadLaneWidth').value)||6,radius:6,left:side('roadL','roadLeftEnable'),right:side('roadR','roadRightEnable')}}
 function loadRoadConfigToUI(o){if(!o||o.type!=='ROAD_PATH')return;const r=o.road||roadConfigDefault();$('roadLaneWidth').value=String(r.laneWidth||6);for(const [p,en,side] of [['roadL','roadLeftEnable',r.left||{}],['roadR','roadRightEnable',r.right||{}]]){$(en).checked=side.enabled!==false;$(p+'Perp').checked=!!side.perp;$(p+'Parallel').checked=!!side.parallel;$(p+'Green').checked=!!side.green;$(p+'GreenW').value=side.greenW||1.6;$(p+'Bike').checked=!!side.bike;$(p+'Sidewalk').checked=!!side.sidewalk;$(p+'SidewalkW').value=side.sidewalkW||1.8}$('roadPanel').style.display='';renderRoadProfile()}
 function createRoadPath(worldPts,cfg){const origin=worldPts[0],local=worldPts.map(p=>[p[0]-origin[0],p[1]-origin[1]]),o={id:uid(),type:'ROAD_PATH',kind:'road',label:'ПРОЕЗД',x:origin[0],y:origin[1],w:1,h:1,rot:0,stage:1,status:'CONCEPT',roadPoints:local,road:deep(cfg)};syncRoadBounds(o);state.objects.push(o);state.selected=o.id;return o}
-function startRoadDraw(){if(siteDraw)cancelSiteDraw();if(rulerMode)setRulerMode(false);if(underlayCalib){underlayCalib=null;$('underlayCalibBtn').textContent='📏 Откалибровать масштаб по 2 точкам'}roadDraw={points:[],config:deep(roadConfigFromUI())};$('roadStartBtn').disabled=true;$('roadFinishBtn').disabled=false;$('roadToolBtn').classList.add('active');updateMode();renderAll()}
+function startRoadDraw(){if(siteDraw)cancelSiteDraw();if(rulerMode)setRulerMode(false);if(underlayCalib){underlayCalib=null;renderCalibrationMarkers();$('underlayCalibBtn').textContent='📏 Откалибровать масштаб по 2 точкам'}roadDraw={points:[],config:deep(roadConfigFromUI())};$('roadStartBtn').disabled=true;$('roadFinishBtn').disabled=false;$('roadToolBtn').classList.add('active');updateMode();renderAll()}
 function cancelRoadDraw(){roadDraw=null;$('roadStartBtn').disabled=false;$('roadFinishBtn').disabled=true;$('roadToolBtn').classList.remove('active');renderAll()}
 function finishRoadDraw(){if(!roadDraw||roadDraw.points.length<2){cancelRoadDraw();return}checkpoint();createRoadPath(roadDraw.points,roadDraw.config);roadDraw=null;$('roadStartBtn').disabled=false;$('roadFinishBtn').disabled=true;$('roadToolBtn').classList.remove('active');renderAll()}
 function renderRoadDraw(){const layer=$('siteDrawLayer');if(!roadDraw||!roadDraw.points.length)return;const cfg=currentRoadConfig(),tmp={id:'draft-road',type:'ROAD_PATH',kind:'road',label:'ПРОЕЗД',x:0,y:0,roadPoints:deep(roadDraw.points),road:deep(cfg)};const g=document.createElementNS(ns,'g');g.setAttribute('class','roadDraft');if(roadDraw.points.length>1){renderRoadSegmentBands(g,tmp);const p=document.createElementNS(ns,'path');p.setAttribute('d',roadRoundedPathD(tmp.roadPoints,Number(cfg.radius)||6));p.setAttribute('class','roadMain shape');p.setAttribute('stroke-width',Number(cfg.laneWidth)||6);g.appendChild(p);const c=document.createElementNS(ns,'path');c.setAttribute('d',roadRoundedPathD(tmp.roadPoints,Number(cfg.radius)||6));c.setAttribute('class','roadCenter');g.appendChild(c);renderRoadJunctions(g,tmp)}layer.appendChild(g);roadDraw.points.forEach((x,i)=>{const c=document.createElementNS(ns,'circle');c.setAttribute('cx',x[0]);c.setAttribute('cy',x[1]);c.setAttribute('r',i===roadDraw.points.length-1?4.4:3.5);c.setAttribute('class','roadGhostNode');layer.appendChild(c)})}
@@ -857,7 +864,7 @@ function setRulerMode(on){
   // Взаимоисключаемость с другими режимами клика по полю — нельзя одновременно рисовать границу ЗУ/калибровать
   // подложку и мерить линейкой.
   if(siteDraw)cancelSiteDraw();
-  if(underlayCalib){underlayCalib=null;$('underlayCalibBtn').textContent='📏 Откалибровать масштаб по 2 точкам'}
+  if(underlayCalib){underlayCalib=null;renderCalibrationMarkers();$('underlayCalibBtn').textContent='📏 Откалибровать масштаб по 2 точкам'}
   rulerMode={points:[]};
   $('rulerBtn').classList.add('active');$('rulerLabel').style.display='';
  }else{
@@ -990,9 +997,11 @@ document.querySelectorAll('[data-layer]').forEach(b=>b.addEventListener('click',
 svg.addEventListener('click',e=>{
  if(underlayCalib){
   const p=svgPoint(e);underlayCalib.points.push([p.x,p.y]);
-  if(underlayCalib.points.length===1){$('underlayCalibBtn').textContent='Кликните точку 2…';return}
+  if(underlayCalib.points.length===1){renderCalibrationMarkers();$('underlayCalibBtn').textContent='Кликните точку 2…';return}
   const [p1,p2]=underlayCalib.points,pxDist=Math.hypot(p2[0]-p1[0],p2[1]-p1[1]);
+  renderCalibrationMarkers();
   underlayCalib=null;$('underlayCalibBtn').textContent='📏 Откалибровать масштаб по 2 точкам';
+  renderCalibrationMarkers();
   if(pxDist<1e-6)return;
   const realStr=prompt('Реальное расстояние между точками, м:','');
   const real=Number(realStr);
@@ -1436,6 +1445,7 @@ $('underlayFile').addEventListener('change',e=>{
    $('underlayControls').style.display='block';
    $('underlayRot').value='0';$('underlayOpacity').value='60';
    renderAll();
+   if(calibrationAfterUpload){calibrationAfterUpload=false;$('underlayCalibBtn').click();}
   };
   img.src=ev.target.result;
  };
@@ -1443,16 +1453,34 @@ $('underlayFile').addEventListener('change',e=>{
  e.target.value='';
 });
 let underlayCalib=null;
+function renderCalibrationMarkers(){
+ const layer=$('underlayCalibrationLayer');if(!layer)return;
+ layer.replaceChildren();
+ if(!underlayCalib)return;
+ const pts=underlayCalib.points||[];
+ if(pts.length===2){const line=document.createElementNS(ns,'line');line.setAttribute('x1',pts[0][0]);line.setAttribute('y1',pts[0][1]);line.setAttribute('x2',pts[1][0]);line.setAttribute('y2',pts[1][1]);line.setAttribute('class','underlayCalibLine');layer.appendChild(line);}
+ pts.forEach((p,i)=>{
+  const circle=document.createElementNS(ns,'circle');circle.setAttribute('cx',p[0]);circle.setAttribute('cy',p[1]);circle.setAttribute('r',5);circle.setAttribute('class','underlayCalibPoint');layer.appendChild(circle);
+  const label=document.createElementNS(ns,'text');label.setAttribute('x',p[0]+8);label.setAttribute('y',p[1]-8);label.setAttribute('class','underlayCalibLabel');label.textContent='Точка '+(i+1);layer.appendChild(label);
+ });
+}
+let calibrationAfterUpload=false;
+$('underlayCalibQuickBtn').addEventListener('click',()=>{
+ if(!state.underlay){calibrationAfterUpload=true;$('underlayLoadBtn').click();return;}
+ $('underlayCalibBtn').click();
+});
 $('underlayCalibBtn').addEventListener('click',()=>{
  if(!state.underlay)return;
  underlayCalib={points:[]};
+ if(rulerMode)setRulerMode(false);
+ renderCalibrationMarkers();
  $('underlayCalibBtn').textContent='Кликните точку 1 на подложке…';
 });
 $('underlayRot').addEventListener('change',()=>{if(!state.underlay)return;checkpoint();state.underlay.rot=Number($('underlayRot').value)||0;renderAll()});
 $('underlayRotM90').addEventListener('click',()=>{if(!state.underlay)return;checkpoint();state.underlay.rot=((Number(state.underlay.rot)||0)-90+360)%360;$('underlayRot').value=state.underlay.rot;renderAll()});
 $('underlayRotP90').addEventListener('click',()=>{if(!state.underlay)return;checkpoint();state.underlay.rot=((Number(state.underlay.rot)||0)+90)%360;$('underlayRot').value=state.underlay.rot;renderAll()});
 $('underlayOpacity').addEventListener('input',()=>{if(!state.underlay)return;state.underlay.opacity=Number($('underlayOpacity').value)/100;renderAll()});
-$('underlayRemoveBtn').addEventListener('click',()=>{if(!state.underlay)return;checkpoint();state.underlay=null;underlayCalib=null;$('underlayControls').style.display='none';renderAll()});
+$('underlayRemoveBtn').addEventListener('click',()=>{if(!state.underlay)return;checkpoint();state.underlay=null;underlayCalib=null;renderCalibrationMarkers();$('underlayControls').style.display='none';renderAll()});
 
 
 /* === v0.19 overrides: roads, parking combo, ramp, brighter 3D, generic callouts === */
