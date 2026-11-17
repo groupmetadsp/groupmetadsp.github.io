@@ -1471,8 +1471,8 @@ $('underlayCalibQuickBtn').addEventListener('click',()=>{
 });
 $('underlayCalibBtn').addEventListener('click',()=>{
  if(!state.underlay)return;
- underlayCalib={points:[]};
  if(rulerMode)setRulerMode(false);
+ underlayCalib={points:[]};
  renderCalibrationMarkers();
  $('underlayCalibBtn').textContent='Кликните точку 1 на подложке…';
 });
