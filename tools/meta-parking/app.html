@@ -358,7 +358,7 @@ input[type=range]{padding:0}
         <div class="help">
           Исходная компоновка: <b>пустая</b>.<br>
           Площадь помещения стоянки: <b>4727,97 м²</b>.<br><br>
-          При обычном открытии файла автоматически загружается рабочая версия <b>28.08.2026</b>. Кнопка <b>«Исходная пустая»</b> очищает расстановку и возвращает план к пустому исходному состоянию.
+          При открытии показывается <b>чистый лист</b> без подложки и объектов. Проект от 28.08.2026 доступен в разделе «Версии компоновки», если ранее не был сохранён отдельно. Подложку можно включить кнопкой «План».
         </div>
       </section>
 
@@ -1093,25 +1093,25 @@ input[type=range]{padding:0}
   function saveLocal(){
     try{localStorage.setItem("meta_vodyanaya_parking_v8_empty",JSON.stringify(exportData()));}catch(e){}
   }
-  ensureUnderlayLoaded();
+  // Чистый старт: не загружаем демонстрационную расстановку и подложку.
+  // CURRENT_LAYOUT остается в исходном коде только как доступная архивная версия.
   setZoom(zoom,false);
-  // Старт с текущей рабочей расстановкой из JSON пользователя. Именованные версии хранятся отдельно.
   items=[];selected=null;selectedIds.clear();measurements=[];parkingContour=[];itemsEl.innerHTML="";
-  (CURRENT_LAYOUT.items||[]).forEach(o=>makeItem(o.type,o.x,o.y,{...o,skipHistory:true}));
-  syncSeqFromItems();
-  measurements=JSON.parse(JSON.stringify(CURRENT_LAYOUT.measurements||[]));
-  parkingContour=JSON.parse(JSON.stringify(CURRENT_LAYOUT.parkingContour||[]));
-  if(CURRENT_LAYOUT.meta?.parking_area_m2)document.getElementById("parkingArea").value=CURRENT_LAYOUT.meta.parking_area_m2;
-  document.getElementById("excludedArea").value=CURRENT_LAYOUT.meta?.excluded_area_m2??234;
-  renderAll();updateUndoButton();setCurrentVersionLabel("Текущая работа 28.08.2026");
+  underlayOn=false;
+  underlay.style.display="none";
+  document.getElementById("toggleUnderlay").textContent="План: выкл";
+  document.getElementById("parkingArea").value=0;
+  document.getElementById("excludedArea").value=0;
+  renderAll();updateUndoButton();setCurrentVersionLabel("Новый проект · пустой лист");
+
+  // Сохраненные пользователем версии не удаляются и не перезаписываются.
+  // Старая образцовая расстановка доступна как именованная версия.
   let bootVersions=readNamedVersions();
-  let changed=false;
-  const v28=bootVersions.find(v=>v.name==="Текущая работа 28.08.2026");
-  if(v28){v28.data=JSON.parse(JSON.stringify(CURRENT_LAYOUT));v28.savedAt="2026-08-28T00:00:00.000Z";changed=true;}
-  else {bootVersions.push({id:"v_current_20260828",name:"Текущая работа 28.08.2026",savedAt:"2026-08-28T00:00:00.000Z",data:JSON.parse(JSON.stringify(CURRENT_LAYOUT))});changed=true;}
-  bootVersions.forEach(v=>{if(v?.data?.meta && Object.prototype.hasOwnProperty.call(v.data.meta,"source_places")){delete v.data.meta.source_places;changed=true;}});
-  if(changed)writeNamedVersions(bootVersions);
-  refreshVersionList("Текущая работа 28.08.2026");
+  if(!bootVersions.some(v=>v.id==="v_current_20260828"||v.name==="Текущая работа 28.08.2026")){
+    bootVersions.push({id:"v_current_20260828",name:"Текущая работа 28.08.2026",savedAt:"2026-08-28T00:00:00.000Z",data:JSON.parse(JSON.stringify(CURRENT_LAYOUT))});
+    writeNamedVersions(bootVersions);
+  }
+  refreshVersionList();
   requestAnimationFrame(fit);
 })();
 </script>
