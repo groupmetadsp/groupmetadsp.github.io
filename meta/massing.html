@@ -270,7 +270,7 @@ body{background:var(--bg)}
       </section>
 
       <section class="sec">
-        <h3>ТЭП площадки</h3>
+        <h3>ТЭП площадки</h3><label style="display:flex;gap:8px;align-items:center;margin:9px 0;font-size:12px"><input id="metaShowStageTeps" type="checkbox"> Показать по этапам</label><div id="metaStageTeps" style="display:none;margin:8px 0 12px;font-size:12px;overflow:auto"></div>
         <div class="metricsGrid">
           <div class="metric primary full"><span>Плотность</span><strong id="mDensity">0,00 / 2,50</strong><div class="progress"><i id="densityBar"></i></div><small id="densityDelta">—</small></div>
           <div class="metric"><span>S продаваемая</span><strong id="mSale">0</strong><small>м²</small></div>
@@ -507,10 +507,10 @@ function roadPreviewObject(cfg){if(roadDraw&&roadDraw.points?.length){return {id
 function modelLayer(o){if(o.type==='P_UG')return 1;if(o.kind==='stylobat'||['P_AG','P_FREE','P_ST'].includes(o.type))return 2;if(o.kind==='road'||o.kind==='land'||o.type==='P_SURF'||o.kind==='stage')return 3;if(o.kind==='building')return 4;return 0}
 
 function objArea(o){if(o?.type==='ROAD_PATH'){const st=roadParkingStats(o);return st.length*roadTotalWidth(o)}if(isPolygonEditable(o)){ensurePolygon(o);return polygonAreaPoints(o.points)}return Math.max(0,(Number(o.w)||0)*(Number(o.h)||0))}
-function buildingSale(o){if(o.kind!=='building')return 0;const floors=Number(o.floors)||0,commercialGround=o.type==='BLOK'&&o.groundFloorUse==='commercial';return (Number(o.saleFloor)||0)*Math.max(0,floors-(commercialGround?1:0))}
-function buildingGross(o){return o.kind==='building'?(Number(o.grossFloor)||0)*(Number(o.floors)||0):0}
-function buildingCommercial(o){if(o.kind!=='building'||!(o.type==='BLOK'&&o.groundFloorUse==='commercial'))return 0;return Number(o.saleFloor)||0} // приближение: площадь коммерции 1 этажа оценена по тому же КЭП, что и жилой этаж — детального расчёта коммерческих помещений нет
-function parkingMM(o){if(o.kind!=='parking')return 0;if(o.type==='P_SURF')return surfaceParkingCapacity(o);const total=objArea(o)*(Number(o.levels)||1);return Math.max(0,Math.floor(total/(Number(o.m2mm)||28)))}
+function buildingSale(o){if(o.kind!=='building'||o.surrounding)return 0;const floors=Number(o.floors)||0,commercialGround=o.type==='BLOK'&&o.groundFloorUse==='commercial';return (Number(o.saleFloor)||0)*Math.max(0,floors-(commercialGround?1:0))}
+function buildingGross(o){return o.kind==='building'&&!o.surrounding?(Number(o.grossFloor)||0)*(Number(o.floors)||0):0}
+function buildingCommercial(o){if(o.kind!=='building'||o.surrounding||!(o.type==='BLOK'&&o.groundFloorUse==='commercial'))return 0;return Number(o.saleFloor)||0} // приближение: площадь коммерции 1 этажа оценена по тому же КЭП, что и жилой этаж — детального расчёта коммерческих помещений нет
+function parkingMM(o){if(o.kind!=='parking')return 0;if(o.metaParking&&Number.isFinite(+o.metaParking.spaces))return Math.max(0,+o.metaParking.spaces);if(o.type==='P_SURF')return surfaceParkingCapacity(o);const total=objArea(o)*(Number(o.levels)||1);return Math.max(0,Math.floor(total/(Number(o.m2mm)||28)))}
 function surfaceParkingSlots(o){ensurePolygon(o);const pw=Number(o.placeW)||2.5,ph=Number(o.placeH)||5.3,ais=Number(o.aisle)||6,xs=o.points.map(p=>p[0]),ys=o.points.map(p=>p[1]),minx=Math.min(...xs),maxx=Math.max(...xs),miny=Math.min(...ys),maxy=Math.max(...ys),strip=ph*2+ais,out=[];for(let y=miny;y+strip<=maxy+.001;y+=strip){for(let x=minx+pw/2;x<=maxx-pw/2+.001;x+=pw){for(const cy of [y+ph/2,y+strip-ph/2])if(pointInPoly([x,cy],o.points))out.push({x,y:cy,w:pw,h:ph,stripY:y});}}return out}
 function surfaceParkingCapacity(o){return surfaceParkingSlots(o).length}
 function resizeSurfaceParkingToMM(o,targetMM,resetShape=false){targetMM=Math.max(2,Math.round(Number(targetMM)||2));o.plannedMM=targetMM;const pw=Number(o.placeW)||2.5,ph=Number(o.placeH)||5.3,ais=Number(o.aisle)||6,cols=Math.ceil(targetMM/2),tw=Math.max(pw,cols*pw),th=ph*2+ais;if(resetShape||!Array.isArray(o.points)||o.points.length<3)o.points=defaultPolyPoints(tw,th);else resizePolygonBounds(o,tw,th);syncPolyBounds(o)}
@@ -561,7 +561,7 @@ function bbox(poly){const xs=poly.map(p=>p[0]),ys=poly.map(p=>p[1]);return {minx
 function aabbOverlap(a,b,pad=0){const A=bbox(corners(a)),B=bbox(corners(b));return !(A.maxx+pad<B.minx||B.maxx+pad<A.minx||A.maxy+pad<B.miny||B.maxy+pad<A.miny)}
 function outOfBounds(o){const b=bbox(corners(o));return b.minx<0||b.miny<0||b.maxx>state.siteW||b.maxy>state.siteH}
 function metrics(){
- const b=state.objects.filter(o=>o.kind==='building'),park=state.objects.filter(o=>o.kind==='parking'),land=state.objects.filter(o=>o.kind==='land');
+ const b=state.objects.filter(o=>o.kind==='building'&&!o.surrounding),park=state.objects.filter(o=>o.kind==='parking'),land=state.objects.filter(o=>o.kind==='land');
  const sale=b.reduce((s,o)=>s+buildingSale(o),0),gross=b.reduce((s,o)=>s+buildingGross(o),0),foot=b.reduce((s,o)=>s+objArea(o),0),avg=product().avg,apts=b.reduce((s,o)=>s+Math.floor(buildingSale(o)/(Number(o.avgApt)||avg)),0);
  const pTH=b.filter(o=>o.type==='T'||o.type==='H').length,ind=b.filter(o=>o.type==='IND').length,pTHSale=b.filter(o=>o.type==='T'||o.type==='H').reduce((sum,o)=>sum+buildingSale(o),0),indSale=b.filter(o=>o.type==='IND').reduce((sum,o)=>sum+buildingSale(o),0),share=(pTHSale+indSale)?pTHSale/(pTHSale+indSale)*100:0;
  const parkingRatio=8593.75/128,needMM=Math.round(sale/parkingRatio),roadMM=state.objects.filter(o=>o.type==='ROAD_PATH').reduce((s,o)=>s+roadParkingStats(o).total,0),haveMM=park.reduce((s,o)=>s+parkingMM(o),0)+roadMM,needLand=sale*.14,haveLand=land.reduce((s,o)=>s+landArea(o),0);
@@ -578,7 +578,9 @@ function updateTargets(m){
  $('tMM').textContent=`${fmt(m.haveMM)} / ${fmt(m.targetMM)}`;setRemain('tMMRemain',m.targetMM-m.haveMM,'');
  $('tLand').textContent=`${fmt(m.haveLand)} / ${fmt(m.targetLand)} м²`;setRemain('tLandRemain',m.targetLand-m.haveLand,' м²');
 }
-function updateMetrics(){const m=metrics();updateTargets(m);$('mDensity').textContent=`${fmt(m.density,2)} / ${fmt(state.densityTarget,2)}`;$('mSale').textContent=fmt(m.sale);$('mGross').textContent=fmt(m.gross);$('mApts').textContent=fmt(m.apts);$('mAvg').textContent=fmt(m.avg,1);$('mFootprint').textContent=fmt(m.foot);$('mFootprintPct').textContent=fmt(m.foot/state.siteArea*100,1)+'% участка';$('mShare').textContent=`${fmt(m.share,0)} / ${fmt(100-m.share,0)}%`;$('mNeedMM').textContent=fmt(m.needMM);$('mHaveMM').textContent=fmt(m.haveMM);if($('mRoadMM'))$('mRoadMM').textContent=fmt(m.roadMM||0);$('mMMDelta').textContent=(m.haveMM>=m.needMM?'запас ':'дефицит ')+fmt(Math.abs(m.haveMM-m.needMM));$('mNeedLand').textContent=fmt(m.needLand);$('mHaveLand').textContent=fmt(m.haveLand);$('mLandDelta').textContent=(m.haveLand>=m.needLand?'запас ':'дефицит ')+fmt(Math.abs(m.haveLand-m.needLand));$('mStages').textContent=fmt(m.stages);$('mSun').textContent=`${m.sun.pass}/${m.sun.risk}/${m.sun.fail}`;
+function updateMetaStageMetrics(){const box=$('metaStageTeps'),toggle=$('metaShowStageTeps');if(!box||!toggle)return;box.style.display=toggle.checked?'block':'none';if(!toggle.checked)return;const all=state.objects.filter(o=>!o.surrounding&&(o.kind==='building'||o.kind==='parking'||o.kind==='land'||o.type==='ROAD_PATH'));const stages=[...new Set(all.map(o=>Math.max(1,Math.round(+o.stage||1))))].sort((a,b)=>a-b);box.innerHTML='<table style="width:100%;border-collapse:collapse"><tr><th>Этап</th><th>S прод.</th><th>S стр.</th><th>Квартир</th><th>ММ</th><th>Благоустр.</th></tr>'+stages.map(n=>{const a=all.filter(o=>Math.max(1,Math.round(+o.stage||1))===n),b=a.filter(o=>o.kind==='building');return '<tr><td>'+n+'</td><td>'+fmt(b.reduce((v,o)=>v+buildingSale(o),0))+'</td><td>'+fmt(b.reduce((v,o)=>v+buildingGross(o),0))+'</td><td>'+fmt(b.reduce((v,o)=>v+Math.floor(buildingSale(o)/(+o.avgApt||product().avg)),0))+'</td><td>'+fmt(a.filter(o=>o.kind==='parking').reduce((v,o)=>v+parkingMM(o),0)+a.filter(o=>o.type==='ROAD_PATH').reduce((v,o)=>v+roadParkingStats(o).total,0))+'</td><td>'+fmt(a.filter(o=>o.kind==='land').reduce((v,o)=>v+landArea(o),0))+'</td></tr>'}).join('')+'</table>'}
+$('metaShowStageTeps').addEventListener('change',updateMetaStageMetrics);
+function updateMetrics(){const m=metrics();updateTargets(m);updateMetaStageMetrics();$('mDensity').textContent=`${fmt(m.density,2)} / ${fmt(state.densityTarget,2)}`;$('mSale').textContent=fmt(m.sale);$('mGross').textContent=fmt(m.gross);$('mApts').textContent=fmt(m.apts);$('mAvg').textContent=fmt(m.avg,1);$('mFootprint').textContent=fmt(m.foot);$('mFootprintPct').textContent=fmt(m.foot/state.siteArea*100,1)+'% участка';$('mShare').textContent=`${fmt(m.share,0)} / ${fmt(100-m.share,0)}%`;$('mNeedMM').textContent=fmt(m.needMM);$('mHaveMM').textContent=fmt(m.haveMM);if($('mRoadMM'))$('mRoadMM').textContent=fmt(m.roadMM||0);$('mMMDelta').textContent=(m.haveMM>=m.needMM?'запас ':'дефицит ')+fmt(Math.abs(m.haveMM-m.needMM));$('mNeedLand').textContent=fmt(m.needLand);$('mHaveLand').textContent=fmt(m.haveLand);$('mLandDelta').textContent=(m.haveLand>=m.needLand?'запас ':'дефицит ')+fmt(Math.abs(m.haveLand-m.needLand));$('mStages').textContent=fmt(m.stages);$('mSun').textContent=`${m.sun.pass}/${m.sun.risk}/${m.sun.fail}`;
  const pct=Math.min(100,Math.max(0,m.density/state.densityTarget*100));$('densityBar').style.width=pct+'%';$('densityBar').className=m.density>state.densityTarget*1.03?'bad':m.density<state.densityTarget*.95?'warn':'';$('densityDelta').textContent=`Осталось ${fmt(Math.max(0,m.targetSale-m.sale))} м² до целевого объема`;
 }
 function distPointSeg(p,a,b){const vx=b[0]-a[0],vy=b[1]-a[1],wx=p[0]-a[0],wy=p[1]-a[1],c1=vx*wx+vy*wy;if(c1<=0)return Math.hypot(p[0]-a[0],p[1]-a[1]);const c2=vx*vx+vy*vy;if(c2<=c1)return Math.hypot(p[0]-b[0],p[1]-b[1]);const t=c1/c2,q=[a[0]+t*vx,a[1]+t*vy];return Math.hypot(p[0]-q[0],p[1]-q[1])}
@@ -671,7 +673,7 @@ function renderObj(o){if(o.type==='ROAD_PATH'){renderRoadObj(o);return}if(!isVis
  // На подписи здания статус (CONCEPT/REQUIREMENT/RESOLVED — служебное внутреннее поле, редактируется в инспекторе)
  // больше не выводится на самом поле: пользователь явно попросила убрать это слово и оставить на подписи только
  // этажность и класс — они уже есть в основной строке текста (o.label + « · N эт.» выше), здесь остаётся площадь.
- if(o.kind==='building')sub.textContent=`${fmt(buildingSale(o))} м²`;else sub.textContent=`S ${fmt(objArea(o))} м²`;g.appendChild(sub);
+ if(o.kind==='building')sub.textContent=o.surrounding?'Окружающая застройка':`${fmt(buildingSale(o))} м²`;else sub.textContent=`S ${fmt(objArea(o))} м²`;g.appendChild(sub);
  renderBuildingDimensions(g,o);renderResizeHandles(g,o);renderPolygonHandles(g,o);renderRotateHandle(g,o);g.addEventListener('pointerdown',startDrag);g.addEventListener('contextmenu',e=>{if(!isPolygonEditable(o)||(o.type==='BLOK'&&o.shape==='bend')||!e.target.closest?.('.shape'))return;e.preventDefault();e.stopPropagation();const edge=nearestPolygonEdge(o,e);if(!edge)return;const screenScale=Math.abs(svg.getScreenCTM()?.a||1);if(edge.d2>(12/screenScale)**2)return;state.selected=o.id;state.calloutId=null;renderAll();showEdgeContextMenu(e.clientX,e.clientY,()=>insertVertex(o.id,edge.edgeIndex,edge.point))});g.addEventListener('click',e=>{
   // Пока активен режим нанесения границы ЗУ, калибровки подложки или линейки — клик по СУЩЕСТВУЮЩЕМУ объекту
   // (например, по уже нарисованному ранее контуру ЗУ при перерисовке, по зданию под подложкой, или просто по
@@ -679,7 +681,7 @@ function renderObj(o){if(o.type==='ROAD_PATH'){renderRoadObj(o);return}if(!isVis
   // клик никогда не долетает до обработчика на <svg>, и точка/калибровка/замер молча не добавляется. Пропускаем
   // клик дальше (без stopPropagation), пусть его обработает svg.addEventListener('click',...).
   if(siteDraw||underlayCalib||rulerMode||roadDraw)return;
-  e.stopPropagation();state.selected=o.id;if(o.type==='BLOK'||o.kind==='stage'){state.calloutId=o.id;state.calloutPos={x:e.clientX,y:e.clientY};state.calloutOffset=null}else state.calloutId=null;renderAll()
+  e.stopPropagation();state.selected=o.id;if(o.kind==='building'||o.kind==='parking'||o.kind==='land'||o.kind==='stage'){state.calloutId=o.id;state.calloutPos={x:e.clientX,y:e.clientY};state.calloutOffset=null}else state.calloutId=null;renderAll()
  });objLayer.appendChild(g)
 }
 // Пользователь: «при нажатии на секцию — должно появляться облако данных по ТЭП секции» — отдельное всплывающее
@@ -695,7 +697,8 @@ function calloutStatsHtml(o){const bc=o.blockCalc||{},saleApts=buildingSale(o),s
  // считаем его ИМЕННО НА ЗДАНИЕ (не на этаж, как bc.nKv) и ИМЕННО от средней площади квартиры ЭТОЙ секции
  // (o.avgApt — прямой числовой ввод, п.18), а не от общего для всего квартала параметра «Класс продукта» —
  // секция может иметь другую среднюю площадь квартиры, чем весь квартал.
- const avgApt=Number(o.avgApt)||bc.avgApt||50,nApts=Math.floor(saleApts/avgApt);
+ if(o.surrounding)return `Окружающая застройка · не учитывается в ТЭП<br>Габариты: <b>${fmt(o.w,1)} × ${fmt(o.h,1)} м</b> · Этажей: <b>${fmt(o.floors)}</b>`;
+  const avgApt=Number(o.avgApt)||bc.avgApt||50,nApts=Math.floor(saleApts/avgApt);
  return `Площадь пятна: <b>${fmt(bc.footprint??objArea(o))} м²</b> · КЭП: <b>${fmt(o.kep,4)}</b><br>S прод. квартиры (на дом): <b>${fmt(saleApts)} м²</b><br>Квартир (на дом): <b>≈ ${fmt(nApts)}</b><br>S прод. коммерция (на дом): <b>${fmt(saleCommercial)} м²</b>`}
 // Общий обработчик перетаскивания HTML-облака (и «живого» у курсора, и закреплённых) — намеренно на window, а не
 // на svg: пользователь двигает облако именно в «свободное пространство рабочего поля», курсор при этом легко
@@ -714,8 +717,9 @@ function renderBlockCallout(){
  const el=$('blkCallout');
  if(!state.calloutId){el.style.display='none';return}
  const o=state.objects.find(x=>x.id===state.calloutId);
- if(!o||(o.type!=='BLOK'&&o.kind!=='stage')){state.calloutId=null;el.style.display='none';return}
+ if(!o||(o.kind!=='building'&&o.kind!=='parking'&&o.kind!=='land'&&o.kind!=='stage')){state.calloutId=null;el.style.display='none';return}
  if(o.kind==='stage'){renderStageCallout(el,o);return}
+  if(o.type!=='BLOK'){const info=o.kind==='building'?(o.surrounding?'Не учитывается в ТЭП':`S прод.: ${fmt(buildingSale(o))} м² · S стр.: ${fmt(buildingGross(o))} м²`):o.kind==='parking'?`${fmt(parkingMM(o))} ММ · ${fmt(objArea(o))} м²`:`Площадь: ${fmt(objArea(o))} м²`;el.innerHTML=`<button class="coClose" id="coCloseBtn" title="Закрыть">×</button><div class="coTitle">${o.label}</div><div class="coStats">${info}</div><div class="coRow"><label>Этап</label><input id="coStageValue" type="number" min="1" step="1" value="${o.stage||1}"></div>${o.kind==='building'?`<div class="coRow"><label>Окружающая застройка (не учитывается в ТЭП)</label><input id="coSurrounding" type="checkbox" ${o.surrounding?'checked':''}></div>`:''}`;el.style.display='block';const p=state.calloutPos||{x:140,y:140};el.style.left=Math.max(8,Math.min(innerWidth-300,p.x+14))+'px';el.style.top=Math.max(8,Math.min(innerHeight-220,p.y-40))+'px';$('coCloseBtn').onclick=()=>{state.calloutId=null;renderAll()};$('coStageValue').onchange=e=>{checkpoint();o.stage=Math.max(1,Math.round(+e.target.value||1));renderAll()};if($('coSurrounding'))$('coSurrounding').onchange=e=>{checkpoint();o.surrounding=e.target.checked;renderAll()};return}
  const pinned=state.pinnedCallouts.some(p=>p.objId===o.id);const avgRow=o.metaFixed?'':'<div class="coRow"><label>Средняя площадь квартиры, м²</label><input id="coAvgApt" type="number" min="40" max="60" step="0.5" value="'+numAttr(o.avgApt,1)+'"></div>';
  // Пользователь (п.18, сент. 2026): «убери класс — оставь среднюю площадь квартиры... пусть там будет зашита
  // формула — при изменении средней площади пересчитываются тэп здания и количество квартир». Дискретный выбор
@@ -726,7 +730,7 @@ function renderBlockCallout(){
  // галочку закрепить на рабочем пространстве. с возможностью смещения этого облака» — обе части ниже: чекбокс
  // #coPin и перетаскивание всего блока (startCalloutDrag), не только полей ввода внутри него.
  el.innerHTML=`<button class="coClose" id="coCloseBtn" title="Закрыть">×</button><div class="coTitle">${o.label}</div>
-  <div class="coRow"><label>Этажность</label><input id="coFloors" type="number" min="1" max="40" value="${o.floors}"></div>
+  <div class="coRow"><label>Этап</label><input id="coStageValue" type="number" min="1" step="1" value="${o.stage||1}"></div><div class="coRow"><label>Окружающая застройка (не учитывается в ТЭП)</label><input id="coSurrounding" type="checkbox" ${o.surrounding?'checked':''}></div><div class="coRow"><label>Этажность</label><input id="coFloors" type="number" min="1" max="40" value="${o.floors}"></div>
   <div class="coRow"><label>1-й этаж</label><select id="coGround"><option value="residential" ${o.groundFloorUse!=='commercial'?'selected':''}>Жилой</option><option value="commercial" ${o.groundFloorUse==='commercial'?'selected':''}>Коммерция</option></select></div>
   ${avgRow}
   <div class="coStats">${calloutStatsHtml(o)}</div>
@@ -737,7 +741,7 @@ function renderBlockCallout(){
  el.style.left=Math.max(8,Math.min(window.innerWidth-w-8,pos.x+14+off.x))+'px';
  el.style.top=Math.max(8,Math.min(window.innerHeight-h-8,pos.y-h/2+off.y))+'px';
  $('coCloseBtn').onclick=()=>{state.calloutId=null;renderAll()};
- $('coFloors').addEventListener('change',()=>{checkpoint();o.floors=Math.max(1,Number($('coFloors').value)||1);syncBlockMetrics(o);renderAll()});
+ $('coStageValue').addEventListener('change',()=>{checkpoint();o.stage=Math.max(1,Math.round(+$('coStageValue').value||1));renderAll()});$('coSurrounding').addEventListener('change',()=>{checkpoint();o.surrounding=$('coSurrounding').checked;renderAll()});$('coFloors').addEventListener('change',()=>{checkpoint();o.floors=Math.max(1,Number($('coFloors').value)||1);syncBlockMetrics(o);renderAll()});
  $('coGround').addEventListener('change',()=>{checkpoint();o.groundFloorUse=$('coGround').value==='commercial'?'commercial':'residential';syncBlockMetrics(o);renderAll()});
  if($('coAvgApt'))$('coAvgApt').addEventListener('change',()=>{checkpoint();o.avgApt=Math.max(40,Math.min(60,Number($('coAvgApt').value)||50));syncBlockMetrics(o);renderAll()});
  $('coPin').addEventListener('change',()=>{
@@ -1090,6 +1094,7 @@ function renderInspector(){const root=$('inspector'),o=selected();if(!o){root.in
    root.innerHTML=html;$('openRoadEditor').onclick=()=>{loadRoadConfigToUI(o);$('roadPanel').style.display='';renderRoadProfile()};$('deleteInspector').onclick=deleteSelected;return;
  }
  if(o.kind==='building'){
+   html+=`<div class="frow"><label>Окружающая застройка (не учитывается в ТЭП)</label><input data-k="surrounding" type="checkbox" ${o.surrounding?'checked':''}></div>`;
    if(o.type==='BLOK'){
      const bc=o.blockCalc||{};
      const combo=MOP_COMBOS[o.comboKey]||MOP_COMBOS.T3L;
@@ -1120,7 +1125,7 @@ function renderInspector(){const root=$('inspector'),o=selected();if(!o){root.in
  if(o.kind==='land')html+=`<div class="statusline"><b>Площадь элемента:</b> ${fmt(area)} м²<br><b>Учет в благоустройстве:</b> да</div>`;
  if(['stage','road','limit','stylobat'].includes(o.kind))html+=`<div class="statusline"><b>Площадь элемента:</b> ${fmt(area)} м²</div>`;
  html+=`<div class="row2" style="margin-top:8px"><button class="btn" id="applyInspector">Применить</button><button class="btn danger" id="deleteInspector">Удалить</button></div>`;root.innerHTML=html;
- const applyKey=el=>{checkpoint();const k=el.dataset.k,oldMM=o.kind==='parking'?parkingMM(o):0;let v=el.value;if(el.type==='number')v=Number(v);if(k==='guest')v=String(v)==='true';if(el.type==='checkbox'&&k==='lengthMode')v=el.checked?'manual':'auto';if(k==='sectionType'){const st=SECTION_TYPES[v];if(st){o.comboKey=st.comboKey;o.shape=st.shape}}else if(isPolygonEditable(o)&&(k==='w'||k==='h'))resizePolygonBounds(o,k==='w'?v:o.w,k==='h'?v:o.h);else o[k]=v;if(o.type==='IND'&&(k==='w'||k==='h'||k==='kep'))syncGeometryMetrics(o);if(o.type==='BLOK'&&['legWidth','leg1','leg2'].includes(k)&&o.shape==='bend')o.points=lShapePoints(o.legWidth,o.leg1,o.leg2);if(o.type==='BLOK')syncBlockMetrics(o);if(o.type==='P_SURF'&&['placeW','placeH','aisle'].includes(k))resizeSurfaceParkingToMM(o,oldMM,false);
+ const applyKey=el=>{checkpoint();const k=el.dataset.k,oldMM=o.kind==='parking'?parkingMM(o):0;let v=el.type==='checkbox'?el.checked:el.value;if(el.type==='number')v=Number(v);if(k==='stage')v=Math.max(1,Math.round(v||1));if(k==='guest')v=String(v)==='true';if(el.type==='checkbox'&&k==='lengthMode')v=el.checked?'manual':'auto';if(k==='sectionType'){const st=SECTION_TYPES[v];if(st){o.comboKey=st.comboKey;o.shape=st.shape}}else if(isPolygonEditable(o)&&(k==='w'||k==='h'))resizePolygonBounds(o,k==='w'?v:o.w,k==='h'?v:o.h);else o[k]=v;if(o.type==='IND'&&(k==='w'||k==='h'||k==='kep'))syncGeometryMetrics(o);if(o.type==='BLOK'&&['legWidth','leg1','leg2'].includes(k)&&o.shape==='bend')o.points=lShapePoints(o.legWidth,o.leg1,o.leg2);if(o.type==='BLOK')syncBlockMetrics(o);if(o.type==='P_SURF'&&['placeW','placeH','aisle'].includes(k))resizeSurfaceParkingToMM(o,oldMM,false);
  // Раньше смена «Уровни»/«м²/ММ» для подземного/наземного паркинга тут же СЖИМАЛА площадь пятна, чтобы удержать
  // прежнее число машиномест (resizeParkingToMM(o,oldMM)) — из-за этого этажность фактически не увеличивала
  // вместимость, что и было найдено как дефект. Теперь при смене этажности/коэффициента площадь пятна не трогается:
@@ -1131,7 +1136,7 @@ function renderInspector(){const root=$('inspector'),o=selected();if(!o){root.in
  root.querySelectorAll('[data-k]').forEach(el=>el.addEventListener('change',()=>applyKey(el)));
  const areaInput=root.querySelector('[data-area]');if(areaInput)areaInput.addEventListener('change',()=>{checkpoint();resizeToArea(o,Number(areaInput.value));renderAll()});
  const mmInput=root.querySelector('[data-mm]');if(mmInput)mmInput.addEventListener('change',()=>{checkpoint();resizeParkingToMM(o,Number(mmInput.value));renderAll()});
- $('applyInspector').onclick=()=>{checkpoint();const oldMM=o.kind==='parking'?parkingMM(o):0;let targetW=o.w,targetH=o.h;root.querySelectorAll('[data-k]').forEach(el=>{const k=el.dataset.k;let v=el.value;if(el.type==='number')v=Number(v);if(k==='guest')v=String(v)==='true';if(el.type==='checkbox'&&k==='lengthMode')v=el.checked?'manual':'auto';if(k==='sectionType'){const st=SECTION_TYPES[v];if(st){o.comboKey=st.comboKey;o.shape=st.shape}}else if(isPolygonEditable(o)&&k==='w')targetW=v;else if(isPolygonEditable(o)&&k==='h')targetH=v;else o[k]=v});if(o.type==='BLOK'&&o.shape==='bend')o.points=lShapePoints(o.legWidth,o.leg1,o.leg2);else if(isPolygonEditable(o))resizePolygonBounds(o,targetW,targetH);if(o.type==='IND')syncGeometryMetrics(o);if(o.type==='BLOK')syncBlockMetrics(o);if(o.type==='P_SURF'&&mmInput)resizeSurfaceParkingToMM(o,Number(mmInput.value),false);else if(mmInput)resizeParkingToMM(o,Number(mmInput.value));else if(areaInput)resizeToArea(o,Number(areaInput.value));else if(o.kind==='parking')resizeParkingToMM(o,oldMM);renderAll()};$('deleteInspector').onclick=deleteSelected;
+ $('applyInspector').onclick=()=>{checkpoint();const oldMM=o.kind==='parking'?parkingMM(o):0;let targetW=o.w,targetH=o.h;root.querySelectorAll('[data-k]').forEach(el=>{const k=el.dataset.k;let v=el.type==='checkbox'?el.checked:el.value;if(el.type==='number')v=Number(v);if(k==='stage')v=Math.max(1,Math.round(v||1));if(k==='guest')v=String(v)==='true';if(el.type==='checkbox'&&k==='lengthMode')v=el.checked?'manual':'auto';if(k==='sectionType'){const st=SECTION_TYPES[v];if(st){o.comboKey=st.comboKey;o.shape=st.shape}}else if(isPolygonEditable(o)&&k==='w')targetW=v;else if(isPolygonEditable(o)&&k==='h')targetH=v;else o[k]=v});if(o.type==='BLOK'&&o.shape==='bend')o.points=lShapePoints(o.legWidth,o.leg1,o.leg2);else if(isPolygonEditable(o))resizePolygonBounds(o,targetW,targetH);if(o.type==='IND')syncGeometryMetrics(o);if(o.type==='BLOK')syncBlockMetrics(o);if(o.type==='P_SURF'&&mmInput)resizeSurfaceParkingToMM(o,Number(mmInput.value),false);else if(mmInput)resizeParkingToMM(o,Number(mmInput.value));else if(areaInput)resizeToArea(o,Number(areaInput.value));else if(o.kind==='parking')resizeParkingToMM(o,oldMM);renderAll()};$('deleteInspector').onclick=deleteSelected;
 }
 function deleteSelected(){if(!state.selected)return;checkpoint();state.pinnedCallouts=state.pinnedCallouts.filter(p=>p.objId!==state.selected);if(state.calloutId===state.selected)state.calloutId=null;state.objects=state.objects.filter(o=>o.id!==state.selected);state.selected=null;renderAll()}
 function duplicateSelected(){const o=selected();if(!o)return;checkpoint();const n=deep(o);n.id=uid();n.x+=12;n.y+=12;state.objects.push(n);state.selected=n.id;renderAll()}
