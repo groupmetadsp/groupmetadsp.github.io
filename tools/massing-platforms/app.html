@@ -1,0 +1,540 @@
+<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Секция · объём и ТЭП v13 · LITE / FULL</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#edf1f4;color:#253b4b;font:15px system-ui}header{padding:24px 3%;background:#223b4c;color:white}h1{margin:0;font-size:25px}header p{margin:6px 0 0;color:#c2d5df}main{display:grid;grid-template-columns:290px minmax(360px,1fr) 350px;gap:18px;padding:22px 3%}section{background:white;border-radius:14px;padding:20px;min-width:0}h2{font-size:18px;margin:0 0 18px}label{display:block;font-size:13px;margin:12px 0}input,select,button{font:inherit;border:1px solid #c6d3db;border-radius:6px;padding:8px;max-width:100%}input:not([type=checkbox]),select{display:block;width:100%;margin-top:5px;background:#fff8e7}button{background:#244c65;color:white;cursor:pointer;margin:6px 5px 0 0}input[type=checkbox]{accent-color:#b16d35}svg{width:100%;height:530px;touch-action:none;background:linear-gradient(#f4f8fa,#e6eef2);border-radius:10px}svg text{font:14px system-ui;fill:#203a4e;paint-order:stroke;stroke:#f3f7fa;stroke-width:4px;stroke-linejoin:round}dl{margin:0}dt{font-size:12px;color:#647988;margin-top:12px}dd{margin:2px 0 0;font-size:19px;font-weight:600}.hero{padding:14px;background:#e8f1f6;border-radius:9px;margin-bottom:15px}.hero strong{font-size:27px;display:block}.note{font-size:12px;line-height:1.6;color:#637783}.warn{padding:12px;background:#fff2dc;border-radius:7px;font-size:12px;line-height:1.5}#error{color:#ac2838}details{margin-top:18px}table{border-collapse:collapse;font-size:12px;width:100%}td,th{padding:8px 3px;border-bottom:1px solid #dbe5eb;text-align:right}th:first-child,td:first-child{text-align:left}.active{background:#fff0c5}.wide{grid-column:1/-1}.legend{display:flex;gap:20px;font-size:12px;margin-top:10px}.legend i{display:inline-block;width:10px;height:10px;margin-right:5px;background:#b5cedb}.legend i.com{background:#d69c65}@media(max-width:1150px){main{grid-template-columns:280px 1fr}.summary{grid-column:1/-1}dl{display:grid;grid-template-columns:1fr 1fr}dd{margin-top:10px}}@media(max-width:700px){main{display:block;padding:12px}section{margin-bottom:12px}svg{height:420px}}@media print{header{background:white;color:#203a4e}.controls,button,#angle{display:none}main{grid-template-columns:1fr 1fr}.summary{grid-column:auto}svg{height:440px}}.bad{color:#ad2638;background:#fff0f1;padding:10px;border-radius:7px}.invalid{border:2px solid #c52d42!important;background:#fff0f1!important}.m{color:#166681;font-size:12px;margin-right:5px}input:not([type=checkbox]),select{background:white}
+
+/* v12: Full workspace isolated from legacy Light workspace */
+#liteRoot[hidden],#fullRoot[hidden]{display:none!important}
+.app-header{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:17px 3%;background:#1f3745}
+.app-header h1{font-size:23px}.app-header p{font-size:12px;margin-top:4px}
+.mode-switch{display:flex;padding:5px;background:#152d3b;border:1px solid #516774;border-radius:13px;gap:4px}
+.mode-switch button{margin:0;border:0;background:transparent;min-width:112px;font-size:14px;font-weight:650;border-radius:9px;color:#bed0d8;padding:10px 14px}
+.mode-switch button.selected{background:#e5bc72;color:#293744;box-shadow:0 1px 8px #0d243580}
+#fullRoot{padding:18px 2.3% 40px;max-width:1760px;margin:auto;color:#243744}
+#fullRoot button{margin:0;border-radius:8px}
+#fullRoot button.plain{background:#fff;color:#274456;border:1px solid #c6d4da}
+#fullRoot button.primary{background:#254e65;color:#fff}
+#fullRoot button.gold{background:#e8bd72;color:#293744;border:0;font-weight:700}
+#fullRoot button.sm{padding:7px 10px;font-size:12px}
+#fullRoot button:disabled{opacity:.43;cursor:not-allowed}
+#fullRoot input[type=number],#fullRoot input[type=text],#fullRoot select{background:#fff;width:100%;margin-top:5px;padding:9px 10px;border:1px solid #c6d4de;border-radius:8px;color:#233847}
+#fullRoot input[type=range]{display:block;width:100%;padding:0;accent-color:#c18e43}
+#fullRoot input[type=checkbox]{accent-color:#b98944}
+#fullRoot label{font-size:12px;color:#607586;margin:0}
+.full-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.full-top .tabs{display:flex;gap:5px;background:#e4ebef;padding:4px;border-radius:12px}
+.full-top .tabs button{padding:10px 17px;background:transparent;color:#4f6c79;border:0}
+.full-top .tabs button.selected{background:white;box-shadow:0 2px 7px #50616b24;color:#273f50;font-weight:700}
+.actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.full-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px;margin:12px 0 16px}
+.metric{background:white;border:1px solid #dce5ea;padding:15px;border-radius:13px;min-width:0}
+.metric small{display:block;color:#687e8e;font-size:12px;line-height:1.3}.metric strong{display:block;font-size:25px;letter-spacing:-.6px;margin:5px 0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.metric span{font-size:12px;color:#6b7c86}
+.metric.emphasis{background:#f9f2e4;border-color:#e8dbbf}
+.full-grid{display:grid;grid-template-columns:minmax(290px,365px) minmax(340px,1fr) minmax(250px,315px);gap:13px;align-items:start}
+.full-panel{background:white;border-radius:14px;border:1px solid #dce5e9;padding:17px;min-width:0}
+.full-panel h2{margin:0 0 12px;font-size:16px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.full-panel h3{font-size:13px;margin:16px 0 10px;color:#395361}
+.full-controls{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.full-controls .span2{grid-column:1/-1}
+.choice-row{display:flex;gap:7px;align-items:center}
+.choice-row label{flex:1}
+.control-sub{margin-top:11px;border-top:1px solid #e5eaee;padding-top:12px}
+.control-sub .hint{margin-top:5px;font-size:11px;line-height:1.45;color:#687d8b}
+.helper{font-size:12px;line-height:1.5;color:#6b7d87}
+#fullError{color:#a43137;font-size:13px;margin:6px 0;min-height:0}
+#fullWarning{font-size:12px;line-height:1.5;color:#8c5a17;background:#fff4df;border:1px solid #f1dfb8;border-radius:8px;padding:9px;margin-top:11px}
+#fullWarning:empty{display:none}
+.full-inline{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:9px 0;font-size:13px}
+.full-inline strong{font-size:14px;white-space:nowrap}
+.full-toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.full-svg{display:block;width:100%;height:490px;background:linear-gradient(160deg,#f8fbfc,#e5eef3);border:1px solid #e4e9eb;border-radius:12px;touch-action:none}
+.full-svg text{font-family:system-ui,sans-serif;font-size:13px;fill:#294657;paint-order:stroke;stroke:#f1f7fb;stroke-width:3;stroke-linejoin:round}
+.full-svg [data-handle]{cursor:grab;touch-action:none}
+.full-svg [data-handle]:active{cursor:grabbing}
+.model-foot{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:12px}
+.model-foot label{max-width:260px;min-width:160px;flex:1}
+.pin-tag{display:inline-block;font-size:11px;padding:4px 7px;background:#f6e9d3;border-radius:6px;color:#7b582c}
+.full-inspect{display:grid;grid-template-columns:1fr auto;gap:7px;font-size:13px;margin-top:10px}
+.full-inspect span{color:#697d89}.full-inspect strong{text-align:right;white-space:nowrap}
+.full-wide{margin-top:14px}
+.list-scenarios{display:flex;gap:10px;align-items:stretch;overflow-x:auto;padding:4px 1px 10px}
+.scenario-card{min-width:205px;max-width:240px;flex:0 0 205px;border-radius:12px;border:1px solid #dbe5e9;background:#f9fbfc;padding:12px;display:flex;flex-direction:column;gap:7px}
+.scenario-card.current{border-color:#c39953;background:#fffbf3}
+.scenario-card strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scenario-card small{color:#657c8b;font-size:11px}.scenario-card .buttons{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+.full-table-wrap{overflow-x:auto}
+#fullRoot table{font-size:12px;border-collapse:collapse;width:100%;min-width:580px}
+#fullRoot td,#fullRoot th{padding:10px 9px;text-align:right;border-bottom:1px solid #e1e8eb;white-space:nowrap}
+#fullRoot td:first-child,#fullRoot th:first-child{text-align:left}
+#fullRoot th{background:#f1f6f8;color:#567082;font-weight:650}
+#fullRoot table tr:hover td{background:#f8fafb}
+#reverseControls{display:none}
+#fullRoot.reverse #forwardControls{display:none}
+#fullRoot.reverse #reverseControls{display:block}
+#fullRoot.reverse #fullWarnLabel{display:none}
+#reverseResults{display:none}
+.reverse-stats{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px;line-height:1.4;font-size:12px}
+.reverse-stats span{padding:6px 9px;border:1px solid #dce5e9;border-radius:7px;background:#f5f8fa}
+.reverse-stats .count-good{background:#e8f4ee;color:#246248;border-color:#c2e5cf}
+.reverse-stats .count-bad{background:#fff3e8;color:#985d22;border-color:#f3ddc0}
+.search-status{font-weight:650;font-size:11px;white-space:nowrap;border-radius:6px;padding:4px 6px}
+.search-status.ok{color:#1f674b;background:#dff3e8}
+.search-status.out{color:#9a6020;background:#fff0d9}
+.search-note{background:#f3f7fa;border-left:3px solid #8aa8b9;padding:9px 11px;margin:11px 0;font-size:11px;line-height:1.5;color:#54707f}
+#rTable table{min-width:1080px}
+#rTable td,#rTable th{white-space:nowrap}
+#rTable td.status-col{text-align:left}
+
+#fullRoot.reverse #reverseResults{display:block}
+#fullRoot.reverse #fullScenarios{display:none}
+#fullRoot.reverse #fullComparison{display:none}
+#fullRoot .no-data{padding:15px 8px;font-size:13px;color:#6c8190}
+.muted{color:#788f9d;font-size:12px}
+@media(max-width:1380px){.full-grid{grid-template-columns:300px minmax(370px,1fr)}.right-panel{grid-column:1/-1}.right-panel .full-inspect{grid-template-columns:repeat(2,1fr auto)}.full-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:810px){.full-grid{display:flex;flex-direction:column}.full-panel{width:100%}.full-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.right-panel .full-inspect{grid-template-columns:1fr auto}.full-svg{height:390px}}
+@media(max-width:520px){#fullRoot{padding:12px}.metric{padding:12px}.metric strong{font-size:20px}.full-svg{height:315px}.mode-switch button{min-width:90px}.full-metrics{gap:7px}}
+@media print{.mode-switch,.full-top .actions,.full-panel button,.model-foot,#fullScenarios,#fullComparison,#reverseControls{display:none!important}#fullRoot{padding:0}.full-grid{grid-template-columns:1fr 1fr}.right-panel{grid-column:1/-1}.full-svg{height:360px}.full-metrics{grid-template-columns:repeat(5,1fr)}.metric strong{font-size:16px}#liteRoot[hidden],#fullRoot[hidden]{display:none!important}}
+
+</style>
+<link rel="stylesheet" href="/tools/platforma-theme1.css?v=4">
+<header class="app-header"><div><h1>Секция: объём и ТЭП</h1><p>v13 · расчёт секции и предварительный массинг · работает без интернета</p></div><div class="mode-switch" role="group" aria-label="Режим работы"><button id="modeLite" type="button" aria-pressed="false">LITE</button><button id="modeFull" type="button" class="selected" aria-pressed="true">FULL</button></div></header>
+<div id="liteRoot" hidden><main><section class="controls"><h2>Параметры</h2>
+<label>Тип МОП<select id="type"><option>Н</option><option>Т</option><option>О</option></select></label>
+<label>Количество этажей<input id="floors" type="number" min="1" max="26" step="1" value="19"></label><div id="platform" class="warn"></div><label>Средняя площадь квартиры, м²<input id="avg" type="number" min="36" max="55" step="0.1" value="50.0"></label>
+
+<label>Ширина секции, м<input id="width" type="number" min="21.2" max="22.6" step="0.1" value="22.0"></label>
+<label>Квартиры на типовом этаже, м²<input id="target" type="number" min="31" step="10" value="640"></label>
+<label><input id="commercial" type="checkbox"> Первый этаж коммерческий</label>
+<div id="consistency"></div>
+<p class="note" id="firstnote"></p><div id="error" role="alert"></div>
+</section><section><h2>Объём здания</h2><svg id="view" viewBox="0 0 650 560" aria-label="Объёмная схема здания с размерами" role="img"></svg>
+<label>Поворот здания<input id="angle" type="range" min="15" max="75" value="35"></label><div class="legend"><span><i></i>Жилые этажи</span><span><i class="com"></i>Коммерция</span></div><p class="note">Высота ПТ показана условно до середины верхнего этажа; подпись — расчётное значение. Схематичный прямоугольный объём. Полосы показывают этажи; верхняя часть 2,5 м — выход на кровлю и парапет, не жилой этаж.</p></section>
+<section class="summary"><h2>Итоговые данные</h2><div id="results"></div><button id="save" disabled>Скачать параметры JSON</button><button onclick="print()">Печать / PDF</button><p class="note">Итоговое количество квартир округляется вниз после деления общей площади квартир на среднюю площадь. Это расчёт, не готовая квартирография. JSON — параметры для последующего подключения к массингу, не файл проекта «Метарайон».</p></section>
+<section class="wide"><h2>Диапазоны и расчёт</h2><div id="basis"></div><details><summary>Формулы и ограничения</summary><p class="note">Источник: КЭП (3).xlsx, лист «Массинг. ТЭП и габарит», с уточнениями пользователя. КЭП = КЭП от + (средняя − 36) / (55 − 36) × (КЭП до − КЭП от). Интерполяция только внутри 36–55 м². Пятно в конструкциях = площадь квартир типового / КЭП. Строительная площадь без шахт = пятно − количество лифтов × 4,59 м². Длина в конструкциях = пятно / ширину в конструкциях. Габарит с фасадом: +0,4 м к ширине и длине. Габаритная длина округляется вверх до 0,1 м; строительные площади рассчитываются без этого округления.</p><p class="note">Первый этаж = типовой − 60 м² для всех типов. Жилой первый этаж включается в площадь квартир, коммерческий учитывается отдельно. Типовых этажей = этажность − 1. Высота первого этажа: квартиры 3,3 м, коммерция 3,6 м; типового 2,92 м; кровля 2,5 м. Проверки длины ≤50 м и высоты ПТ ≤75 м — ограничения исходной модели, не нормативная экспертиза.</p><p class="note">Т: 1Л 1–10, 2Л 11–19, 3Л 20–26. Н: 3Л 11–19, 4Л 20–26. О: 3Л 20–26. Квартир всего = площадь квартир всего / средняя площадь квартиры, с округлением вниз до целого. Проверка целого числа квартир типового этажа сохранена. Для жилого первого этажа количество показано как оценка, если его площадь не делится на ту же среднюю.</p></details></section></main></div>
+
+<div id="fullRoot" hidden>
+  <div class="full-top">
+    <div class="tabs"><button id="fwdTab" type="button" class="selected">Прямой расчёт</button><button id="revTab" type="button">От заданной площади</button></div>
+    <div class="actions">
+      <button class="plain sm" type="button" id="fullReset">Сброс</button>
+      <button class="plain sm" type="button" id="fullJson">Экспорт JSON</button>
+      <button class="plain sm" type="button" id="fullCsv">Сравнение CSV</button>
+      <button class="primary sm" type="button" id="fullPrint">Печать / PDF</button>
+    </div>
+  </div>
+  <div class="full-metrics">
+    <div class="metric emphasis"><small>Площадь квартир всего</small><strong id="fmArea">—</strong><span>м² · жилая продаваемая</span></div>
+    <div class="metric"><small>КЭП (модель)</small><strong id="fmKep">—</strong><span>целевой / принятый</span></div>
+    <div class="metric"><small>Габарит здания</small><strong id="fmSize">—</strong><span>ширина × длина, м</span></div>
+    <div class="metric"><small>Количество квартир</small><strong id="fmCount">—</strong><span>оценка, округление вниз</span></div>
+    <div class="metric"><small>Строительная площадь</small><strong id="fmGross">—</strong><span>м² · без шахт по модели v11</span></div>
+  </div>
+  <div class="full-grid">
+    <section class="full-panel">
+      <div id="forwardControls">
+        <h2>Параметры секции <span class="pin-tag" id="fProfile">Н · 3 лифта</span></h2>
+        <div class="full-controls">
+          <label>Тип МОП<select id="fType"><option value="Н">Н</option><option value="Т">Т</option><option value="О">О</option></select></label>
+          <label>Этажность<input id="fFloors" type="number" step="1" min="1" max="26" value="19"></label>
+          <label>Ширина в конструкциях, м<input id="fWidth" type="number" step="0.1" value="22.0"></label>
+          <label>S квартир типового, м²<input id="fArea" type="number" step="0.01" value="640"></label>
+          <label>Средняя квартира, м²<input id="fAvg" type="number" step="0.1" min="36" max="55" value="50"></label>
+          <label>КЭП, доли<input id="fKep" type="number" step="0.001" min="0.55" max="0.90" value="0.715"></label>
+          <label class="span2"><input id="fCommercial" type="checkbox"> Первый этаж коммерческий</label>
+        </div>
+        <div class="control-sub">
+          <h3>Что удерживать при изменении длины</h3>
+          <label>Фиксация параметра<select id="fPin"><option value="area">Площадь квартир → менять КЭП</option><option value="kep">КЭП → менять площадь квартир</option><option value="length">Длина → при изменении ширины менять КЭП</option></select></label>
+          <label style="display:block;margin-top:11px">Длина по фасаду, м<input id="fLength" type="number" min="1" step="0.1" value="41.2"></label>
+          <p class="hint" id="fPinHelp">Изменение длины сохраняет площадь квартир типового этажа и изменяет КЭП.</p>
+        </div>
+        <div class="control-sub">
+          <div class="full-inline"><span>Этажность · быстрое изменение</span><strong id="floorSliderLabel">19</strong></div>
+          <input id="fFloorSlider" type="range" min="11" max="26" step="1" value="19" aria-label="Изменить этажность">
+        </div>
+        <div id="fullWarning" role="status"></div>
+        <div id="fullError" role="alert"></div>
+      </div>
+      <div id="reverseControls">
+        <h2>Подбор секции по цели</h2>
+        <p class="helper">Задайте требуемую суммарную площадь квартир. Подбор переберёт допустимые платформы и этажность, учитывая ограничения исходной модели.</p>
+        <div class="full-controls">
+          <label class="span2">Целевая площадь квартир, м²<input id="rGoal" type="number" min="100" step="100" value="12000"></label>
+          <label>Тип платформы<select id="rType"><option value="all">Т / Н / О — все</option><option value="Н">Н</option><option value="Т">Т</option><option value="О">О</option></select></label>
+          <label>Макс. этажей<input id="rMaxFloor" type="number" min="1" max="26" value="26" step="1"></label>
+          <label>Макс. длина, м<input id="rMaxLength" type="number" min="15" value="50" step="0.1"></label>
+          <label>Макс. высота ПТ, м<input id="rMaxHeight" type="number" min="5" value="75" step="1"></label>
+          <label class="span2"><input type="checkbox" id="rWhole" checked> Только целое количество квартир на типовом этаже</label>
+          <label class="span2"><input type="checkbox" id="rCom"> Первый этаж коммерческий</label>
+          <label>Допуск от целевой площади, ±%<input id="rTolerance" type="number" min="0" max="20" value="1" step="0.1"></label>
+          <label>Ранжирование<select id="rSort"><option value="gross">Минимальная Sстр здания</option><option value="delta">Ближе к цели</option></select></label>
+          <label class="span2"><input id="rShapes" type="checkbox"> Показывать альтернативные пропорции секции (узкая / широкая)</label>
+        </div>
+        <p class="helper">Средняя площадь квартиры берётся из прямого режима. Перебор: ширина 0,1 м; КЭП 0,001 в рабочих диапазонах Т и Н. Для О сохранён ориентировочный диапазон v12. По умолчанию решения должны попасть в заданный допуск.</p>
+        <div class="search-note">Статус «Расчётно допустим» означает соответствие ограничениям этого калькулятора. <b>АМ, математическая сборка квартирографии и геометрическая реализуемость квартир не проверяются.</b></div>
+        <button id="rFind" class="gold" type="button">Подобрать варианты</button>
+      </div>
+    </section>
+    <section class="full-panel">
+      <div class="full-toolbar"><h2 style="margin:0">Интерактивный объём</h2><div class="actions"><button class="plain sm" type="button" id="fViewIso">3D</button><button class="plain sm" type="button" id="fViewPlan">План</button><button class="plain sm" type="button" id="fViewFront">Фасад</button></div></div>
+      <svg id="fullView" class="full-svg" viewBox="0 0 700 530" role="img" aria-label="Объём здания. Потяните за золотистые маркеры длины, ширины и этажности"></svg>
+      <div class="model-foot">
+        <label>Поворот, °<input id="fAngle" type="range" min="15" max="75" value="35" step="1"></label>
+        <span class="helper">Золотые маркеры: <b>длина · ширина · этажность</b>. Также доступны поля слева.</span>
+      </div>
+    </section>
+    <section class="full-panel right-panel">
+      <h2>Расчётные ТЭП</h2>
+      <div id="fInspect" class="full-inspect"></div>
+      <div class="control-sub">
+        <h3>Логика расчёта</h3>
+        <p class="helper">Использована исходная упрощённая модель v11: S квартир типового этажа / КЭП; первый этаж −60 м²; площади шахт по 4,59 м²; фиксированные высоты этажей. Это предварительный массинг, не нормативная экспертиза и не готовая квартирография.</p>
+        <p class="helper">В отличие от режима «LITE», во «FULL» разрешён ручной КЭП. В сравнении показаны результаты одной модели для всех вариантов.</p>
+      </div>
+    </section>
+  </div>
+  <section class="full-panel full-wide" id="reverseResults"><h2>Найденные решения</h2><div id="rStats" class="reverse-stats" role="status"></div><div class="full-table-wrap" id="rTable"></div><p class="helper">Sстр рассчитывается в упрощённой модели v11: площадь типового без шахт × этажность. Геометрический КЭП — справочный показатель по прямоугольному фасадному контуру, может отличаться от принятого модельного КЭП. Открытый вариант можно сохранить в сценариях и сравнить с другими.</p></section>
+  <section class="full-panel full-wide" id="fullScenarios">
+    <div class="full-toolbar"><h2 style="margin:0">Сценарии секций</h2><div class="actions"><input id="scenarioName" type="text" placeholder="Название варианта" style="width:200px;margin:0"><button class="gold sm" type="button" id="scenarioSave">+ Сохранить текущий</button><button class="plain sm" type="button" id="scenarioCompare">Сравнить выбранные</button></div></div>
+    <div class="list-scenarios" id="scenarioList"></div>
+    <p class="helper">Варианты сохраняются в браузере этого устройства (если разрешено локальное хранение). Переключение «LITE / FULL» не удаляет их.</p>
+  </section>
+  <section class="full-panel full-wide" id="fullComparison"><h2>Сравнение вариантов</h2><div id="compareTable" class="full-table-wrap"></div></section>
+</div>
+
+<script>const $=id=>document.getElementById(id),fmt=x=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:3}).format(x);let current=null;const fmtAvg=x=>new Intl.NumberFormat('ru-RU',{minimumFractionDigits:1,maximumFractionDigits:1}).format(x);
+function profile(type,n){if(type==='Т')return n>=1&&n<=10?{lifts:1,lo:1,hi:10}:n>=11&&n<=19?{lifts:2,lo:11,hi:19}:n>=20&&n<=26?{lifts:3,lo:20,hi:26}:null;if(type==='Н')return n>=11&&n<=19?{lifts:3,lo:11,hi:19}:n>=20&&n<=26?{lifts:4,lo:20,hi:26}:null;return n>=20&&n<=26?{lifts:3,lo:20,hi:26}:null;}
+function calculate(x){if(!Number.isInteger(x.floors))throw Error('Этажность должна быть целой.');const q=profile(x.type,x.floors);if(!q)throw Error('Этажность вне диапазонов выбранной платформы.');const isH=x.type==='Н',wmin=isH?21.2:x.type==='О'?17:15.5,wmax=isH?22.6:x.type==='О'?18:16.9,pmin=isH?600:540,pmax=isH?650:550;if(!(x.avg>=36&&x.avg<=55))throw Error('Средняя площадь: от 36 до 55 м².');if(!(x.p>=pmin&&x.p<=pmax))throw Error(`Площадь квартир типового этажа: ${pmin}–${pmax} м².`);if(!(x.structWidth>=wmin&&x.structWidth<=wmax))throw Error(`Ширина в конструкциях: ${wmin}–${wmax} м.`);const kmin=isH?.70:x.type==='Т'?.72:.73,kmax=isH?.72:x.type==='Т'?.73:.74,kep=kmin+(x.avg-36)/19*(kmax-kmin),gross=x.p/kep,b=gross-q.lifts*4.59,structLength=gross/x.structWidth,first=x.p-60,com=x.commercial?first:0,total=(x.floors-1)*x.p+(x.commercial?0:first),typCount=x.p/x.avg,firstCount=x.commercial?0:first/x.avg,whole=Math.abs(typCount-Math.round(typCount))<1e-8,firstHeight=x.commercial?3.6:3.3;return {...x,...q,wmin,wmax,pmin,pmax,kmin,kmax,kep,gross,b,structLength,width:x.structWidth+.4,length:Math.ceil(Number(((structLength+.4)*10).toPrecision(15)))/10,first,com,total,typCount,firstCount,totalCount:Math.floor(total/x.avg),whole,firstHeight,height:firstHeight+(x.floors-1)*2.92+2.5,fireHeight:.2+firstHeight+(x.floors-2)*2.92+.9};}
+function suggestions(r){let aa=[],pp=[];for(let n=1;n<=30;n++){const avg=r.p/n,p=n*r.avg;if(avg>=36&&avg<=55)aa.push({n,v:avg});if(p>=r.pmin&&p<=r.pmax)pp.push({n,v:p});}aa.sort((a,b)=>Math.abs(a.v-r.avg)-Math.abs(b.v-r.avg));pp.sort((a,b)=>Math.abs(a.v-r.p)-Math.abs(b.v-r.p));return {avg:aa[0],p:pp[0]};}
+function render(){current=null;$('save').disabled=true;['avg','target'].forEach(id=>$(id).classList.remove('invalid'));$('consistency').innerHTML='';const type=$('type').value,n=+$('floors').value,q=profile(type,n);$('platform').textContent=q?`${type}-тип · ${q.lifts}Л · ${q.lo}–${q.hi} этажей`:'Нет подходящего диапазона';$('firstnote').textContent='Первый этаж: площадь типового минус 60 м².';try{const r=current=calculate({type,floors:n,avg:$('avg').dataset.exact?Number($('avg').dataset.exact):+$('avg').value,p:+$('target').value,structWidth:+$('width').value,commercial:$('commercial').checked});$('error').textContent='';const ss=suggestions(r);if(!r.whole){['avg','target'].forEach(id=>$(id).classList.add('invalid'));$('consistency').innerHTML=`<div class="bad">${fmt(r.p)} / ${fmtAvg(r.avg)} = ${fmt(r.typCount)} квартир — не целое число.<br>${ss.avg?`Ближайшая средняя (отображение округлено): ${fmtAvg(ss.avg.v)} м² → ${ss.avg.n} квартир. <button id="fixavg">Принять среднюю</button>`:''}${ss.p?`<br>Ближайшая площадь этажа: ${fmt(ss.p.v)} м² → ${ss.p.n} квартир. <button id="fixp">Принять площадь</button>`:''}</div>`;if(ss.avg)$('fixavg').onclick=()=>{$('avg').dataset.exact=ss.avg.v;$('avg').value=ss.avg.v.toFixed(1);render()};if(ss.p)$('fixp').onclick=()=>{$('target').value=ss.p.v;render()};}else $('consistency').textContent=`${Math.round(r.typCount)} квартир на типовом этаже — согласовано.`;
+const pairs=[['Тип платформы',r.type+' · '+r.lifts+'Л'],['Средняя квартира',fmtAvg(r.avg)+' м²'],['КЭП расчётный',fmt(r.kep*100)+'%'],['Квартиры на типовом этаже',fmt(r.p)+' м²'],['Квартир на типовом этаже'+(r.whole?'':', несоответствие'),fmt(r.typCount)],['М · Первый этаж',r.commercial?'Коммерция':'Квартиры'],['Продаваемая площадь первого этажа',fmt(r.first)+' м²'],['М · Площадь квартир всего',fmt(r.total)+' м²'],['М · Площадь коммерции',fmt(r.com)+' м²'],['М · Квартир всего (округление вниз)',fmt(r.totalCount)],['Квартир первого этажа, оценка',fmt(r.firstCount)],['М · Габарит с фасадом',fmt(r.width)+' × '+fmt(r.length)+' м'],['Высота архитектурная',fmt(r.height)+' м'],['Высота ПТ',fmt(r.fireHeight)+' м'],['Строительная площадь этажа без шахт',fmt(r.b)+' м²'],['Строительная площадь здания без шахт',fmt(r.b*r.floors)+' м²']];$('results').innerHTML=`<div class="hero"><strong>${fmt(r.width)} × ${fmt(r.length)} м</strong>${r.floors} этажей · высота ${fmt(r.height)} м</div><dl>`+pairs.map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('')+'</dl>'+(r.structLength>50?'<p class="bad">Длина в конструкциях больше 50 м.</p>':'')+(r.fireHeight>75?'<p class="bad">Высота ПТ больше 75 м.</p>':'');$('basis').innerHTML=`<table><tr><th>Параметр</th><th>От</th><th>До</th><th>Принято</th></tr>`+[['Этажность',r.lo,r.hi,r.floors],['Площадь квартир типового, м²',r.pmin,r.pmax,r.p],['Средняя квартира, м²',36,55,r.avg],['КЭП',r.kmin,r.kmax,r.kep],['Ширина в конструкциях, м',r.wmin,r.wmax,r.structWidth]].map(a=>'<tr>'+a.map(v=>'<td>'+(typeof v==='number'?fmt(v):v)+'</td>').join('')+'</tr>').join('')+'</table><p class="note">М — ключевые параметры для массинга. Квартир всего: общая площадь квартир / средняя площадь, округление вниз. Дробное число квартир типового этажа выделяется как несоответствие.</p>';draw(r);$('save').disabled=false;}catch(e){$('error').textContent=e.message;$('results').innerHTML='';$('basis').textContent='Исправьте параметры для расчёта.';$('view').innerHTML='';}}
+['avg','floors','width','target','commercial'].forEach(id=>$(id).addEventListener('input',render));$('type').onchange=()=>{const h=$('type').value==='Н';const o=$('type').value==='О';$('width').value=h?22:o?17:16;$('width').min=h?21.2:o?17:15.5;$('width').max=h?22.6:o?18:16.9;$('target').value=h?640:550;$('floors').value=$('type').value==='О'?20:19;render()};$('angle').oninput=()=>{if(current)draw(current)};$('save').onclick=()=>{if(!current)return;const r=current,url=URL.createObjectURL(new Blob([JSON.stringify({schema:'section-v11',source:'КЭП (3).xlsx / Массинг. ТЭП и габарит',inputs:r,massing:{width:r.width,length:r.length,height:r.height,floors:r.floors,apartmentArea:r.total,commercialArea:r.com,apartmentCount:r.totalCount,apartmentCountRounding:'floor(totalApartmentArea / averageApartmentArea)',firstFloor:r.commercial?'commercial':'residential'}},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='section_v11.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+
+function draw(r){const svg=$('view'),theta=+$('angle').value*Math.PI/180,L=r.length,W=r.width,H=r.height;const project=(x,y,z)=>[(x*Math.cos(theta)-y*Math.sin(theta)),(x*Math.sin(theta)+y*Math.cos(theta))*.45-z];const corners=[[0,0,0],[L,0,0],[L,W,0],[0,W,0],[0,0,H],[L,0,H],[L,W,H],[0,W,H]].map(p=>project(...p));const xs=corners.map(p=>p[0]),ys=corners.map(p=>p[1]),mnX=Math.min(...xs),mxX=Math.max(...xs),mnY=Math.min(...ys),mxY=Math.max(...ys),scale=Math.min(430/(mxX-mnX),400/(mxY-mnY));const pt=(x,y,z)=>{const p=project(x,y,z);return [100+(430-(mxX-mnX)*scale)/2+(p[0]-mnX)*scale,65+(400-(mxY-mnY)*scale)/2+(p[1]-mnY)*scale]};const points=a=>a.map(p=>pt(...p).join(',')).join(' ');let out='';const poly=(a,c)=>out+=`<polygon points="${points(a)}" fill="${c}" stroke="#6e8f9f" stroke-width="1"/>`;for(let i=0;i<r.floors;i++){const z=i===0?0:r.firstHeight+(i-1)*2.92,top=i===0?r.firstHeight:r.firstHeight+i*2.92;const c=i===0&&r.commercial;poly([[L,0,z],[L,W,z],[L,W,top],[L,0,top]],c?'#bd814e':'#8daebe');poly([[0,W,z],[L,W,z],[L,W,top],[0,W,top]],c?'#e1ad78':'#cbdde5');}const z=H-2.5;poly([[L,0,z],[L,W,z],[L,W,H],[L,0,H]],'#6f8a98');poly([[0,W,z],[L,W,z],[L,W,H],[0,W,H]],'#a4bac5');poly([[0,0,H],[L,0,H],[L,W,H],[0,W,H]],'#dce6eb');const line=(a,b,label,dx=0,dy=0)=>{const p=pt(...a),q=pt(...b),xx=(p[0]+q[0])/2+dx,yy=(p[1]+q[1])/2+dy;out+=`<path d="M${p} L${q}" stroke="#244b65" fill="none" stroke-dasharray="4 3"/><circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#244b65"/><circle cx="${q[0]}" cy="${q[1]}" r="3" fill="#244b65"/><text x="${xx}" y="${yy}" text-anchor="middle">${label}</text>`;};line([0,W+5,0],[L,W+5,0],`Длина ${fmt(L)} м`,0,22);line([L+5,0,0],[L+5,W,0],`Ширина ${fmt(W)} м`,30,23);line([L+8,0,0],[L+8,0,H],`Высота арх. ${fmt(H)} м`,0,-22);line([-7,W,0],[-7,W,Math.max(0,r.firstHeight+(r.floors-2)*2.92+1.46)],`Высота ПТ ${fmt(r.fireHeight)} м`,0,0);out+=`<text x="25" y="28">${r.floors} этажей · МОП ${r.type}</text>`;svg.innerHTML=out;}
+
+$('avg').addEventListener('input',()=>{delete $('avg').dataset.exact;render()});$('avg').addEventListener('change',()=>{if($('avg').value!==''&&Number.isFinite(+$('avg').value))$('avg').value=(+$('avg').value).toFixed(1)});render();</script>
+<script>
+
+(() => {
+  'use strict';
+  const E = id => document.getElementById(id);
+  const nfmt = (x,d=1) => Number.isFinite(x) ? new Intl.NumberFormat('ru-RU',{minimumFractionDigits:0,maximumFractionDigits:d}).format(x) : '—';
+  const fixed = (x,d) => Number.isFinite(x) ? Number(x).toFixed(d) : '';
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ranges = { 'Н':{wmin:21.2,wmax:22.6,pmin:600,pmax:650},'Т':{wmin:15.5,wmax:16.9,pmin:540,pmax:550},'О':{wmin:17,wmax:18,pmin:540,pmax:550} };
+  const kepAuto = (type,avg) => (type==='Н'?.70:type==='Т'?.72:.73)+(avg-36)/19*(type==='Н'?.02:.01);
+  const clamp=(x,lo,hi)=>Math.min(hi,Math.max(lo,x));
+  let st = {type:'Н',floors:19,avg:50,p:640,structWidth:22,commercial:false,kep:kepAuto('Н',50),pin:'area',pinnedLength:null,angle:35,view:'iso'};
+  let result=null, searchResults=[], scenarios=[], activeId=null, comparing=true, isFull=true, loading=false, lightSignature=null;
+  const liteSignature=()=>[E('type').value,E('floors').value,E('avg').value,E('avg').dataset.exact||'',E('target').value,E('width').value,E('commercial').checked].join('|');
+  const storeKey='META_SECTION_V12_SCENARIOS';
+  const fSnapshot=()=>({...st,pinnedLength:st.pinnedLength});
+  function loadStorage(){try{const x=JSON.parse(localStorage.getItem(storeKey)||'[]');if(Array.isArray(x))scenarios=x.filter(a=>a&&a.state&&a.id).slice(0,50);}catch(e){scenarios=[];}}
+  function persist(){try{localStorage.setItem(storeKey,JSON.stringify(scenarios));}catch(e){E('fullWarning').textContent='Сохранение в браузере недоступно. Варианты останутся до закрытия страницы; используйте экспорт JSON.';}}
+  function fromLite(){
+    st.type=E('type').value;st.floors=+E('floors').value;st.avg=Number(E('avg').dataset.exact||E('avg').value);st.p=+E('target').value;st.structWidth=+E('width').value;st.commercial=E('commercial').checked;
+    st.kep=kepAuto(st.type,st.avg);st.pin='area';st.pinnedLength=null;st.angle=+E('angle').value;st.view='iso';
+  }
+  function toLite(){
+    const newType=st.type; if(E('type').value!==newType){E('type').value=newType;E('type').onchange();}
+    E('floors').value=st.floors;E('avg').value=fixed(st.avg,2);delete E('avg').dataset.exact;
+    E('target').value=fixed(st.p,2);E('width').value=fixed(st.structWidth,2);E('commercial').checked=st.commercial;E('angle').value=st.angle;
+    render();lightSignature=liteSignature();
+  }
+  function switchMode(mode){
+    if(mode==='full'&&!isFull&&liteSignature()!==lightSignature){fromLite();}
+    if(mode==='lite'&&isFull){toLite();}
+    isFull=mode==='full';
+    E('liteRoot').hidden=isFull;E('fullRoot').hidden=!isFull;
+    E('modeLite').classList.toggle('selected',!isFull);
+    E('modeFull').classList.toggle('selected',isFull);
+    E('modeLite').setAttribute('aria-pressed',String(!isFull));E('modeFull').setAttribute('aria-pressed',String(isFull));
+    if(isFull)redraw();
+  }
+  function resultFor(s) {
+    let r=calculate({type:s.type,floors:s.floors,avg:s.avg,p:s.p,structWidth:s.structWidth,commercial:s.commercial});
+    if(!(s.kep>=0.55&&s.kep<=0.90))throw Error('КЭП: допустимо 0,550–0,900.');
+    const k=s.kep, gross=s.p/k, b=gross-r.lifts*4.59, structLength=gross/s.structWidth;
+    const length=Math.ceil(Number(((structLength+.4)*10).toPrecision(15)))/10;
+    return {...r,kep:k,gross,b,structLength,length,width:s.structWidth+.4,actualKep:s.p/((s.structWidth+.4)*length-r.lifts*4.59)};
+  }
+  function refreshCalculated(){try{result=resultFor(st);E('fullError').textContent='';}catch(e){result=null;E('fullError').textContent=e.message;}}
+  function setProfile(){
+    const r=ranges[st.type];if(!r)return;
+    st.structWidth=clamp(st.structWidth,r.wmin,r.wmax);st.p=clamp(st.p,r.pmin,r.pmax);
+    const q=profile(st.type,st.floors);
+    if(!q)st.floors=st.type==='О'?20:st.type==='Н'?19:19;
+    st.kep=kepAuto(st.type,st.avg);
+    if(st.pin==='length'&&st.pinnedLength)st.kep=st.p/(st.structWidth*(st.pinnedLength-.4));
+  }
+  function change(name,value){
+    let prev={...st};
+    if(!Number.isFinite(value)&&name!=='type'&&name!=='commercial'&&name!=='pin'){return;}
+    if(name==='type'){
+      st.type=value;setProfile();
+    } else if(name==='pin'){
+      st.pin=value;
+      st.pinnedLength=value==='length'&&result?result.length:null;
+    } else if(name==='length'){
+      if(st.pin==='length')return;
+      if(!(value>0.4))return;
+      if(st.pin==='area')st.kep=st.p/(st.structWidth*(value-0.4));
+      else st.p=st.kep*st.structWidth*(value-0.4);
+    } else if(name==='width'){
+      st.structWidth=value;
+      if(st.pin==='length'&&st.pinnedLength)st.kep=st.p/(st.structWidth*(st.pinnedLength-.4));
+    } else if(name==='area'){
+      st.p=value;
+      if(st.pin==='length'&&st.pinnedLength)st.kep=st.p/(st.structWidth*(st.pinnedLength-.4));
+    } else if(name==='kep'){
+      st.kep=value;
+      if(st.pin==='length'&&st.pinnedLength)st.p=st.kep*st.structWidth*(st.pinnedLength-.4);
+    } else if(name==='avg'){
+      st.avg=value;
+    } else if(name==='floors'){
+      st.floors=Math.round(value);
+    } else if(name==='commercial'){
+      st.commercial=value;
+    } else if(name==='angle'){
+      st.angle=value;
+    }
+    refreshCalculated();
+    if(!result&&name!=='angle'){
+      // Keep invalid numeric field so the user can see why it is invalid, but do not draw a misleading geometry.
+    }
+    syncControls();redraw();
+  }
+  function syncControls(){
+    loading=true;
+    const fields={fType:st.type,fFloors:st.floors,fWidth:fixed(st.structWidth,2),fArea:fixed(st.p,2),fAvg:fixed(st.avg,2),fKep:fixed(st.kep,4),fPin:st.pin,fAngle:st.angle};
+    for(const [id,v] of Object.entries(fields)){if(document.activeElement!==E(id))E(id).value=v;}
+    E('fCommercial').checked=st.commercial;
+    const rg=ranges[st.type],q=profile(st.type,st.floors);
+    E('fWidth').min=rg.wmin;E('fWidth').max=rg.wmax;E('fArea').min=rg.pmin;E('fArea').max=rg.pmax;
+    E('fFloorSlider').min=st.type==='О'?20:st.type==='Н'?11:1;
+    E('fFloorSlider').max=26;E('fFloorSlider').value=st.floors;E('floorSliderLabel').textContent=st.floors;
+    E('fProfile').textContent=`${st.type} · ${q?q.lifts:'—'} лифта`;E('fLength').disabled=st.pin==='length';
+    if(result&&document.activeElement!==E('fLength'))E('fLength').value=fixed(result.length,1);
+    E('fPinHelp').textContent=st.pin==='area'?'Длина меняется через КЭП при неизменной площади квартир.':st.pin==='kep'?'Длина меняется через площадь квартир при неизменном КЭП.':'Длина зафиксирована. Изменение ширины или площади квартир корректирует КЭП; изменение КЭП корректирует площадь.';
+    loading=false;
+  }
+  function fmtMetric(id,v){E(id).textContent=v;}
+  function redraw(){
+    refreshCalculated();
+    syncControls();
+    if(!result){for(const id of ['fmArea','fmKep','fmSize','fmCount','fmGross'])fmtMetric(id,'—');E('fInspect').innerHTML='';E('fullView').innerHTML='<text x="25" y="50">Проверьте исходные данные</text>';E('fullWarning').textContent='';return;}
+    const r=result;
+    fmtMetric('fmArea',nfmt(r.total,1));fmtMetric('fmKep',nfmt(r.kep*100,2)+'%');fmtMetric('fmSize',nfmt(r.width,1)+' × '+nfmt(r.length,1));fmtMetric('fmCount',nfmt(r.totalCount,0));fmtMetric('fmGross',nfmt(r.b*r.floors,1));
+    E('fInspect').innerHTML=[['Платформа',r.type],['Количество этажей',r.floors],['Количество лифтов',r.lifts],['Квартиры типового этажа, м²',nfmt(r.p,2)],['Квартир на типовом',nfmt(r.typCount,2)],['Первый этаж',r.commercial?'Коммерция':'Квартиры'],['S первого этажа, м²',nfmt(r.first,1)],['S коммерции, м²',nfmt(r.com,1)],['S этажа без шахт, м²',nfmt(r.b,2)],['Площадь в конструкциях, м²',nfmt(r.gross,2)],['Длина по фасаду, м',nfmt(r.length,1)],['Высота архитектурная, м',nfmt(r.height,2)],['Высота ПТ, м',nfmt(r.fireHeight,2)]].map(([a,b])=>`<span>${a}</span><strong>${b}</strong>`).join('');
+    let warn=[];if(!r.whole)warn.push('Количество квартир типового этажа дробное. Итоговое число квартир оценочное.');if(r.fireHeight>75)warn.push('Высота ПТ превышает 75 м (ограничение модели).');if(r.structLength>50)warn.push('Длина в конструкциях превышает 50 м.');
+    if(st.pin==='length'&&st.pinnedLength&&Math.abs(r.length-st.pinnedLength)>.16)warn.push('Зафиксированная длина не может быть выдержана при текущих ограничениях.');
+    E('fullWarning').textContent=warn.join(' ');
+    drawFull(r);
+  }
+  function drawFull(r){
+    const svg=E('fullView');let mode=st.view, L=r.length,W=r.width,H=r.height;
+    E('fAngle').disabled=mode!=='iso';
+    for(const [id,m] of [['fViewIso','iso'],['fViewPlan','plan'],['fViewFront','front']]){E(id).style.background=mode===m?'#e8bd72':'';E(id).style.color=mode===m?'#213d4c':'';}
+    const theta=st.angle*Math.PI/180;
+    const proj=(x,y,z)=> mode==='plan'?[x,y]:mode==='front'?[x,-z]:[x*Math.cos(theta)-y*Math.sin(theta),(x*Math.sin(theta)+y*Math.cos(theta))*.45-z];
+    const pts=[[0,0,0],[L,0,0],[L,W,0],[0,W,0],[0,0,H],[L,0,H],[L,W,H],[0,W,H]].map(p=>proj(...p));
+    const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+    const scale=Math.min(480/Math.max(1,maxX-minX),380/Math.max(1,maxY-minY));
+    const pt=(x,y,z)=>{const p=proj(x,y,z);return [100+(490-(maxX-minX)*scale)/2+(p[0]-minX)*scale,65+(390-(maxY-minY)*scale)/2+(p[1]-minY)*scale];};
+    const polygon=a=>a.map(p=>pt(...p).map(x=>x.toFixed(2)).join(',')).join(' ');
+    let out='';
+    const poly=(a,fill)=>{out+=`<polygon points="${polygon(a)}" fill="${fill}" stroke="#7594a6" stroke-width="1.1"/>`;};
+    if(mode==='plan'){
+      poly([[0,0,H],[L,0,H],[L,W,H],[0,W,H]],'#c5dbe7');
+      for(let i=1;i<5;i++){const x=L*i/5,outA=pt(x,0,H),outB=pt(x,W,H);out+=`<line x1="${outA[0]}" y1="${outA[1]}" x2="${outB[0]}" y2="${outB[1]}" stroke="#a2c0d0" stroke-dasharray="4 5"/>`;}
+    } else {
+      for(let i=0;i<r.floors;i++){
+        const z=i===0?0:r.firstHeight+(i-1)*2.92,top=i===0?r.firstHeight:r.firstHeight+i*2.92,com=i===0&&r.commercial;
+        if(mode==='iso'){poly([[L,0,z],[L,W,z],[L,W,top],[L,0,top]],com?'#bd814e':'#91b0c1');poly([[0,W,z],[L,W,z],[L,W,top],[0,W,top]],com?'#deb17e':'#c9dce7');}
+        else poly([[0,0,z],[L,0,z],[L,0,top],[0,0,top]],com?'#deb17e':'#c1d9e5');
+      }
+      if(mode==='iso'){const z=H-2.5;poly([[L,0,z],[L,W,z],[L,W,H],[L,0,H]],'#809baa');poly([[0,W,z],[L,W,z],[L,W,H],[0,W,H]],'#a8bfcb');poly([[0,0,H],[L,0,H],[L,W,H],[0,W,H]],'#e4ebef');}
+    }
+    function guide(a,b,label,dx=0,dy=0){const p=pt(...a),q=pt(...b);out+=`<path d="M${p[0]},${p[1]}L${q[0]},${q[1]}" stroke="#738f9e" stroke-width="1.1" stroke-dasharray="5 4"/><text x="${(p[0]+q[0])/2+dx}" y="${(p[1]+q[1])/2+dy}" text-anchor="middle">${esc(label)}</text>`;}
+    if(mode==='plan'){guide([0,W+2,0],[L,W+2,0],`Длина ${nfmt(L,1)} м`,0,23);guide([L+2,0,0],[L+2,W,0],`Ширина ${nfmt(W,1)} м`,33,7);}
+    else if(mode==='front'){guide([0,-1,0],[L,-1,0],`Длина ${nfmt(L,1)} м`,0,30);guide([L+2,0,0],[L+2,0,H],`Высота ${nfmt(H,1)} м`,36,0);}
+    else {guide([0,W+4,0],[L,W+4,0],`Длина ${nfmt(L,1)} м`,0,26);guide([L+4,0,0],[L+4,W,0],`Ширина ${nfmt(W,1)} м`,23,23);guide([L+7,0,0],[L+7,0,H],`${nfmt(H,1)} м`,25,0);}
+    // Three drag handles, independent of camera angle. Gold circles identify editable constraints.
+    const handle=(p,name,txt,dx,dy)=>{const v=pt(...p),x=v[0]+dx,y=v[1]+dy;out+=`<line x1="${v[0]}" y1="${v[1]}" x2="${x}" y2="${y}" stroke="#b88743" stroke-width="1.4"/><g data-handle="${name}" aria-label="Перетащить: ${esc(txt)}"><circle data-handle="${name}" cx="${x}" cy="${y}" r="13" fill="#efc47a" stroke="#92652a" stroke-width="2"/><text data-handle="${name}" x="${x}" y="${y+4}" text-anchor="middle" font-size="13" style="stroke:none;fill:#513a1f;pointer-events:none">↔</text></g>`;};
+    handle([L,W,0],'length','длина',24,25);handle([L,W/2,0],'width','ширина',mode==='front'?-20:24,-6);if(mode!=='plan')handle([0,0,H],'floors','этажность',-21,-9);
+    out+=`<text x="20" y="30">${r.floors} этажей · ${r.type} · ${r.lifts}Л</text>`;
+    if(mode==='plan')out+=`<text x="20" y="51">План крыши (условно)</text>`;
+    if(mode==='front')out+=`<text x="20" y="51">Фасад (условно)</text>`;
+    svg.innerHTML=out;
+  }
+  // FULL v13: exhaustive (within configured 0.1m/0.001 grids) quick search.
+  // Uses the v11 simplified volume model, NOT the apartment-layout assembly engine.
+  const reverseKep = {
+    'Т':{min:0.720,max:0.742,origin:'рабочий диапазон Т'},
+    'Н':{min:0.710,max:0.729,origin:'рабочий диапазон Н'},
+    'О':{min:0.730,max:0.740,origin:'ориентир v12, не подтверждён АМ'}
+  };
+  function findReverse(){
+    const goal=Number(E('rGoal').value),maxFloors=Number(E('rMaxFloor').value),
+      maxLength=Number(E('rMaxLength').value),maxHeight=Number(E('rMaxHeight').value),
+      tolPct=Number(E('rTolerance').value),whole=E('rWhole').checked,commercial=E('rCom').checked,
+      showShapes=E('rShapes').checked,sort=E('rSort').value;
+    const types=E('rType').value==='all'?['Н','Т','О']:[E('rType').value];
+    const stats=E('rStats'),tbl=E('rTable');searchResults=[];
+    if(![goal,maxFloors,maxLength,maxHeight,tolPct,st.avg].every(Number.isFinite)||goal<=0||
+      maxFloors<1||maxFloors>26||maxLength<=0||maxHeight<=0||tolPct<0||tolPct>20||st.avg<36||st.avg>55){
+      stats.textContent='';tbl.innerHTML='<p class="no-data">Проверьте входные параметры: цель > 0, этажность 1–26, ограничения > 0, допуск 0–20%, средняя квартира 36–55 м².</p>';return;
+    }
+    const tol=goal*tolPct/100;
+    const bestGroups=new Map(),bestShapes=new Map();
+    let iterations=0,within=0,geometric=0;
+    const gross=a=>a.r.b*a.r.floors;
+    // First, accept only results with integer apartments and compliant area when whole is enabled.
+    const rank=(a,b)=>sort==='gross'?
+      gross(a)-gross(b)||Math.abs(a.delta)-Math.abs(b.delta)||a.r.length-b.r.length:
+      Math.abs(a.delta)-Math.abs(b.delta)||gross(a)-gross(b)||a.r.length-b.r.length;
+    const prefer=(a,b)=>rank(a,b)||Math.abs(a.r.structWidth-st.structWidth)-Math.abs(b.r.structWidth-st.structWidth)||a.r.length-b.r.length;
+    for(const type of types){
+      const rg=ranges[type],kr=reverseKep[type];
+      for(let n=1;n<=Math.floor(maxFloors);n++){
+        if(!profile(type,n))continue;
+        const denominator=commercial?n-1:n;
+        if(denominator<=0)continue;
+        const ideal=(goal+(commercial?0:60))/denominator;
+        const pValues=[];
+        if(whole){
+          const lo=Math.ceil((rg.pmin-1e-7)/st.avg),hi=Math.floor((rg.pmax+1e-7)/st.avg);
+          for(let a=lo;a<=hi;a++)pValues.push({p:a*st.avg,count:a});
+        }else{
+          // Exploratory, non-apartment-consistent mode: grid every 1m² plus exact ideal.
+          for(let p=Math.ceil(rg.pmin);p<=Math.floor(rg.pmax);p++)pValues.push({p,count:p/st.avg});
+          const p=clamp(ideal,rg.pmin,rg.pmax);
+          if(!pValues.some(x=>Math.abs(x.p-p)<1e-7))pValues.push({p,count:p/st.avg});
+        }
+        for(const item of pValues){
+          const p=item.p;
+          // Area and apartment count do not depend on KEP or width, so prune early.
+          const total=denominator*p-(commercial?0:60);
+          const delta=total-goal,ok=Math.abs(delta)<=tol+1e-7;
+          const group=`${type}|${n}|${p.toFixed(5)}`;
+          // 0.1 m width increments including endpoints.
+          const wSteps=Math.round((rg.wmax-rg.wmin)*10);
+          const kSteps=Math.round((kr.max-kr.min)*1000);
+          for(let wi=0;wi<=wSteps;wi++){
+            const width=Number((rg.wmin+wi/10).toFixed(3));
+            for(let ki=0;ki<=kSteps;ki++){
+              const kep=Number((kr.min+ki/1000).toFixed(4));iterations++;
+              const ss={...st,type,floors:n,p,structWidth:width,commercial,kep,pin:'area',pinnedLength:null};
+              let r;try{r=resultFor(ss);}catch(e){continue;}
+              // The user sets max length by *facade*, and max fire height by the v11 formula.
+              if(r.length>maxLength+1e-8||r.fireHeight>maxHeight+1e-8)continue;
+              geometric++;if(ok)within++;
+              const cand={ss,r,delta,ok,origin:kr.origin};
+              const current=bestGroups.get(group);
+              if(!current||prefer(cand,current)<0)bestGroups.set(group,cand);
+              if(showShapes){
+                // Keep one narrow/middle/wide representative per apartment plan.
+                const band=wi< wSteps/3?'узкая':wi>2*wSteps/3?'широкая':'средняя';
+                const shapeKey=group+'|'+band,old=bestShapes.get(shapeKey);
+                if(!old||prefer(cand,old)<0)bestShapes.set(shapeKey,{...cand,band});
+              }
+            }
+          }
+        }
+      }
+    }
+    const base=[...bestGroups.values()],valid=base.filter(a=>a.ok),alternatives=base.filter(a=>!a.ok);
+    valid.sort(rank);alternatives.sort((a,b)=>Math.abs(a.delta)-Math.abs(b.delta)||gross(a)-gross(b));
+    const selected=valid.length?valid:alternatives;
+    let display=selected.slice(0,25);
+    if(showShapes&&display.length<25){
+      const used=new Set(display.map(a=>`${a.r.type}|${a.r.floors}|${a.r.p.toFixed(5)}|${a.r.structWidth}`));
+      const extras=[...bestShapes.values()].filter(a=>a.ok===Boolean(valid.length)).sort(rank);
+      for(const a of extras){
+        if(display.length>=25)break;
+        const key=`${a.r.type}|${a.r.floors}|${a.r.p.toFixed(5)}|${a.r.structWidth}`;
+        if(!used.has(key)){display.push(a);used.add(key);}
+      }
+    }
+    searchResults=display;
+    const percent=a=>nfmt(100*a/goal,2);
+    const stat=[
+      `<span>Перебрано сочетаний: <b>${nfmt(iterations,0)}</b></span>`,
+      `<span>В габаритах: <b>${nfmt(geometric,0)}</b></span>`,
+      `<span class="count-good">В допуске ±${nfmt(tolPct,1)}%: <b>${valid.length} разных вариантов квартирографии / этажности</b></span>`,
+      `<span>Показано: <b>${searchResults.length}</b></span>`
+    ];
+    if(!valid.length)stat.push(`<span class="count-bad">Совпадений в допуске нет — ниже только ближайшие варианты</span>`);
+    if(types.includes('О'))stat.push('<span>Диапазон КЭП О — ориентир v12</span>');
+    stats.innerHTML=stat.join('');
+    if(!searchResults.length){
+      tbl.innerHTML='<p class="no-data">Под заданные габариты, этажность и количество квартир решения не найдены. Попробуйте увеличить длину / этажность или отключить проверку целого числа квартир для предварительной оценки.</p>';return;
+    }
+    tbl.innerHTML='<table><thead><tr><th>Статус</th><th>Платформа</th><th>Этажи</th><th>Квартир/эт</th><th>S квартир всего, м²</th><th>Отклонение, м² / %</th><th>Sстр здания, м²*</th><th>КЭП прин., %</th><th>КЭП геом., %*</th><th>Ширина × длина, м</th><th>Действие</th></tr></thead><tbody>'+
+      searchResults.map((a,i)=>`<tr><td class="status-col"><span class="search-status ${a.ok?'ok':'out'}">${a.ok?'Расчётно допустим':'Вне допуска'}</span></td><td>${a.r.type}${a.r.type==='О'?' <abbr title="КЭП ориентировочный">*</abbr>':''}</td><td>${a.r.floors}</td><td>${nfmt(a.r.typCount,2)}</td><td>${nfmt(a.r.total,1)}</td><td>${a.delta>=0?'+':''}${nfmt(a.delta,1)} / ${a.delta>=0?'+':''}${percent(a.delta)}%</td><td>${nfmt(gross(a),1)}</td><td>${nfmt(a.r.kep*100,2)}</td><td>${nfmt(a.r.actualKep*100,2)}</td><td>${nfmt(a.r.width,1)} × ${nfmt(a.r.length,1)}</td><td><button class="primary sm" type="button" data-apply="${i}">Открыть</button></td></tr>`).join('')+'</tbody></table>';
+  }
+  function setWorkMode(mode){E('fullRoot').classList.toggle('reverse',mode==='reverse');E('fwdTab').classList.toggle('selected',mode!=='reverse');E('revTab').classList.toggle('selected',mode==='reverse');if(mode==='reverse'){findReverse();}}
+  function saveScenario(){
+    if(!result)return;const name=E('scenarioName').value.trim()||`${st.type} · ${st.floors} эт. · ${nfmt(st.p,1)} м²`;
+    const obj={id:String(Date.now())+'-'+Math.random().toString(36).slice(2,7),name:name.slice(0,85),selected:true,state:fSnapshot()};
+    scenarios.unshift(obj);scenarios=scenarios.slice(0,30);activeId=obj.id;E('scenarioName').value='';persist();renderScenarios();renderComparison();
+  }
+  function renderScenarios(){
+    E('scenarioList').innerHTML=scenarios.length?scenarios.map((o,i)=>{
+      let r;try{r=resultFor(o.state);}catch(e){r=null;}
+      return `<div class="scenario-card ${o.id===activeId?'current':''}"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" data-compare="${i}" ${o.selected?'checked':''}> сравнивать</label><strong title="${esc(o.name)}">${esc(o.name)}</strong><small>${r?`${r.type} · ${r.floors} эт. · ${nfmt(r.total,1)} м² квартир`:'Ошибка параметров'}</small><small>${r?`КЭП ${nfmt(r.kep*100,2)}% · ${nfmt(r.width,1)}×${nfmt(r.length,1)} м`:''}</small><div class="buttons"><button type="button" class="plain sm" data-open="${i}">Открыть</button><button type="button" class="plain sm" data-copy="${i}">Копия</button><button type="button" class="plain sm" data-delete="${i}">Удалить</button></div></div>`;
+    }).join(''):'<p class="no-data">Сохранённых вариантов пока нет. Настройте секцию и нажмите «+ Сохранить текущий».</p>';
+  }
+  function renderComparison(){
+    const arr=scenarios.filter(o=>o.selected).map(o=>{try{return {name:o.name,r:resultFor(o.state)};}catch(e){return null;}}).filter(Boolean);
+    if(!arr.length){E('compareTable').innerHTML='<p class="no-data">Отметьте один или несколько сохранённых сценариев для сравнения.</p>';return;}
+    const rows=[['Тип платформы',r=>r.type],['Этажность',r=>r.floors],['Количество лифтов',r=>r.lifts],['S квартир типового, м²',r=>nfmt(r.p,2)],['Средняя квартира, м²',r=>nfmt(r.avg,2)],['КЭП, %',r=>nfmt(r.kep*100,2)],['Продаваемая площадь квартир, м²',r=>nfmt(r.total,1)],['Коммерция, м²',r=>nfmt(r.com,1)],['Количество квартир, оценка',r=>r.totalCount],['Строительная площадь без шахт, м²',r=>nfmt(r.b*r.floors,1)],['Пятно по фасаду, м²',r=>nfmt(r.width*r.length,1)],['Длина по фасаду, м',r=>nfmt(r.length,1)],['Ширина по фасаду, м',r=>nfmt(r.width,1)],['Высота ПТ, м',r=>nfmt(r.fireHeight,2)]];
+    E('compareTable').innerHTML='<table><thead><tr><th>Показатель</th>'+arr.map(a=>`<th>${esc(a.name)}</th>`).join('')+'</tr></thead><tbody>'+rows.map(([label,fn])=>'<tr><td>'+label+'</td>'+arr.map(a=>`<td>${fn(a.r)}</td>`).join('')+'</tr>').join('')+'</tbody></table>';
+  }
+  function saveFile(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);}
+  const csvSafe=v=>'"'+String(v).replaceAll('"','""')+'"';
+  function exportCsv(){const arr=scenarios.filter(x=>x.selected).map(o=>{try{return {name:o.name,r:resultFor(o.state)};}catch(e){return null;}}).filter(Boolean);if(!arr.length&&result)arr.push({name:'Текущий',r:result});const head=['Вариант','Тип МОП','Этажей','S квартир типового','КЭП','Площадь квартир всего','Квартир всего','Ширина по фасаду','Длина по фасаду','Строительная площадь без шахт','Высота ПТ'];const rows=arr.map(({name,r})=>[name,r.type,r.floors,r.p,r.kep,r.total,r.totalCount,r.width,r.length,r.b*r.floors,r.fireHeight]);saveFile(new Blob(['\ufeff'+[head,...rows].map(row=>row.map(csvSafe).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'}),'section_v13_compare.csv');}
+  function exportJson(){saveFile(new Blob([JSON.stringify({schema:'section-v13',model:'simplified-v11',quickSearch:'grid width 0.1m; KEP 0.001; integer apartments by default',current:fSnapshot(),scenarios},null,2)],{type:'application/json'}),'section_v13_full.json');}
+  function setup(){
+    loadStorage();fromLite();refreshCalculated();
+    E('modeLite').onclick=()=>switchMode('lite');E('modeFull').onclick=()=>switchMode('full');
+    const bindInput=(id,name,conv=Number)=>{E(id).addEventListener('change',()=>{if(!loading)change(name,conv(E(id).value));});};
+    bindInput('fType','type',String);bindInput('fFloors','floors');bindInput('fWidth','width');bindInput('fArea','area');bindInput('fAvg','avg');bindInput('fKep','kep');bindInput('fPin','pin',String);bindInput('fLength','length');
+    for(const [id,key] of [['fFloors','floors'],['fWidth','width'],['fArea','area'],['fAvg','avg'],['fKep','kep'],['fLength','length']])E(id).addEventListener('input',()=>{if(E(id).value.trim()!==''&&Number.isFinite(+E(id).value))change(key,+E(id).value);});
+    E('fCommercial').onchange=()=>change('commercial',E('fCommercial').checked);
+    E('fAngle').oninput=()=>change('angle',+E('fAngle').value);
+    E('fFloorSlider').oninput=()=>change('floors',+E('fFloorSlider').value);
+    for(const [id,mode] of [['fViewIso','iso'],['fViewPlan','plan'],['fViewFront','front']])E(id).onclick=()=>{st.view=mode;redraw();};
+    E('fwdTab').onclick=()=>setWorkMode('forward');E('revTab').onclick=()=>setWorkMode('reverse');E('rFind').onclick=findReverse;
+    for(const id of ['rGoal','rMaxFloor','rMaxLength','rMaxHeight','rType','rWhole','rCom','rTolerance','rSort','rShapes'])E(id).addEventListener('change',findReverse);
+    E('rTable').addEventListener('click',e=>{const b=e.target.closest('[data-apply]');if(!b)return;const i=+b.dataset.apply;if(!searchResults[i])return;st={...searchResults[i].ss,angle:st.angle,view:st.view};syncControls();setWorkMode('forward');redraw();});
+    E('fullReset').onclick=()=>{st={type:'Н',floors:19,avg:50,p:640,structWidth:22,commercial:false,kep:kepAuto('Н',50),pin:'area',pinnedLength:null,angle:35,view:'iso'};activeId=null;syncControls();redraw();};
+    E('fullPrint').onclick=()=>print();E('fullJson').onclick=exportJson;E('fullCsv').onclick=exportCsv;
+    E('scenarioSave').onclick=saveScenario;E('scenarioCompare').onclick=()=>{renderComparison();E('fullComparison').scrollIntoView({behavior:'smooth',block:'start'});};
+    E('scenarioList').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const prop=['open','copy','delete'].find(x=>b.dataset[x]!==undefined);if(!prop)return;const idx=+b.dataset[prop];const o=scenarios[idx];if(!o)return;
+      if(prop==='delete'){scenarios.splice(idx,1);if(activeId===o.id)activeId=null;}
+      else if(prop==='copy'){scenarios.splice(idx+1,0,{...o,id:String(Date.now())+'copy',name:o.name+' (копия)',state:{...o.state}});}
+      else{st={...o.state};activeId=o.id;syncControls();setWorkMode('forward');redraw();window.scrollTo({top:0,behavior:'smooth'});}
+      persist();renderScenarios();renderComparison();});
+    E('scenarioList').addEventListener('change',e=>{const b=e.target.closest('[data-compare]');if(!b)return;const o=scenarios[+b.dataset.compare];if(!o)return;o.selected=b.checked;persist();renderComparison();});
+    let drag=null;const svg=E('fullView');
+    svg.addEventListener('pointerdown',e=>{
+      const h=e.target.closest('[data-handle]');if(!h||!result||E('fullRoot').classList.contains('reverse'))return;
+      const rect=svg.getBoundingClientRect();drag={kind:h.dataset.handle,x:e.clientX,y:e.clientY,st:{...st},length:result.length,scale:rect.width/700};svg.setPointerCapture(e.pointerId);e.preventDefault();
+    });
+    svg.addEventListener('pointermove',e=>{
+      if(!drag)return;
+      const dx=(e.clientX-drag.x)/Math.max(.2,drag.scale),dy=(e.clientY-drag.y)/Math.max(.2,drag.scale);
+      if(drag.kind==='floors'){
+        const val=clamp(drag.st.floors-Math.round(dy/13),st.type==='О'?20:st.type==='Н'?11:1,26);if(val!==st.floors)change('floors',val);
+      } else if(drag.kind==='width'){
+        const rg=ranges[st.type];const val=clamp(Math.round((drag.st.structWidth+dx*.025)*10)/10,rg.wmin,rg.wmax);if(val!==st.structWidth)change('width',val);
+      } else if(drag.kind==='length'&&st.pin!=='length'){
+        const val=clamp(Math.round((drag.length+dx*.08)*10)/10,4,100);if(Math.abs(val-(result?result.length:0))>.04)change('length',val);
+      }
+    });
+    const end=()=>{drag=null;};svg.addEventListener('pointerup',end);svg.addEventListener('pointercancel',end);svg.addEventListener('lostpointercapture',end);
+    syncControls();redraw();renderScenarios();renderComparison();switchMode('full');
+  }
+  setup();
+})();
+
+</script></html>
