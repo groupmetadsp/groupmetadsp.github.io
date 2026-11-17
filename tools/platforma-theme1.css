@@ -1,0 +1,42 @@
+/* PLATFORMA shared visual system · Theme 1 light · 2026-11-17
+   The shared navigation shell is scoped to .pf-*; application-specific overrides
+   touch only colour, font, border and top-bar appearance, not app algorithms. */
+@font-face{font-family:Manrope;src:url('/meta/assets/fonts/manrope-cyrillic.woff2') format('woff2');font-weight:400 800;font-display:swap;unicode-range:U+0400-052F,U+2116}
+@font-face{font-family:Manrope;src:url('/meta/assets/fonts/manrope-latin.woff2') format('woff2');font-weight:400 800;font-display:swap}
+@font-face{font-family:"Roboto Condensed";src:url('/meta/assets/fonts/roboto-condensed-cyrillic.woff2') format('woff2');font-weight:700 800;font-display:swap;unicode-range:U+0400-052F,U+2116}
+@font-face{font-family:"Roboto Condensed";src:url('/meta/assets/fonts/roboto-condensed-latin.woff2') format('woff2');font-weight:700 800;font-display:swap}
+:root{--pf-bg:#f3f0e9;--pf-surface:#fcfaf6;--pf-surface2:#ece8df;--pf-ink:#333b38;--pf-muted:#777770;--pf-line:#d9d5cb;--pf-accent:#b95228;--pf-accentsoft:#f3e0d3}
+body.pf-page{margin:0;min-height:100vh;display:flex;flex-direction:column;background:var(--pf-bg);font-family:Manrope,"Segoe UI",Arial,sans-serif;color:var(--pf-ink);overflow:hidden}
+.pf-page *{box-sizing:border-box}
+.pf-bar{height:45px;min-height:45px;display:flex;align-items:center;gap:14px;background:var(--pf-surface);padding:0 16px;border-bottom:1px solid var(--pf-line);white-space:nowrap}
+.pf-logo{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:5px;background:var(--pf-accent);color:white;text-decoration:none;flex:none}
+.pf-brand{font:800 19px/1 "Roboto Condensed","Arial Narrow",Arial,sans-serif;letter-spacing:.01em;color:var(--pf-ink);text-decoration:none}
+.pf-location{border-left:1px solid var(--pf-line);margin-left:8px;padding-left:14px;color:var(--pf-muted);font:600 10px/1.4 Manrope,Arial,sans-serif;overflow:hidden;text-overflow:ellipsis}
+.pf-home{margin-left:auto;color:var(--pf-accent);text-decoration:none;font-size:10px;font-weight:800;flex:none}
+.pf-tabs{height:32px;min-height:32px;display:flex;gap:20px;align-items:stretch;padding:0 18px;background:var(--pf-surface);border-bottom:1px solid var(--pf-line);overflow-x:auto;scrollbar-width:thin}
+.pf-tab{display:flex;align-items:center;position:relative;white-space:nowrap;color:var(--pf-muted);text-decoration:none;font:800 10px Manrope,Arial,sans-serif}
+.pf-tab:hover,.pf-tab[aria-current="page"]{color:var(--pf-accent)}
+.pf-tab[aria-current="page"]::after{content:"";position:absolute;bottom:0;left:0;right:0;background:var(--pf-accent);height:2px;border-radius:3px}
+.pf-stage{flex:1;min-height:0;position:relative}
+.pf-stage iframe{position:absolute;inset:0;height:100%;width:100%;border:0;background:var(--pf-bg)}
+.pf-note{display:none}
+@media(max-width:700px){.pf-bar{padding:0 10px;gap:8px}.pf-brand{font-size:16px}.pf-location{display:none}.pf-tabs{gap:14px;padding:0 10px}.pf-tab{font-size:9px}}
+/* META parking constructor (uploaded v21): ONLY colours/fonts/panels/header */
+body:has(#moduleTool):not(.pf-page){--bg:#f3f0e9;--panel:#fcfaf6;--ink:#333b38;--muted:#777770;--line:#d9d5cb;--accent:#b95228;--accent2:#cf7848;--dark:#fcfaf6;font-family:Manrope,"Segoe UI",Arial,sans-serif}
+body:has(#moduleTool) .topbar{background:#fcfaf6;color:#333b38;border-bottom:1px solid #d9d5cb;box-shadow:none}
+body:has(#moduleTool) .brand strong,body:has(#moduleTool) .sec h3{font-family:"Roboto Condensed","Arial Narrow",Arial,sans-serif;color:#333b38}
+body:has(#moduleTool) .brand span{color:#777770}
+body:has(#moduleTool) .btn.dark{background:#fffdf9;color:#333b38;border-color:#d9d5cb}
+body:has(#moduleTool) .top-selection{background:#fffdf9;color:#333b38;border-color:#d9d5cb}
+body:has(#moduleTool) .top-quick-actions{border-left-color:#d9d5cb}
+body:has(#moduleTool) .tool:hover,body:has(#moduleTool) .tool.active{background:#fff5ec;border-color:#b95228}
+body:has(#moduleTool) .metric,body:has(#moduleTool) .module-summary,body:has(#moduleTool) .groupInfo{background:#fffdf9}
+/* Parking economics / comparison: ONLY colours/fonts/controls/header */
+body:has(#salesScenarioBtn):not(.pf-page){--bg:#f3f0e9;--panel:#fcfaf6;--ink:#333b38;--muted:#777770;--line:#d9d5cb;--teal:#b95228;--teal2:#d77d50;--blue:#9e5735;--shadow:0 9px 28px rgba(60,47,29,.07);--shadow-strong:0 15px 35px rgba(166,69,25,.12);font-family:Manrope,"Segoe UI",Arial,sans-serif;background:#f3f0e9}
+body:has(#salesScenarioBtn) h1,body:has(#salesScenarioBtn) h2,body:has(#salesScenarioBtn) .model-name,body:has(#salesScenarioBtn) .section-title{font-family:"Roboto Condensed","Arial Narrow",Arial,sans-serif}
+body:has(#salesScenarioBtn) .header{background:#fcfaf6;border-color:#d9d5cb;box-shadow:none}
+body:has(#salesScenarioBtn) .logo{background:#b95228}
+body:has(#salesScenarioBtn) .card,body:has(#salesScenarioBtn) .kpi,body:has(#salesScenarioBtn) .main-result,body:has(#salesScenarioBtn) .sales-field{background:#fcfaf6;border-color:#d9d5cb}
+body:has(#salesScenarioBtn) .btn.analysis-main,body:has(#salesScenarioBtn) .main-result.primary-result{background:#b95228;color:#fff}
+body:has(#salesScenarioBtn) .btn.soft,body:has(#salesScenarioBtn) .btn.blue,body:has(#salesScenarioBtn) .btn.product-secondary{background:#f3e0d3;color:#8e4323;border-color:#dfbda9}
+body:has(#salesScenarioBtn) input[type="range"]{accent-color:#b95228}
