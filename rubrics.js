@@ -9,7 +9,8 @@ const PLATFORM_TOOLS=[
   {id:'above-ground-parking',name:'04 · Мета Паркинг',url:'/tools/meta-parking/',status:'verified'},
   {id:'parking-comparison',name:'05 · Сравнение паркингов',url:'/tools/parking-comparison/',status:'verified'},
   {id:'building-height',name:'06 · Калькулятор этажности и высоты здания',url:'/tools/building-height/',status:'verified'},
-  {id:'surface-parking-configurator',name:'07 · Конфигуратор наземного паркинга',url:'/tools/surface-parking-configurator/',status:'verified'}
+  {id:'surface-parking-configurator',name:'07 · Конфигуратор наземного паркинга',url:'/tools/surface-parking-configurator/',status:'verified'},
+  {id:'massing-platforms',name:'08 · Платформы для массинга · LITE / FULL',url:'/tools/massing-platforms/',status:'verified'}
 ];
 const STORAGE='platform-hierarchy-v2';
 const DELETED_KEY='platform-hierarchy-deleted-v1';
