@@ -23,6 +23,9 @@ alter table public.platform_members enable row level security;
 alter table public.platform_catalog enable row level security;
 alter table public.platform_catalog_history enable row level security;
 revoke all on public.platform_members from anon, authenticated;
+grant select on public.platform_members to authenticated;
+create policy platform_members_read_own on public.platform_members
+  for select to authenticated using (user_id=(select auth.uid()));
 revoke all on public.platform_catalog_history from anon, authenticated;
 revoke all on public.platform_catalog from anon;
 grant select on public.platform_catalog to authenticated;
