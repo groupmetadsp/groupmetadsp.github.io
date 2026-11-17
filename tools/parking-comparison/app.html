@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>META • Parking Compare v4</title>
+<style>
+:root{
+  --bg:#f4f8f8; --panel:#ffffff; --ink:#17363a; --muted:#708287;
+  --line:#d7e2e3; --teal:#0f7f78; --teal2:#35a69c; --blue:#2167a8;
+  --green:#16835a; --amber:#c88620; --red:#b94b4b; --yellow:#ffd84d; --yellow-deep:#d19a00; --cyan:#17a6a0; --shadow:0 14px 40px rgba(22,57,62,.09); --shadow-strong:0 18px 50px rgba(15,127,120,.18);
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 12% 0%,rgba(53,166,156,.12),transparent 28%),radial-gradient(circle at 88% 6%,rgba(33,103,168,.10),transparent 24%),linear-gradient(180deg,#fbfefe 0,#eef6f6 100%);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif}
+button,input{font:inherit}
+.app{max-width:1450px;margin:0 auto;padding:24px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px;padding:16px 18px;border:1px solid rgba(15,127,120,.12);border-radius:18px;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);box-shadow:var(--shadow)}
+.brand{display:flex;align-items:center;gap:14px}.logo{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--teal),var(--blue));display:grid;place-items:center;color:#fff;font-weight:900;letter-spacing:.5px;box-shadow:var(--shadow)}
+h1{font-size:24px;line-height:1.15;margin:0 0 5px}.subtitle{color:var(--muted);font-size:13px}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:11px;padding:10px 14px;font-weight:800;cursor:pointer;transition:.18s ease;box-shadow:0 2px 0 rgba(20,60,65,.02)}.btn:hover{transform:translateY(-2px);border-color:#a8c6c8;box-shadow:0 9px 20px rgba(25,73,78,.10)}.btn.primary{background:var(--teal);border-color:var(--teal);color:#fff}.btn.soft{background:#eef7f6;border-color:#cce6e3;color:#0c6963}.btn.blue{background:#edf4fb;border-color:#cddff0;color:#205d93}.btn.analysis-main{background:linear-gradient(135deg,#0b8179,#176da8);border-color:transparent;color:#fff;padding:13px 20px;font-size:13px;letter-spacing:.25px;box-shadow:0 12px 26px rgba(20,111,132,.25)}.btn.analysis-main:hover{box-shadow:0 16px 34px rgba(20,111,132,.33)}.btn.instruction{background:linear-gradient(135deg,#ffe66f,#ffc934);border-color:#efbd19;color:#5f4900;box-shadow:0 9px 20px rgba(209,154,0,.18)}.btn.product-secondary{background:#f1f7f7;border-color:#cfe0e1;color:#42666a}.btn.product-secondary:hover{background:#e8f4f3;color:#176f69}
+.top-grid{display:grid;grid-template-columns:220px 1fr 250px;gap:16px;align-items:stretch}
+.card{background:linear-gradient(180deg,#ffffff 0,#fcfefe 100%);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}.card:hover{border-color:#c2d8da;box-shadow:0 18px 46px rgba(22,57,62,.105)}
+.case-card{padding:18px;display:flex;flex-direction:column;justify-content:space-between;min-height:172px}.case-card p{font-size:13px;color:var(--muted);line-height:1.45;margin:12px 0 0}.case-card .btn{width:100%}
+.slider-card{padding:18px 22px}.slider-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.area-value{font-size:28px;font-weight:900;color:var(--teal)}.area-sub{font-size:12px;color:var(--muted)}
+.range-wrap{display:grid;grid-template-columns:60px 1fr 60px;gap:12px;align-items:center;margin-top:18px}.range-end{text-align:center;font-size:12px;color:var(--muted);font-weight:700}
+input[type=range]{width:100%;accent-color:var(--teal)}.step-note{text-align:center;color:var(--muted);font-size:12px;margin-top:9px}
+.city-card{padding:18px}.city-label{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:6px}.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.seg button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:12px 8px;font-weight:850;cursor:pointer}.seg button.active{background:var(--blue);border-color:var(--blue);color:#fff}.city-note{font-size:12px;color:var(--muted);line-height:1.45;margin-top:12px}
+.summary{margin-top:16px;padding:18px}.summary-title{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:13px}.summary-title h2{font-size:16px;margin:0}.tag{font-size:10px;font-weight:900;border-radius:999px;padding:5px 8px;background:#edf5f5;color:#416367;border:1px solid #d5e5e5;letter-spacing:.4px}
+.summary-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.kpi{border:1px solid #e2e9ea;background:linear-gradient(180deg,#ffffff,#f8fcfc);border-radius:12px;padding:12px;min-height:92px;transition:.18s ease}.kpi:hover{transform:translateY(-2px);border-color:#bddbd8;box-shadow:0 10px 24px rgba(15,127,120,.08)}.kpi-label{font-size:11px;color:var(--muted);font-weight:750;display:flex;align-items:center;gap:6px}.kpi-value{font-size:20px;font-weight:900;margin-top:8px}.kpi-foot{font-size:10px;color:#8b999c;margin-top:5px}
+.controls-row{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:14px 0}.checkline{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:#fff}.checkline input{width:18px;height:18px;accent-color:var(--teal)}.checkline label{font-weight:800;font-size:13px}.action-group{display:flex;gap:8px;flex-wrap:wrap}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;position:relative}.compare-grid:after{content:"";position:absolute;left:50%;top:18px;bottom:18px;width:1px;background:#d9e3e4;transform:translateX(-8px);pointer-events:none}
+.model{padding:20px}.model-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border-bottom:1px solid #e5ecec;padding-bottom:14px;margin-bottom:12px}.model-name{font-size:18px;font-weight:900}.model-sub{font-size:12px;color:var(--muted);margin-top:4px}.model-badge{font-size:10px;font-weight:900;border-radius:999px;padding:6px 8px}.model-a .model-badge{background:#eaf2fb;color:#255d91}.model-b .model-badge{background:#e9f7f3;color:#157252}
+.section{margin-top:16px}.section-title{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#71868a;font-weight:900;margin:0 0 7px}.metric{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;padding:9px 0;border-bottom:1px dashed #e3e9ea}.metric:last-child{border-bottom:0}.metric-label{font-size:13px;color:#476267;display:flex;align-items:center;gap:6px}.metric-value{text-align:right;font-size:13px;font-weight:900;color:#17363a}.metric-value.good{color:var(--green)}.metric-value.warn{color:var(--amber)}.metric-value.bad{color:var(--red)}
+.totalbox{margin-top:16px;border-radius:14px;padding:15px;background:linear-gradient(135deg,#eff8f7,#fbfefe);border:1px solid #cfe2e1;box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}.total-row{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.total-label{font-size:12px;color:#5f777b;font-weight:800}.total-value{font-size:24px;font-weight:950}.delta-note{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4}
+.info-btn{display:inline-grid;place-items:center;width:19px;height:19px;border-radius:50%;border:1px solid #8fb9bd;background:#fff;color:#1b7378;font-size:11px;font-weight:950;cursor:pointer;flex:0 0 auto;box-shadow:0 2px 5px rgba(35,91,96,.07);transition:.16s ease}.info-btn:hover{background:#dff4f1;border-color:#58a9a2;transform:scale(1.08)}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:900;padding:5px 8px;border-radius:999px}.status.low{color:#157252;background:#e9f7f3}.status.mid{color:#9a6717;background:#fff5df}.status.high{color:#a64040;background:#fdecec}
+.footer-note{font-size:11px;color:#829295;line-height:1.5;margin-top:14px;text-align:center}
+.modal{position:fixed;inset:0;background:rgba(17,36,39,.45);display:none;align-items:center;justify-content:center;padding:24px;z-index:50}.modal.open{display:flex}.modal-card{width:min(920px,96vw);max-height:88vh;overflow:auto;background:#fff;border-radius:18px;border:1px solid #d9e5e6;box-shadow:0 24px 70px rgba(0,0,0,.20)}.modal-head{position:sticky;top:0;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid #e2eaea;z-index:2}.modal-head h3{margin:0;font-size:18px}.close{border:0;background:#f1f5f5;width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:19px;color:#527075}.modal-body{padding:20px}.info-content{font-size:14px;line-height:1.65;color:#314f54}.info-content b{color:#17363a}.info-source{margin-top:14px;padding:10px 12px;border-radius:10px;background:#f4f8f8;color:#60787d;font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{border-bottom:1px solid #e4eaeb;padding:10px 8px;text-align:left;vertical-align:top}th{color:#60777b;font-size:11px;text-transform:uppercase;letter-spacing:.4px}.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.mini{border:1px solid #e0e8e9;border-radius:12px;padding:13px}.mini h4{margin:0 0 7px;font-size:13px}.mini p{margin:0;color:#63777b;font-size:12px;line-height:1.45}
+.analysis-box{padding:14px;border:1px solid #dce7e8;border-radius:12px;background:#fbfdfd;margin-bottom:10px}.analysis-box strong{display:block;margin-bottom:5px}.analysis-box p{margin:0;color:#4f686c;font-size:13px;line-height:1.55}
+.product-factor{display:grid;grid-template-columns:190px 1fr 1fr;gap:8px;border-bottom:1px solid #e6ecec;padding:10px 0;font-size:12px}.product-factor b{font-size:12px}.class-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.class-card{border:1px solid #dde7e8;border-radius:12px;padding:13px}.class-card h4{margin:0 0 8px}.class-card p{font-size:12px;color:#5f7478;line-height:1.45;margin:6px 0}.class-status{font-size:10px;font-weight:900;padding:5px 8px;border-radius:999px;display:inline-block}
+.type-row{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}.type-label{font-size:11px;color:var(--muted);font-weight:850;display:flex;align-items:center;gap:6px}.type-seg{display:flex;gap:6px}.type-seg button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:7px 10px;font-size:11px;font-weight:850;cursor:pointer}.type-seg button.active{background:var(--teal);border-color:var(--teal);color:#fff}.conclusions{margin-top:16px;padding:20px}.conclusions h2{margin:0 0 12px;font-size:17px}.conclusion-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.conclusion-item{border:1px solid #dfe9ea;border-radius:12px;padding:14px;background:#fbfdfd}.conclusion-item strong{display:block;margin-bottom:6px;font-size:13px}.conclusion-item p{margin:0;color:#526c70;font-size:12px;line-height:1.55}.calc-bridge{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}.main-results{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}.main-result{border-radius:16px;padding:18px;border:1px solid #dce7e8;background:#fff;position:relative;overflow:hidden}.main-result.primary-result{background:linear-gradient(135deg,#0f887b 0%,#126e99 100%);border-color:transparent;color:#fff;box-shadow:0 18px 40px rgba(18,110,153,.24)}.main-result.primary-result:before{content:'';position:absolute;width:180px;height:180px;border-radius:50%;right:-70px;top:-105px;background:rgba(255,255,255,.14)}.main-result .mr-label{font-size:11px;color:#647b7f;font-weight:900;text-transform:uppercase;letter-spacing:.55px}.main-result .mr-value{font-size:27px;font-weight:950;margin-top:7px}.main-result .mr-note{font-size:11px;color:#667c80;line-height:1.45;margin-top:7px}.main-result.primary-result .mr-label,.main-result.primary-result .mr-note{color:rgba(255,255,255,.82)}.main-result.primary-result .mr-value{color:#fff;font-size:31px;text-shadow:0 2px 10px rgba(0,0,0,.10)}.main-kpi-badge{display:inline-flex;margin-left:7px;padding:3px 7px;border-radius:999px;background:#ffdc57;color:#554000;font-size:9px;font-weight:950;letter-spacing:.35px;vertical-align:middle}.bridge-item{border:1px solid #dfe8e9;border-radius:11px;padding:12px;background:#fff}.bridge-item span{display:block;font-size:10px;color:#6d8185;font-weight:800}.bridge-item b{display:block;margin-top:5px;font-size:15px}.bridge-final{background:#eef8f5;border-color:#cfe7df}.evidence{font-size:12px;color:#5a7175;line-height:1.55;margin-top:10px;padding:12px;background:#f7fafb;border-radius:10px;border:1px solid #e0e8e9}
+
+.sales-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}.sales-field{border:1px solid #dde7e8;border-radius:12px;padding:12px;background:#fbfdfd}.sales-field label{display:block;font-size:11px;color:#60777b;font-weight:850;margin-bottom:7px}.sales-field input{width:100%;border:1px solid #cfdcde;border-radius:9px;padding:10px 11px;background:#fff;color:#17363a;font-weight:850}.sales-field input:focus{outline:2px solid rgba(15,127,120,.18);border-color:#65aaa4}.sales-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.sales-model{border:1px solid #dce7e8;border-radius:14px;padding:14px;background:#fff}.sales-model h4{margin:0 0 10px;font-size:14px}.sales-kpi{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed #e2e9ea;font-size:12px}.sales-kpi:last-child{border-bottom:0}.sales-kpi b{text-align:right}.sales-result{margin-top:14px;padding:16px;border-radius:14px;background:linear-gradient(135deg,#eff8f7,#eef5fc);border:1px solid #cfe2e1}.sales-result .big{font-size:27px;font-weight:950;margin-top:5px}.sales-note{font-size:11px;color:#6c8084;line-height:1.5;margin-top:8px}.sales-pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.sales-pill{font-size:10px;font-weight:900;border-radius:999px;padding:5px 8px;background:#eef6f6;border:1px solid #d5e5e5;color:#416367}.sales-warning{display:none;margin-top:10px;padding:10px 12px;border-radius:10px;background:#fff5df;color:#8a5d17;font-size:12px;border:1px solid #efd9aa}.norm-input{margin-top:12px;padding-top:12px;border-top:1px solid #e2e9ea}.norm-input label{display:block;font-size:11px;color:var(--muted);font-weight:850;margin-bottom:6px}.norm-input input{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 10px;font-weight:850;background:#fff}
+@media(max-width:1050px){.top-grid{grid-template-columns:1fr}.summary-grid{grid-template-columns:repeat(3,1fr)}.compare-grid{grid-template-columns:1fr}.compare-grid:after{display:none}.header{flex-direction:column}.header-actions{justify-content:flex-start}}
+
+.instruction-steps{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:8px 0 16px}.instruction-step{display:flex;gap:12px;padding:14px;border:1px solid #e2e8d6;border-radius:13px;background:linear-gradient(135deg,#fffdf0,#fff9cf)}.step-num{width:29px;height:29px;flex:0 0 29px;border-radius:9px;background:#f1bd1a;color:#fff;display:grid;place-items:center;font-weight:950}.instruction-step b{display:block;font-size:13px;margin-bottom:4px}.instruction-step p{margin:0;font-size:12px;line-height:1.45;color:#655d3e}.instruction-final{padding:14px;border-radius:12px;background:#edf8f6;border:1px solid #cde6df;color:#3e6063;font-size:12px;line-height:1.55}.analysis-callout{display:flex;gap:10px;align-items:center;padding:10px 13px;border-radius:12px;background:linear-gradient(135deg,#e9f7f5,#eef5fc);border:1px solid #cfe4e4;color:#315c61;font-size:12px;font-weight:750}.analysis-dot{width:9px;height:9px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 5px rgba(15,127,120,.10)}
+@media(max-width:680px){.app{padding:12px}.summary-grid{grid-template-columns:repeat(2,1fr)}.mini-grid,.class-grid,.conclusion-grid,.calc-bridge,.instruction-steps,.sales-grid,.sales-summary{grid-template-columns:1fr}.product-factor{grid-template-columns:1fr}.controls-row{align-items:stretch;flex-direction:column}.action-group{display:grid;grid-template-columns:1fr 1fr}}
+</style>
+<link rel="stylesheet" href="/tools/platforma-theme1.css?v=1">
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="brand">
+      <div class="logo">M</div>
+      <div><h1>META • Паркинг: подземный vs наземный</h1><div class="subtitle">Интерактивное расчетное ядро • экономика + баланс территории + эксплуатация + коммерция + продукт</div></div>
+    </div>
+    <div class="header-actions">
+      <button class="btn analysis-main" id="analysisBtn">АНАЛИТИКА Н/П • ГЛАВНЫЙ РЕЗУЛЬТАТ</button>
+      <button class="btn blue" id="salesScenarioBtn">СЦЕНАРИЙ ПРОДАЖ</button>
+       <button class="btn instruction" id="instructionBtn">ИНСТРУКЦИЯ</button>
+      <button class="btn product-secondary" id="productBtn">Влияние на продукт</button>
+    </div>
+  </div>
+
+  <div class="top-grid">
+    <div class="card case-card">
+      <button class="btn soft" id="casesBtn2">ПРЕДЛОЖЕНИЕ НА РЫНКЕ</button>
+      <p>Рыночная экспозиция и наши аналоги: цена предложения, себестоимость, тип паркинга и статус данных. Внизу окна — вывод по рынку.</p>
+    </div>
+
+    <div class="card slider-card">
+      <div class="slider-head">
+        <div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);font-weight:850">ПЛОЩАДЬ ЗЕМЕЛЬНОГО УЧАСТКА <button class="info-btn" data-info="siteArea">i</button></div>
+          <div class="area-value" id="areaValue">0,344 га</div>
+          <div class="area-sub" id="areaM2">3 440 м²</div>
+        </div>
+        <span class="tag">Шаг 220 м²</span>
+      </div>
+      <div class="range-wrap">
+        <div class="range-end">min<br><b>0,30 га</b></div>
+        <input id="siteRange" type="range" min="0" max="77" step="1" value="2" />
+        <div class="range-end">max<br><b>≈2,00 га</b></div>
+      </div>
+      <div class="step-note">Каждый шаг = 220 м² участка; при K=2,5 в Новосибирске это +550 м² максимальной площади квартир.</div>
+    </div>
+
+    <div class="card city-card">
+      <div class="city-label">НОРМАТИВНЫЙ ПРОФИЛЬ <button class="info-btn" data-info="cityProfile">i</button></div>
+      <div class="seg"><button class="active" data-city="nsk">Новосибирск</button><button data-city="tmn">Тюмень</button></div>
+      <div class="city-note" id="cityNote">Ж-4: max застройка 30%, Kплотн 2,5; благоустройство 14 м²/100 м² квартир.</div>
+      <div class="norm-input"><label for="avgAptArea">Средняя площадь квартиры для расчёта ММ, м²</label><input id="avgAptArea" type="number" min="20" max="150" step="0.5" value="40"><div class="city-note">Новосибирск: 270 ММ/1000 чел., но не менее 0,5 ММ/квартиру.</div></div>
+      <div class="norm-input"><label for="driveArea">Обязательные проезды и наземные зоны, м²</label><input id="driveArea" type="number" min="0" max="5000" step="10" value="600"><div class="city-note">Кразм считаем только по проездам. Благоустройство может размещаться на кровле наземного паркинга.</div></div>
+    </div>
+  </div>
+
+  <div class="card summary">
+    <div class="summary-title"><h2>Общая расчетная часть</h2><span class="tag" id="normTag">НОВОСИБИРСК • NORM</span></div>
+    <div class="summary-grid">
+      <div class="kpi"><div class="kpi-label">Расчетное количество ММ <button class="info-btn" data-info="parkingCount">i</button></div><div class="kpi-value" id="kpiMm">128</div><div class="kpi-foot">по действующему нормативу города</div></div>
+      <div class="kpi"><div class="kpi-label">Макс. площадь квартир <button class="info-btn" data-info="maxApartments">i</button></div><div class="kpi-value" id="kpiApt">8 600 м²</div><div class="kpi-foot" id="aptFoot">Kплотн = 2,5</div></div>
+      <div class="kpi"><div class="kpi-label">Норм. благоустройство <button class="info-btn" data-info="landscape">i</button></div><div class="kpi-value" id="kpiLandscape">1 204 м²</div><div class="kpi-foot" id="landscapeFoot">14 м² / 100 м² квартир</div></div>
+      <div class="kpi"><div class="kpi-label">Предельное жилое пятно <button class="info-btn" data-info="houseFootprint">i</button></div><div class="kpi-value" id="kpiHouseFoot">1 032 м²</div><div class="kpi-foot" id="houseFoot">30% участка</div></div>
+      <div class="kpi"><div class="kpi-label">Пятно наземного паркинга <button class="info-btn" data-info="aboveFootprint">i</button></div><div class="kpi-value" id="kpiParkFoot">717 м²</div><div class="kpi-foot">28 м²/ММ ÷ 5 уровней</div></div>
+      <div class="kpi"><div class="kpi-label">Ограничивающий фактор <button class="info-btn" data-info="limiter">i</button></div><div class="kpi-value" style="font-size:15px" id="kpiLimiter">Кразм по проездам</div><div class="kpi-foot" id="limiterFoot">проезды / свободная земля</div></div>
+    </div>
+  </div>
+
+  <div class="controls-row">
+    <div class="checkline"><input id="highGwl" type="checkbox"><label for="highGwl">Высокий уровень УГВ</label><button class="info-btn" data-info="gwl">i</button><span class="tag" id="highGwlTag">+4 500 ₽/м² подземного паркинга</span></div>
+    <div class="action-group">
+      <button class="btn analysis-main" id="analysisBtn2">АНАЛИТИКА Н/П</button>
+       <button class="btn blue" id="salesScenarioBtn2">СЦЕНАРИЙ ПРОДАЖ</button>
+      <button class="btn product-secondary" id="productBtn2">Влияние на продукт</button>
+    </div>
+  </div>
+
+  <div class="compare-grid">
+    <div class="card model model-a">
+      <div class="model-head"><div><div class="model-name">Модель А — подземный паркинг</div><div class="model-sub">Паркинг под двором/зданием; поверхность может работать на благоустройство</div></div><span class="model-badge">ПОДЗЕМНЫЙ</span></div>
+      <div class="section"><div class="section-title">Градостроительство</div>
+        <div class="metric"><div class="metric-label">Количество ММ <button class="info-btn" data-info="parkingCount">i</button></div><div class="metric-value" id="aMm">128</div></div>
+        <div class="metric"><div class="metric-label">Площадь паркинга <button class="info-btn" data-info="ugArea">i</button></div><div class="metric-value" id="aParkArea">3 840 м²</div></div>
+        <div class="metric"><div class="metric-label">Пятно на поверхности <button class="info-btn" data-info="ugFootprint">i</button></div><div class="metric-value good">0 м²</div></div>
+        <div class="metric"><div class="metric-label">Доступная площадь квартир <button class="info-btn" data-info="availableApartments">i</button></div><div class="metric-value" id="aApt">8 600 м²</div></div>
+        <div class="metric"><div class="metric-label">Потеря квартир <button class="info-btn" data-info="aptLoss">i</button></div><div class="metric-value good" id="aLoss">0 м²</div></div>
+        <div class="metric"><div class="metric-label">Кразм <button class="info-btn" data-info="krazm">i</button></div><div class="metric-value" id="aKrazm">50%</div></div>
+        <div class="metric"><div class="metric-label">Остаток территории <button class="info-btn" data-info="residual">i</button></div><div class="metric-value" id="aResidual">1 204 м²</div></div>
+      </div>
+      <div class="section"><div class="section-title">Экономика + эксплуатация 5 лет</div>
+        <div class="metric"><div class="metric-label">Себестоимость 1 ММ <button class="info-btn" data-info="ugCost">i</button></div><div class="metric-value" id="aCostMm">1,70 млн ₽</div></div>
+        <div class="metric"><div class="metric-label">CAPEX <button class="info-btn" data-info="capex">i</button></div><div class="metric-value" id="aCapex">217,6 млн ₽</div></div>
+        <div class="metric"><div class="metric-label">Надбавка высокий УГВ <button class="info-btn" data-info="gwlAdd">i</button></div><div class="metric-value" id="aGwlAdd">0 ₽</div></div>
+        <div class="metric"><div class="metric-label">OPEX 5 лет <button class="info-btn" data-info="opex5">i</button></div><div class="metric-value" id="aOpex">21,76 млн ₽</div></div>
+        <div class="metric"><div class="metric-label">Плановые ремонты <button class="info-btn" data-info="repair5">i</button></div><div class="metric-value" id="aRepair">6,53 млн ₽</div></div>
+        <div class="metric"><div class="metric-label">Риски ремонтов <button class="info-btn" data-info="risk5">i</button></div><div class="metric-value" id="aRisk">6,53 млн ₽</div></div>
+      </div>
+      <div class="section"><div class="section-title">Коммерция — рынок</div>
+        <div class="metric"><div class="metric-label">Рыночная цена продажи ММ <button class="info-btn" data-info="marketSale">i</button></div><div class="metric-value" id="aSale">1,30 млн ₽/ММ</div></div>
+        <div class="metric"><div class="metric-label">Продано ММ <button class="info-btn" data-info="soldMm">i</button></div><div class="metric-value" id="aSold">102 ММ</div></div>
+        <div class="metric"><div class="metric-label">Непроданный остаток <button class="info-btn" data-info="unsold">i</button></div><div class="metric-value" id="aUnsold">20% • 26 ММ</div></div>
+        <div class="metric"><div class="metric-label">Выручка от проданных ММ <button class="info-btn" data-info="parkingRevenue">i</button></div><div class="metric-value good" id="aParkingRevenue">132,6 млн ₽</div></div>
+        <div class="metric"><div class="metric-label">Рыночная цена квартир <button class="info-btn" data-info="aptMarketPrice">i</button></div><div class="metric-value" id="aAptMarket">186,7 тыс. ₽/м²</div></div>
+        <div class="metric"><div class="metric-label">Сохраненная площадь квартир vs Б <button class="info-btn" data-info="lostAptRevenue">i</button></div><div class="metric-value good" id="aSavedAptRevenue">0,0 млн ₽</div></div>
+      </div>
+      <div class="totalbox"><div class="total-row"><div class="total-label">Совокупные затраты 5 лет <button class="info-btn" data-info="lcc5">i</button></div><div class="total-value" id="aTotal">252,42 млн ₽</div></div><div class="delta-note">CAPEX + OPEX5 + плановые ремонты + расчетный риск. Коммерческий остаток показывается отдельно и не считается безвозвратной потерей.</div></div>
+    </div>
+
+    <div class="card model model-b">
+      <div class="model-head"><div><div class="model-name">Модель Б — наземный паркинг</div><div class="model-sub" id="bModelSub">Отдельно стоящий открытый 5-уровневый паркинг</div><div class="type-row"><div class="type-label">ТИП МОДЕЛИ Б <button class="info-btn" data-info="bType">i</button></div><div class="type-seg" id="bTypeSeg"><button class="active" data-btype="open">Открытый</button><button data-btype="closed">Закрытый</button></div></div></div><span class="model-badge" id="bModelBadge">ОТКРЫТЫЙ</span></div>
+      <div class="section"><div class="section-title">Градостроительство</div>
+        <div class="metric"><div class="metric-label">Количество ММ <button class="info-btn" data-info="parkingCount">i</button></div><div class="metric-value" id="bMm">126</div></div>
+        <div class="metric"><div class="metric-label">Площадь паркинга <button class="info-btn" data-info="agArea">i</button></div><div class="metric-value" id="bParkArea">3 528 м²</div></div>
+        <div class="metric"><div class="metric-label">Пятно паркинга <button class="info-btn" data-info="aboveFootprint">i</button></div><div class="metric-value" id="bFoot">706 м²</div></div>
+        <div class="metric"><div class="metric-label">Доступная площадь квартир <button class="info-btn" data-info="availableApartments">i</button></div><div class="metric-value" id="bApt">8 493 м²</div></div>
+        <div class="metric"><div class="metric-label">Потеря квартир <button class="info-btn" data-info="aptLoss">i</button></div><div class="metric-value good" id="bLoss">107 м²</div></div>
+        <div class="metric"><div class="metric-label">Кразм <button class="info-btn" data-info="krazm">i</button></div><div class="metric-value bad" id="bKrazm">71,2% → 69,8%</div></div>
+        <div class="metric"><div class="metric-label">Остаток территории <button class="info-btn" data-info="residual">i</button></div><div class="metric-value" id="bResidual">513 м²</div></div>
+      </div>
+      <div class="section"><div class="section-title">Экономика + эксплуатация 5 лет</div>
+        <div class="metric"><div class="metric-label">Себестоимость 1 ММ <button class="info-btn" data-info="agCost">i</button></div><div class="metric-value" id="bCostMm">0,60 млн ₽</div></div>
+        <div class="metric"><div class="metric-label">CAPEX <button class="info-btn" data-info="capex">i</button></div><div class="metric-value" id="bCapex">75,6 млн ₽</div></div>
+        <div class="metric"><div class="metric-label">OPEX 5 лет <button class="info-btn" data-info="opex5">i</button></div><div class="metric-value" id="bOpex">3,78 млн ₽</div></div>
+        <div class="metric"><div class="metric-label">Плановые ремонты <button class="info-btn" data-info="repair5">i</button></div><div class="metric-value" id="bRepair">1,51 млн ₽</div></div>
+        <div class="metric"><div class="metric-label">Риски ремонтов <button class="info-btn" data-info="risk5">i</button></div><div class="metric-value" id="bRisk">0,38 млн ₽</div></div>
+      </div>
+      <div class="section"><div class="section-title">Коммерция — рынок</div>
+        <div class="metric"><div class="metric-label">Рыночная цена продажи ММ <button class="info-btn" data-info="marketSale">i</button></div><div class="metric-value" id="bSale">0,78 млн ₽/ММ</div></div>
+        <div class="metric"><div class="metric-label">Продано ММ <button class="info-btn" data-info="soldMm">i</button></div><div class="metric-value" id="bSold">88 ММ</div></div>
+        <div class="metric"><div class="metric-label">Непроданный остаток <button class="info-btn" data-info="unsold">i</button></div><div class="metric-value" id="bUnsold">30% • 38 ММ</div></div>
+        <div class="metric"><div class="metric-label">Выручка от проданных ММ <button class="info-btn" data-info="parkingRevenue">i</button></div><div class="metric-value good" id="bParkingRevenue">68,2 млн ₽</div></div>
+        <div class="metric"><div class="metric-label">Рыночная цена квартир <button class="info-btn" data-info="aptMarketPrice">i</button></div><div class="metric-value" id="bAptMarket">186,7 тыс. ₽/м²</div></div>
+        <div class="metric"><div class="metric-label">Потерянная выручка квартир vs А <button class="info-btn" data-info="lostAptRevenue">i</button></div><div class="metric-value bad" id="bLostAptRevenue">0,0 млн ₽</div></div>
+      </div>
+      <div class="totalbox"><div class="total-row"><div class="total-label">Совокупные затраты 5 лет <button class="info-btn" data-info="lcc5">i</button></div><div class="total-value" id="bTotal">81,27 млн ₽</div></div><div class="delta-note" id="bTotalNote">В текущем базовом кейсе преимущество формируется прежде всего CAPEX и эксплуатацией.</div></div>
+    </div>
+  </div>
+
+  <div class="main-results">
+    <div class="main-result"><div class="mr-label">Экономия СМР модели Б <button class="info-btn" data-info="deltaCapex">i</button></div><div class="mr-value" id="mainDeltaCapex">0,0 млн ₽</div><div class="mr-note">Только разница CAPEX. Не учитывает продажи, эксплуатацию и потерю квартир.</div></div>
+    <div class="main-result primary-result"><div class="mr-label">Главный KPI — эффект после продаж <span class="main-kpi-badge">ГЛАВНЫЙ</span> <button class="info-btn" data-info="marketNetEffect">i</button></div><div class="mr-value" id="mainMarketEffect">0,0 млн ₽</div><div class="mr-note" id="mainMarketNote">LCC5 + фактическая выручка от проданных ММ − стоимость потерянных квартир.</div></div>
+  </div>
+
+  <div class="card conclusions">
+    <div class="summary-title"><h2>Выводы</h2><span class="tag">ДИНАМИЧЕСКАЯ АНАЛИТИКА <button class="info-btn" data-info="finalLogic">i</button></span></div>
+    <div class="conclusion-grid" id="finalConclusions"></div>
+  </div>
+
+  <div class="footer-note">Рабочая версия расчетного ядра. НОРМАТИВ — нормативный параметр; ПОДТВЕРЖДЕНО — собственная база; РАСЧЕТНО — рабочее допущение; РЫНОК — ориентир открытой экспозиции. Для конкретного проекта обязательна проверка ГПЗУ / ПЗЗ / ППТ / геологии.</div>
+</div>
+
+<div class="modal" id="infoModal"><div class="modal-card"><div class="modal-head"><h3 id="infoTitle">Информация</h3><button class="close" data-close="infoModal">×</button></div><div class="modal-body"><div class="info-content" id="infoText"></div></div></div></div>
+<div class="modal" id="instructionModal"><div class="modal-card"><div class="modal-head"><h3>Как пользоваться инструментом</h3><button class="close" data-close="instructionModal">×</button></div><div class="modal-body">
+  <div class="instruction-steps">
+    <div class="instruction-step"><div class="step-num">1</div><div><b>Выберите город</b><p>Нажмите «Новосибирск» или «Тюмень». Нормативный и рыночный профиль переключится автоматически.</p></div></div>
+    <div class="instruction-step"><div class="step-num">2</div><div><b>Задайте площадь участка</b><p>Передвигайте ползунок. Шаг 220 м². Все показатели двух моделей пересчитываются сразу.</p></div></div>
+    <div class="instruction-step"><div class="step-num">3</div><div><b>Настройте модель Б</b><p>Выберите открытый или закрытый наземный паркинг. При необходимости включите «Высокий УГВ».</p></div></div>
+    <div class="instruction-step"><div class="step-num">4</div><div><b>Смотрите главный KPI</b><p>Яркий блок «Эффект после продаж» учитывает LCC5, рыночную выручку проданных ММ, непроданный остаток и потерянную площадь квартир.</p></div></div>
+    <div class="instruction-step"><div class="step-num">5</div><div><b>Откройте «Аналитику Н/П»</b><p>Это главный экран объяснения результата: из чего сложилось преимущество и что ограничивает участок.</p></div></div>
+    <div class="instruction-step"><div class="step-num">6</div><div><b>Используйте значки i</b><p>Каждый значок раскрывает формулу, норматив, допущение и статус исходных данных.</p></div></div>
+  </div>
+  <div class="instruction-final"><b>Как читать результат:</b> положительный главный KPI означает финансовое преимущество модели Б; отрицательный — модели А. Отдельно проверяйте Кразм по проездам и баланс благоустройства с учетом кровли паркинга.</div>
+</div></div></div>
+<div class="modal" id="casesModal"><div class="modal-card"><div class="modal-head"><h3>Предложение на рынке</h3><button class="close" data-close="casesModal">×</button></div><div class="modal-body" id="casesBody"></div></div></div>
+<div class="modal" id="analysisModal"><div class="modal-card"><div class="modal-head"><h3>Аналитика Н/П</h3><button class="close" data-close="analysisModal">×</button></div><div class="modal-body" id="analysisBody"></div></div></div>
+<div class="modal" id="productModal"><div class="modal-card"><div class="modal-head"><h3>Влияние на продукт</h3><button class="close" data-close="productModal">×</button></div><div class="modal-body" id="productBody"></div></div></div>
+<div class="modal" id="salesScenarioModal"><div class="modal-card"><div class="modal-head"><h3>Сценарий продаж парковок</h3><button class="close" data-close="salesScenarioModal">×</button></div><div class="modal-body">
+  <div class="analysis-callout"><span class="analysis-dot"></span>Одинаковое количество машино-мест для подземного и наземного вариантов определяется автоматически по нормативу для текущей площади квартир.</div>
+  <div class="sales-grid">
+    <div class="sales-field"><label for="salesMm">Нормативное количество машино-мест</label><input id="salesMm" type="number" value="0" readonly><div class="sales-note" id="salesMmNormNote"></div></div>
+    <div class="sales-field"><label for="salesAtInput">Продано к вводу, %</label><input id="salesAtInput" type="number" min="0" max="100" step="1" value="30"></div>
+    <div class="sales-field"><label for="salesIn5">Продано в течение 5 лет, %</label><input id="salesIn5" type="number" min="0" max="100" step="1" value="40"></div>
+  </div>
+  <div class="sales-pills"><span class="sales-pill" id="salesUnsoldPill">Не продано: 30%</span><span class="sales-pill" id="salesProfilePill">30% к вводу • 40% за 5 лет • 30% остаток</span></div>
+  <div class="sales-warning" id="salesWarning"></div>
+  <div class="sales-summary">
+    <div class="sales-model"><h4>Подземный</h4><div id="salesAResult"></div></div>
+    <div class="sales-model"><h4 id="salesBTitle">Наземный открытый</h4><div id="salesBResult"></div></div>
+  </div>
+  <div class="sales-result">
+    <div style="font-size:11px;color:#60777b;font-weight:900;text-transform:uppercase;letter-spacing:.5px">Ответ на поставленный вопрос</div>
+    <div class="big" id="salesDecisionTitle">—</div>
+    <div class="sales-note" id="salesDecisionCurrent"></div>
+    <div class="sales-note" id="salesDecisionGift"></div>
+    <div class="sales-note" id="salesDecisionBreakEven"></div>
+    <div class="sales-note" id="salesDecisionAction" style="margin-top:8px;font-weight:750;color:#355f63"></div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid #d6e4e4;font-size:11px;color:#60777b;font-weight:900;text-transform:uppercase;letter-spacing:.5px">Финансовая разница текущего сценария</div>
+    <div class="big" id="salesDelta">0,0 млн ₽</div>
+    <div class="sales-note" id="salesDeltaNote"></div>
+  </div>
+</div></div></div>
+
+
+<script>
+const fmt0 = n => Math.round(n).toLocaleString('ru-RU');
+const rubM = n => (n/1e6).toLocaleString('ru-RU',{minimumFractionDigits:1,maximumFractionDigits:2})+' млн ₽';
+const pct = n => (n*100).toLocaleString('ru-RU',{maximumFractionDigits:1})+'%';
+const moneyMm = n => (n/1e6).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})+' млн ₽/ММ';
+
+const CONST = {
+  baseArea:3000, stepArea:220,
+  nskParkingPer1000:270, nskHousingPerPerson:24,
+  ugM2PerMm:30, agM2PerMm:28, agLevels:5,
+  ugCostPerMm:1700000, agOpenCostPerMm:600000, agClosedCostPerMm:800000,
+  gwlRatePerParkingM2:4500,
+  city:{
+    nsk:{name:'Новосибирск', buildPct:.30, density:2.5, landscapePerApt:.14, unsoldA:.30,unsoldB:.30, marketA:1500000,marketB:950000, apartmentMarket:186700,
+      note:'Ж-4: max застройка 30%, Kплотн 2,5; благоустройство 14 м²/100 м² квартир.'},
+    tmn:{name:'Тюмень', buildPct:.326, density:null, peoplePerHa:290, housingPerPerson:35, nonParkingImprovePerPerson:7.9, greenPerPerson:4.5, unsoldA:.25,unsoldB:.35, marketA:970000,marketB:422000, apartmentMarket:166600,
+      note:'Рабочий профиль: max застройка 32,6%; квартальная плотность 290 чел./га × 35 м²/чел.; непарковочное благоустройство 7,9 м²/чел.'}
+  }
+};
+let state={city:'nsk',highGwl:false,siteArea:3440,bType:'open',avgAptArea:40,driveArea:600,salesAtInput:30,salesIn5:40};
+
+const info = {
+ siteArea:{t:'Площадь земельного участка',x:`Ползунок меняет площадь ЗУ с шагом <b>220 м²</b>. Для Новосибирска при Kплотн=2,5 это дает прирост <b>550 м²</b> расчетной максимальной площади квартир.`,s:'Методика ядра • шаг задан пользователем.'},
+ cityProfile:{t:'Нормативный профиль города',x:`При переключении города пересчитываются градостроительные и коммерческие параметры. <b>Новосибирск:</b> Ж-4 — max застройка 30%, Kплотн 2,5, благоустройство 14 м²/100 м² квартир. <b>Тюмень:</b> рабочий профиль — max застройка 32,6%; 290 чел./га × 35 м²/чел.; непарковочное благоустройство 7,9 м²/чел.`,s:'NORM / NEED_REVIEW для конкретного ГПЗУ и расчетной территории.'},
+ parkingCount:{t:'Расчетное количество машино-мест',x:`<b>Новосибирск:</b> по действующим МНГП — 270 автомобилей на 1000 человек расчетного населения, но не менее 0,5 машино-места на 1 квартиру. Расчетное население для модели определяется по 24 м² общей площади квартир на человека. Количество квартир в укрупненном расчете = площадь квартир / введенная средняя площадь квартиры. Итоговое NММ = ceil(max(Nнас×270/1000; Nкв×0,5)).`,s:'МНГП Новосибирска, действующая редакция 24.06.2026 • п. 2.7.13; укрупненный расчет числа квартир.'},
+ maxApartments:{t:'Максимальная площадь квартир',x:`<b>Новосибирск:</b> Sкв,max = SЗУ × 2,5. <b>Тюмень:</b> рабочий сценарий Sкв,max = SЗУ/10 000 × 290 × 35. В Тюмени показатель 290 чел./га относится к кварталу и требует проверки применимости к конкретному ЗУ.`,s:'NORM / NEED_REVIEW.'},
+ landscape:{t:'Нормируемое благоустройство',x:`<b>Новосибирск:</b> 14 м² на 100 м² квартир. <b>Тюмень:</b> 7,9 м²/чел. в чистом балансе без повторного учета 3,2 м²/чел. хранения транспорта.`,s:'NORM • расчетный слой.'},
+ houseFootprint:{t:'Предельное жилое пятно',x:`В стресс-тесте используется предельное пятно: 30% ЗУ для Новосибирска и 32,6% для рабочего профиля Тюмени. Фактическое пятно может быть меньше.`,s:'NORM + консервативное допущение.'},
+ aboveFootprint:{t:'Пятно наземного паркинга',x:`Sпятна = NММ × 28 м²/ММ ÷ 5 уровней. Тип «открытый/закрытый» пока не меняет площадь, только стоимость и продуктовый профиль.`,s:'Методика ядра.'},
+ limiter:{t:'Ограничивающий фактор',x:`Проверяются: нормативный предел площади квартир, формальный баланс территории и геометрическая размещаемость через Кразм. Если Кразм попадает в риск-зону, площадь квартир корректируется до границы предыдущей зоны риска.`,s:'Расчетная логика ядра.'},
+ ugArea:{t:'Площадь подземного паркинга',x:`Sподз = NММ × 30 м²/ММ.`,s:'Расчетное допущение пользователя.'},
+ ugFootprint:{t:'Пятно подземного паркинга на поверхности',x:`Дополнительное пятно принимается 0 м² при условии использования кровли под благоустройство. Въезды, вентшахты и техзоны требуют проектной проверки.`,s:'NEED_REVIEW для конкретного ГП.'},
+ agArea:{t:'Площадь наземного паркинга',x:`Sназем = NММ × 28 м²/ММ; пятно = площадь / 5 уровней.`,s:'Расчетное допущение пользователя.'},
+ availableApartments:{t:'Доступная площадь квартир',x:`Площадь квартир сначала определяется градостроительным пределом. Для наземного паркинга благоустройство допускается размещать на его кровле, поэтому само пятно паркинга не переводится автоматически в потерю квартир. Отдельно проверяется, хватает ли наземной территории под обязательные проезды/зоны и суммарной площади благоустройства на земле + кровле.`,s:'Обновленная расчетная логика ядра.'},
+ aptLoss:{t:'Потеря площади квартир',x:`Потеря квартир возникает только если после учета обязательных наземных проездов и возможности использовать кровлю паркинга под благоустройство нормативная площадь жилья физически не размещается. Пятно наземного паркинга само по себе больше не конвертируется в потерю квартир.`,s:'Расчетный показатель • проверяется генпланом.'},
+ krazm:{t:'Кразм — коэффициент размещаемости',x:`<b>Новая формула:</b> Кразм = Sобязательных проездов и наземных зон / Sсвободной земли после пятен жилых зданий и наземного паркинга. <br><br>Благоустройство в Кразм больше не входит, потому что оно может размещаться на эксплуатируемой кровле паркинга. Показатель показывает, какую долю оставшейся земли занимают функции, которые нельзя перенести на кровлю: пожарные и транспортные проезды, рампы, обязательные наземные участки.`,s:'Инженерный PROXY, не нормативный коэффициент.'},
+ residual:{t:'Остаток территории',x:`Остаток = свободная земля после пятен минус обязательные проезды/наземные зоны. Благоустройство проверяется отдельным балансом с учетом пригодной кровли наземного паркинга.`,s:'Расчет баланса территории.'},
+ ugCost:{t:'Себестоимость подземного паркинга',x:`База ядра: <b>1,70 млн ₽/ММ</b>. Это соответствует медиане внутренней базы: К1604 2,381; Пульсар 1,617; Ясный берег 1,257; К54 1,838 млн ₽/ММ.`,s:'VERIFIED/PROXY • внутренняя база.'},
+ agCost:{t:'Себестоимость наземного паркинга',x:`<b>Открытый:</b> 600 тыс. ₽/ММ. <b>Закрытый:</b> 800 тыс. ₽/ММ. Выбор меняет CAPEX и продуктовый профиль. Проценты OPEX5 для закрытого пока оставлены теми же, что у открытого, до отдельной калибровки.`,s:'PROXY • ранее согласованные рабочие ставки.'},
+ bType:{t:'Тип наземного паркинга',x:`Можно сравнить <b>открытый</b> и <b>закрытый</b> наземный паркинг. Площадь на ММ и этажность в этой версии одинаковы; различаются себестоимость и продуктовая оценка.`,s:'Расчетный сценарий.'},
+ capex:{t:'CAPEX',x:`CAPEX = NММ × базовая себестоимость 1 ММ + расчетная надбавка высокого УГВ (если включена). Надбавка высокого УГВ больше не фиксированная: она считается от площади подземного паркинга.`,s:'Расчетная формула.'},
+ opex5:{t:'OPEX за 5 лет',x:`Подземный: 10% CAPEX за 5 лет. Наземный: 5% CAPEX за 5 лет. Это PROXY.`,s:'PROXY / NEED_REVIEW.'},
+ repair5:{t:'Плановые ремонты за 5 лет',x:`Подземный: 3% CAPEX; наземный: 2% CAPEX.`,s:'PROXY / NEED_REVIEW.'},
+ risk5:{t:'Риски ремонтов за 5 лет',x:`Подземный: 3% CAPEX; наземный: 0,5% CAPEX. Гидроизоляция подземного пока входит в укрупненный риск.`,s:'PROXY / NEED_REVIEW.'},
+ lcc5:{t:'Совокупные затраты 5 лет',x:`LCC5 = CAPEX + OPEX5 + плановые ремонты + риск внеплановых ремонтов. Коммерческий непроданный остаток здесь не считается безвозвратной потерей.`,s:'Согласованная методика LCC5.'},
+ marketSale:{t:'Рыночная цена продажи ММ',x:`Рабочая база для Новосибирска обновлена по экспозиции сентября 2026: <b>подземный 1,50 млн ₽/ММ</b>, <b>многоуровневый наземный 0,95 млн ₽/ММ</b>. Подземный ориентир выбран выше средней 1,34 млн ₽ по новостройкам, поскольку в актуальных новых проектах встречается экспозиция 1,5–2,1 млн ₽ и выше. Наземный ориентир менее устойчив из-за меньшего числа чистых сопоставимых предложений.`,s:'MARKET PROXY • сентябрь 2026.'},
+ soldMm:{t:'Продано машино-мест',x:`Nпродано = Nвсего − Nнепроданных. Непроданный остаток округляется до целого количества ММ и <b>не включается в выручку</b>.`,s:'Расчетная коммерческая методика.'},
+ parkingRevenue:{t:'Выручка от проданных ММ',x:`Выручка ММ = Nпроданных × рыночная цена ММ. Непроданные места вычитаются из реализованного объема полностью.`,s:'Расчет по MARKET PROXY.'},
+ aptMarketPrice:{t:'Рыночная цена квартир',x:`Для оценки стоимости потерянной площади используется текущий ориентир первичного рынка: <b>Новосибирск ≈186,7 тыс. ₽/м²</b>, <b>Тюмень ≈166,6 тыс. ₽/м²</b>. Это среднерыночный PROXY, а не цена конкретного проекта.`,s:'MARKET PROXY • ЦИАН, открытая экспозиция, август–сентябрь 2026.'},
+ lostAptRevenue:{t:'Стоимость потерянной площади квартир',x:`Потерянная выручка = max(0, Sкв.А − Sкв.Б) × рыночная цена квартир выбранного города. В модели А та же величина показывается как сохраненная выручка относительно модели Б.`,s:'Коммерческий расчет ядра.'},
+ unsold:{t:'Доля непроданных ММ',x:`Берется из окна «Сценарий продаж»: 100% − продано к вводу − продано в течение 5 лет. По умолчанию 30% / 40% / 30%. Эта же доля используется в основном расчете и в сценарии.`,s:'Связанная коммерческая методика.'},
+ 
+ gwl:{t:'Высокий уровень УГВ',x:`При включении применяется расчетная надбавка <b>4 500 ₽/м² площади подземного паркинга</b>. Площадь подземного паркинга = NММ × 30 м²/ММ. <br><br><b>Состав по типовому ТЗ, п. 3.17:</b> фундаментная плита/ростверк — <b>Тип Ак + В1ок</b>; наружные стены в грунте — <b>Тип Ак + Ад + В1ок</b>. Тип Ак — водонепроницаемый монолитный бетон не ниже W8 с ограничением раскрытия трещин; Тип Ад — Пенетрон Адмикс; Тип В1ок — наружная оклеечная гидроизоляция по праймеру материалом типа «Техноэласт» минимум в 2 слоя. Под плитой предусматривается защитная стяжка; на стенах без наружного утеплителя — защитная профилированная мембрана типа PLANTER; технологические швы герметизируются гидрошпонками и набухающими профилями. <br><br><b>Что входит в 4 500 ₽/м²:</b> двухслойная оклеечная гидроизоляция, праймер, работы, защитная стяжка под плитой, Пенетрон Адмикс для стен, защитная мембрана и резерв на швы/примыкания. <br><br><b>Не включено:</b> возможное дополнительное армирование из-за ограничения раскрытия трещин, водопонижение, «стена в грунте» и иные геотехнические мероприятия — они остаются NEED_REVIEW.`,s:'PROXY по составу типового ТЗ • ставка 4 500 ₽/м² подземного паркинга.'},
+ gwlAdd:{t:'Расчетная надбавка высокого УГВ',x:`ΔУГВ = Sподземного паркинга × 4 500 ₽/м², где Sподземного паркинга = NММ × 30 м²/ММ. Для 128 ММ: 128 × 30 × 4 500 = <b>17,28 млн ₽</b>. Значение пересчитывается автоматически вместе с количеством ММ.`,s:'PROXY • прямой расчет гидроизоляционного комплекса; геотехническое усиление не включено.'},
+ deltaCapex:{t:'Экономия СМР модели Б',x:`ΔCAPEX = CAPEX подземного − CAPEX наземного. Это <b>отдельный</b> показатель и больше не является главным итогом.`,s:'Расчетный показатель.'},
+ marketNetEffect:{t:'Главный KPI — эффект после продаж',x:`Это основной финансовый результат сравнения, а не простая разница себестоимости. <br><br><b>Формула:</b> Эффект Б = (LCC5А − LCC5Б) + (Выручка от проданных ММ Б − Выручка от проданных ММ А) − Потерянная выручка квартир. <br><br><b>LCC5</b> включает CAPEX, эксплуатацию 5 лет, плановые ремонты и риски. <br><b>Выручка ММ</b> считается по рыночной цене города и только по реально реализуемой части: непроданные места исключаются. <br><b>Потерянные квартиры</b> = разница доступной площади квартир между моделями × рыночная цена м². <br><br>Положительное значение означает преимущество наземной модели Б; отрицательное — подземной модели А. ΔCAPEX показывается отдельно и не подменяет этот KPI.`,s:'Главный сравнительный показатель ядра • MARKET + LCC5 + градостроительный контур.'},
+ finalLogic:{t:'Логика итогового вывода',x:`Итог строится как связанная система из трех контуров: <b>1) стоимость владения LCC5, 2) коммерческая реализация машино-мест по рынку, 3) цена потерянной площади квартир.</b> Разница CAPEX показывается отдельно, чтобы было видно источник экономии, но решение принимается по главному KPI после продаж. Непроданные ММ не создают выручку. Если Кразм формирует потерю квартир, она автоматически уменьшает преимущество наземного решения.`,s:'Связанная расчетная модель.'}
+};
+
+function cityCfg(){return CONST.city[state.city]}
+function normativeMaxApt(site){const c=cityCfg(); return state.city==='nsk'?site*c.density:site/10000*c.peoplePerHa*c.housingPerPerson;}
+function landscapeFor(apt){const c=cityCfg(); return state.city==='nsk'?apt*c.landscapePerApt:apt/c.housingPerPerson*c.nonParkingImprovePerPerson;}
+function parkingCountFor(apt){
+ const a=Math.max(0,Number(apt)||0);
+ if(state.city==='nsk'){
+   const residents=a/CONST.nskHousingPerPerson;
+   const byPopulation=residents*CONST.nskParkingPer1000/1000;
+   const apartments=a/Math.max(20,state.avgAptArea||40);
+   const byApartments=apartments*0.5;
+   return Math.max(0,Math.ceil(Math.max(byPopulation,byApartments)));
+ }
+ // Для Тюмени пока сохраняется прежний рабочий расчет до внесения регионального норматива.
+ return Math.max(0,Math.round(a/(8593.75/128)));
+}
+function houseFootprint(site){return site*cityCfg().buildPct;}
+function normativeParkingCount(site){return parkingCountFor(normativeMaxApt(site));}
+function parkingFootprint(site,model){if(model==='A')return 0;return normativeParkingCount(site)*CONST.agM2PerMm/CONST.agLevels;}
+function freeGround(site,model){return Math.max(0,site-houseFootprint(site)-parkingFootprint(site,model));}
+function usableRoof(site,model){return model==='B'?parkingFootprint(site,model):0;}
+function driveAreaFor(site,model){return Math.min(Math.max(0,state.driveArea||0),freeGround(site,model));}
+function residualFor(site,apt,model){return Math.max(0,freeGround(site,model)-driveAreaFor(site,model));}
+function krazm(site,apt,model){const free=freeGround(site,model);return free>0?driveAreaFor(site,model)/free:9.99;}
+function formalFeasibleApt(site,model){
+ const max=normativeMaxApt(site);
+ // Благоустройство может размещаться на свободной земле после проездов + на кровле наземного паркинга.
+ const availableLandscape=Math.max(0,residualFor(site,max,model)+usableRoof(site,model));
+ if(landscapeFor(max)<=availableLandscape+1e-6)return max;
+ let lo=0,hi=max;
+ for(let i=0;i<60;i++){const mid=(lo+hi)/2;if(landscapeFor(mid)<=availableLandscape)lo=mid;else hi=mid;}
+ return lo;
+}
+function feasibleApt(site,model){const formal=formalFeasibleApt(site,model);const raw=krazm(site,formal,model);return {apt:formal,formal,raw,target:null,finalK:raw,geometryLoss:normativeMaxApt(site)-formal};}
+function krazmClass(v){if(v<.5)return ['low','низкий'];if(v<.6)return ['mid','умеренный'];if(v<.7)return ['mid','высокий'];return ['high','критический'];}
+function krazmDisplay(x){return pct(x.finalK);}
+
+function modelFinance(model,mm){
+ let unit=model==='A'?CONST.ugCostPerMm:(state.bType==='open'?CONST.agOpenCostPerMm:CONST.agClosedCostPerMm);
+ let gwlAdd=(model==='A'&&state.highGwl)?(mm*CONST.ugM2PerMm*CONST.gwlRatePerParkingM2):0;
+ let capex=mm*unit+gwlAdd;
+ let opex=capex*(model==='A'?.10:.05),repair=capex*(model==='A'?.03:.02),risk=capex*(model==='A'?.03:.005);
+ const c=cityCfg(),unsold=Math.max(0,1-(state.salesAtInput+state.salesIn5)/100),market=model==='A'?c.marketA:c.marketB;
+ const unsoldMm=Math.min(mm,Math.round(mm*unsold)),soldMm=Math.max(0,mm-unsoldMm),parkingRevenue=soldMm*market;
+ return {capex,gwlAdd,opex,repair,risk,total:capex+opex+repair+risk,unit:capex/Math.max(mm,1),unsold,unsoldMm,soldMm,market,parkingRevenue};
+}
+function set(id,v){document.getElementById(id).textContent=v}
+function setClass(id,cls){const e=document.getElementById(id);e.classList.remove('good','warn','bad');if(cls)e.classList.add(cls)}
+
+function update(){
+ const site=state.siteArea,c=cityCfg(),maxA=normativeMaxApt(site),mmMax=parkingCountFor(maxA),landMax=landscapeFor(maxA),hfoot=houseFootprint(site),bFootMax=mmMax*CONST.agM2PerMm/CONST.agLevels;
+ const calcA=feasibleApt(site,'A'),calcB=feasibleApt(site,'B'),aptA=calcA.apt,aptB=calcB.apt,mmNorm=normativeParkingCount(site),mmA=mmNorm,mmB=mmNorm;
+ const resA=residualFor(site,aptA,'A'),resB=residualFor(site,aptB,'B'),finA=modelFinance('A',mmA),finB=modelFinance('B',mmB),lossA=maxA-aptA,lossB=maxA-aptB;
+ const deltaCapex=finA.capex-finB.capex,expDelta=(finA.opex+finA.repair+finA.risk)-(finB.opex+finB.repair+finB.risk);
+ const lostAptArea=Math.max(0,aptA-aptB),lostAptRevenue=lostAptArea*c.apartmentMarket;
+ const parkingRevenueDelta=finB.parkingRevenue-finA.parkingRevenue;
+ const lccDelta=finA.total-finB.total,marketNetEffect=lccDelta+parkingRevenueDelta-lostAptRevenue;
+ set('areaValue',(site/10000).toLocaleString('ru-RU',{minimumFractionDigits:3,maximumFractionDigits:4})+' га');set('areaM2',fmt0(site)+' м²');set('cityNote',c.note);set('normTag',c.name.toUpperCase()+' • НОРМАТИВНЫЙ ПРОФИЛЬ');
+ const gwlTag=document.getElementById('highGwlTag'); if(gwlTag){const refAdd=mmA*CONST.ugM2PerMm*CONST.gwlRatePerParkingM2;gwlTag.textContent=state.highGwl?`+4 500 ₽/м² • ${rubM(refAdd)}`:'+4 500 ₽/м² подземного паркинга';}
+ document.querySelectorAll('.seg button[data-city]').forEach(b=>b.classList.toggle('active',b.dataset.city===state.city));document.querySelectorAll('#bTypeSeg button').forEach(b=>b.classList.toggle('active',b.dataset.btype===state.bType));
+ set('bModelSub',`Отдельно стоящий ${state.bType==='open'?'открытый':'закрытый'} 5-уровневый паркинг`);set('bModelBadge',state.bType==='open'?'ОТКРЫТЫЙ':'ЗАКРЫТЫЙ');
+ set('kpiMm',mmMax);set('kpiApt',fmt0(maxA)+' м²');set('kpiLandscape',fmt0(landMax)+' м²');set('kpiHouseFoot',fmt0(hfoot)+' м²');set('kpiParkFoot',fmt0(bFootMax)+' м²');
+ set('aptFoot',state.city==='nsk'?'Kплотн = 2,5':'290 чел./га × 35 м²/чел.');set('landscapeFoot',state.city==='nsk'?'14 м² / 100 м² квартир':'7,9 м²/чел. без дублирования парковки');set('houseFoot',pct(c.buildPct)+' участка');
+ const limiter='Кразм по проездам';set('kpiLimiter',limiter);set('limiterFoot',`${fmt0(state.driveArea)} м² проездов • Кразм Б ${pct(calcB.raw)}`);
+ // model A
+ set('aMm',mmA);set('aParkArea',fmt0(mmA*CONST.ugM2PerMm)+' м²');set('aApt',fmt0(aptA)+' м²');set('aLoss',fmt0(lossA)+' м²');set('aKrazm',krazmDisplay(calcA));set('aResidual',fmt0(resA)+' м²');setClass('aKrazm',krazmClass(calcA.raw)[0]);setClass('aLoss',lossA>1?'bad':'good');
+ set('aCostMm',moneyMm(finA.unit));set('aCapex',rubM(finA.capex));set('aGwlAdd',state.highGwl?rubM(finA.gwlAdd):'0 ₽');setClass('aGwlAdd',state.highGwl?'warn':'');set('aOpex',rubM(finA.opex));set('aRepair',rubM(finA.repair));set('aRisk',rubM(finA.risk));set('aSale',moneyMm(finA.market));set('aSold',finA.soldMm+' ММ');set('aUnsold',pct(finA.unsold)+' • '+finA.unsoldMm+' ММ');set('aParkingRevenue',rubM(finA.parkingRevenue));set('aAptMarket',(c.apartmentMarket/1000).toLocaleString('ru-RU',{maximumFractionDigits:1})+' тыс. ₽/м²');set('aSavedAptRevenue',rubM(lostAptRevenue));set('aTotal',rubM(finA.total));
+ // model B
+ set('bMm',mmB);set('bParkArea',fmt0(mmB*CONST.agM2PerMm)+' м²');set('bFoot',fmt0(mmB*CONST.agM2PerMm/CONST.agLevels)+' м²');set('bApt',fmt0(aptB)+' м²');set('bLoss',fmt0(lossB)+' м²');set('bKrazm',krazmDisplay(calcB));set('bResidual',fmt0(resB)+' м²');setClass('bKrazm',krazmClass(calcB.raw)[0]);setClass('bLoss',lossB>1?'bad':'good');
+ set('bCostMm',moneyMm(finB.unit));set('bCapex',rubM(finB.capex));set('bOpex',rubM(finB.opex));set('bRepair',rubM(finB.repair));set('bRisk',rubM(finB.risk));set('bSale',moneyMm(finB.market));set('bSold',finB.soldMm+' ММ');set('bUnsold',pct(finB.unsold)+' • '+finB.unsoldMm+' ММ');set('bParkingRevenue',rubM(finB.parkingRevenue));set('bAptMarket',(c.apartmentMarket/1000).toLocaleString('ru-RU',{maximumFractionDigits:1})+' тыс. ₽/м²');set('bLostAptRevenue',rubM(lostAptRevenue));set('bTotal',rubM(finB.total));
+ document.getElementById('bTotalNote').textContent=`ΔCAPEX = ${rubM(deltaCapex)}; ΔEXP5 = ${rubM(expDelta)}. Главный итог с продажами вынесен отдельным KPI ниже.`;
+ set('mainDeltaCapex',rubM(deltaCapex));set('mainMarketEffect',rubM(marketNetEffect));setClass('mainMarketEffect',marketNetEffect>=0?'good':'bad');document.getElementById('mainMarketNote').textContent=`ΔLCC5 ${rubM(lccDelta)} + Δвыручки ММ ${rubM(parkingRevenueDelta)} − потеря квартир ${rubM(lostAptRevenue)}.`;
+ state.last={site,c,maxA,calcA,calcB,aptA,aptB,mmA,mmB,resA,resB,finA,finB,lossA,lossB,deltaCapex,expDelta,lostAptArea,lostAptRevenue,parkingRevenueDelta,lccDelta,marketNetEffect};
+ renderConclusions();
+ if(document.getElementById('salesScenarioModal')?.classList.contains('open'))renderSalesScenario();
+}
+
+function renderConclusions(){const d=state.last;if(!d)return;const bName=state.bType==='open'?'открытого':'закрытого';const kr=krazmClass(d.calcB.raw)[1];const cityPrice=state.city==='tmn'?`В Тюмени рыночная цена подземного ММ (${moneyMm(d.finA.market)}) существенно ниже расчетной себестоимости (${moneyMm(d.finA.unit)}). Это поддерживает гипотезу, что одним из толчков перехода к наземным решениям могло быть ценообразование.`:`В Новосибирске рыночная цена подземного ММ (${moneyMm(d.finA.market)}) также ниже расчетной себестоимости (${moneyMm(d.finA.unit)}), но разрыв меньше, чем в Тюмени.`;
+ const efficiency=d.marketNetEffect>0?`После учета LCC5, фактической выручки от проданных ММ и стоимости потерянной площади квартир ${bName} наземный паркинг эффективнее подземного на <b>${rubM(d.marketNetEffect)}</b>.`:`После учета продаж преимущество наземного решения не подтверждается: эффект Б = <b>${rubM(d.marketNetEffect)}</b>.`;
+ document.getElementById('finalConclusions').innerHTML=`
+ <div class="conclusion-item"><strong>1. Главный финансовый вывод</strong><p>${efficiency} Отдельно экономия СМР модели Б составляет <b>${rubM(d.deltaCapex)}</b>. ${state.highGwl?`В подземной модели учтена надбавка высокого УГВ <b>${rubM(d.finA.gwlAdd)}</b> по ставке 4 500 ₽/м² площади паркинга.`:''}</p></div>
+ <div class="conclusion-item"><strong>2. Продажи паркинга</strong><p>Подземный: продано <b>${d.finA.soldMm} из ${d.mmA} ММ</b>, выручка <b>${rubM(d.finA.parkingRevenue)}</b>. Наземный: продано <b>${d.finB.soldMm} из ${d.mmB} ММ</b>, выручка <b>${rubM(d.finB.parkingRevenue)}</b>. Непроданные места полностью исключены из выручки.</p></div>
+ <div class="conclusion-item"><strong>3. Проезды, Кразм и квартиры</strong><p>Кразм Б = <b>${pct(d.calcB.raw)}</b> (${kr} риск) при ${fmt0(state.driveArea)} м² обязательных проездов/зон. Благоустройство учитывается отдельно с возможностью размещения на кровле паркинга. Расчетная потеря квартир относительно А — <b>${fmt0(d.lostAptArea)} м²</b>, стоимость — <b>${rubM(d.lostAptRevenue)}</b>.</p></div>
+ <div class="conclusion-item"><strong>4. Ценообразование и критерий эффективности</strong><p>${cityPrice} Наземный паркинг эффективнее, когда экономия LCC5 плюс его фактическая рыночная выручка относительно подземного перекрывают стоимость потерянных квартир; дополнительно Кразм и продуктовый класс должны оставаться приемлемыми.</p></div>`;
+}
+
+function openModal(id){document.getElementById(id).classList.add('open')}function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.addEventListener('click',e=>{if(e.target.matches('[data-close]'))closeModal(e.target.dataset.close);if(e.target.classList.contains('modal'))closeModal(e.target.id);if(e.target.classList.contains('info-btn')){const d=info[e.target.dataset.info];if(d){set('infoTitle',d.t);document.getElementById('infoText').innerHTML=`${d.x}<div class="info-source"><b>Источник / статус:</b> ${d.s}</div>`;openModal('infoModal')}}});
+document.getElementById('siteRange').addEventListener('input',e=>{state.siteArea=CONST.baseArea+Number(e.target.value)*CONST.stepArea;update()});
+document.querySelectorAll('.seg button[data-city]').forEach(b=>b.addEventListener('click',()=>{state.city=b.dataset.city;update()}));
+document.getElementById('highGwl').addEventListener('change',e=>{state.highGwl=e.target.checked;update()});
+document.querySelectorAll('#bTypeSeg button').forEach(b=>b.addEventListener('click',()=>{state.bType=b.dataset.btype;update()}));
+
+function showCases(){
+ const rows=[
+ ['Квартал 1604','Новосибирск','подземный / встроенный','238','2,381 млн ₽/ММ','ПОДТВЕРЖДЕНО'],
+ ['Пульсар','Новосибирск','паркинг','215','1,617 млн ₽/ММ','ПОДТВЕРЖДЕНО'],
+ ['Ясный берег','Новосибирск','несколько паркингов','1 015','1,257 млн ₽/ММ','ПОДТВЕРЖДЕНО'],
+ ['Квартал 54','Новосибирск','паркинг','208','1,838 млн ₽/ММ','ПОДТВЕРЖДЕНО*'],
+ ['Экспозиция Тюмени','Тюмень','подземный','—','≈0,97 млн ₽','РЫНОЧНЫЙ ОРИЕНТИР'],
+ ['Экспозиция Тюмени','Тюмень','многоуровневый','—','≈0,422 млн ₽','РЫНОЧНЫЙ ОРИЕНТИР'],
+ ['Экспозиция Новосибирска','Новосибирск','подземный','—','≈1,30 млн ₽','РЫНОЧНЫЙ ОРИЕНТИР'],
+ ['Экспозиция Новосибирска','Новосибирск','многоуровневый','—','≈0,50–0,95 млн ₽; база 0,95','РЫНОК • 09.2026']
+ ];
+ document.getElementById('casesBody').innerHTML=`<table><thead><tr><th>Источник</th><th>Город</th><th>Тип</th><th>ММ</th><th>Стоимость / цена</th><th>Статус</th></tr></thead><tbody>${rows.map(r=>'<tr>'+r.map(x=>'<td>'+x+'</td>').join('')+'</tr>').join('')}</tbody></table>
+ <div class="analysis-box" style="margin-top:14px"><strong>Вывод по предложению</strong><p><b>Тюмень:</b> рыночная цена многоуровневого паркинга около 0,42 млн ₽/ММ, а подземного — около 0,97 млн ₽/ММ; обе величины ниже расчетной себестоимости соответствующих решений. Это поддерживает гипотезу, что переход к открытым/наземным решениям может быть следствием не только CAPEX, но и невозможности перенести полную стоимость подземного паркинга на покупателя. <b>Новосибирск:</b> рабочая база обновлена до 0,95 млн ₽ для многоуровневого и 1,50 млн ₽ для подземного ММ; подземный рынок новых проектов показывает экспозицию 1,5–2,1 млн ₽ и выше при среднем около 1,34 млн ₽.</p></div>
+ <div class="info-source">* По К54 показатель в исходнике обозначен как «СМР полностью». Рыночные ориентиры требуют периодического обновления.</div>`;openModal('casesModal');
+}
+
+function showAnalysis(){const d=state.last,city=d.c.name,kr=krazmClass(d.calcB.raw)[1],bType=state.bType==='open'?'открытый':'закрытый';
+ document.getElementById('analysisBody').innerHTML=`
+ <div class="analysis-callout"><span class="analysis-dot"></span>Главный экран принятия решения: сначала смотрите эффект после продаж, затем коммерческий мост и причину потери/сохранения площади квартир.</div>
+ <div class="main-results">
+   <div class="main-result"><div class="mr-label">Экономия СМР Б</div><div class="mr-value">${rubM(d.deltaCapex)}</div><div class="mr-note">Только CAPEX.</div></div>
+   <div class="main-result primary-result"><div class="mr-label">Главный KPI после продаж <span class="main-kpi-badge">ГЛАВНЫЙ</span></div><div class="mr-value">${rubM(d.marketNetEffect)}</div><div class="mr-note">LCC5 + продажи ММ − потерянные квартиры.</div></div>
+ </div>
+ <div class="analysis-box"><strong>1. Коммерческий мост</strong><div class="calc-bridge"><div class="bridge-item"><span>+ ΔLCC5</span><b>${rubM(d.lccDelta)}</b></div><div class="bridge-item"><span>+ Δвыручки ММ (Б−А)</span><b>${rubM(d.parkingRevenueDelta)}</b></div><div class="bridge-item"><span>− потерянные квартиры</span><b>${rubM(d.lostAptRevenue)}</b></div><div class="bridge-item bridge-final"><span>= эффект модели Б</span><b>${rubM(d.marketNetEffect)}</b></div></div><p>Формула: <b>Эффект Б = (LCC5А − LCC5Б) + (ВыручкаММБ − ВыручкаММА) − (Sкв.А − Sкв.Б) × рыночная цена квартир</b>.</p></div>
+ <div class="analysis-box"><strong>2. Продажа машино-мест — только реализованный объем</strong><p>Подземный: ${d.mmA} ММ, непродано ${d.finA.unsoldMm}, продано <b>${d.finA.soldMm}</b> по ${moneyMm(d.finA.market)} → выручка <b>${rubM(d.finA.parkingRevenue)}</b>. ${bType} наземный: ${d.mmB} ММ, непродано ${d.finB.unsoldMm}, продано <b>${d.finB.soldMm}</b> по ${moneyMm(d.finB.market)} → выручка <b>${rubM(d.finB.parkingRevenue)}</b>. Непроданные места в выручку не входят.</p></div>
+ <div class="analysis-box"><strong>3. Проезды, Кразм и потеря квартир — ${city}</strong><p>Кразм теперь считается только по обязательным наземным проездам/зонам: <b>${fmt0(state.driveArea)} м² / свободная земля</b>. Для модели Б Кразм = <b>${pct(d.calcB.raw)}</b> (${kr}). Благоустройство допускается на кровле наземного паркинга и проверяется отдельным балансом. Модель А: ${fmt0(d.aptA)} м² квартир; модель Б: ${fmt0(d.aptB)} м²; расчетная потеря = <b>${fmt0(d.lostAptArea)} м²</b> = <b>${rubM(d.lostAptRevenue)}</b>.</p></div>
+ <div class="evidence"><b>Новая логика:</b> пятно наземного паркинга само по себе не превращается в потерянные квартиры. Ограничение появляется только если не хватает земли под обязательные проезды/зоны либо суммарной площади благоустройства на земле и кровле.</div>
+ <div class="analysis-box"><strong>4. Итог</strong><p>Разница себестоимости показана отдельно: <b>${rubM(d.deltaCapex)}</b>. Главный итог после учета рынка и непроданных ММ: <b>${rubM(d.marketNetEffect)}</b> в пользу ${d.marketNetEffect>=0?'модели Б':'модели А'}.</p></div>`;openModal('analysisModal');}
+
+function showProduct(){const closed=state.bType==='closed';const typeName=closed?'Наземный закрытый':'Наземный открытый';document.getElementById('productBody').innerHTML=`
+ <div class="product-factor"><b>Фактор</b><b>Подземный</b><b>${typeName}</b></div>
+ <div class="product-factor"><span>Двор без автомобилей</span><span>Максимально достижим; кровля может работать на двор</span><span>Достижим при выносе паркинга из активной дворовой зоны</span></div>
+ <div class="product-factor"><span>Вид из квартир</span><span>Практически нейтрален</span><span>Отдельный крупный объем; прямой вид требует проверки и возможного дисконта квартир</span></div>
+ <div class="product-factor"><span>Расстояние до автомобиля</span><span>Минимальное при встроенной связи</span><span>Зависит от расположения относительно секций</span></div>
+ <div class="product-factor"><span>Теплый переход</span><span>Естественно интегрируется</span><span>${closed?'Реалистичен и способен существенно компенсировать отдельное размещение':'Возможен, но требует отдельного закрытого маршрута и CAPEX'}</span></div>
+ <div class="product-factor"><span>Осадки / мороз</span><span>Высокая защита</span><span>${closed?'Высокая защита при отапливаемом/закрытом контуре':'Защита ниже; маршрут до автомобиля открыт погоде'}</span></div>
+ <div class="product-factor"><span>Архитектурное влияние</span><span>Минимальное</span><span>${closed?'Фасад становится полноценной частью архитектуры проекта':'Открытая конструкция требует аккуратной визуальной интеграции'}</span></div>
+ <div class="class-grid">
+   <div class="class-card"><h4>Standard</h4><span class="class-status" style="background:#e9f7f3;color:#157252">ДОПУСТИМО</span><p>${closed?'Закрытый наземный продукт дает запас качества.':'Открытый наземный паркинг допустим при безопасном маршруте и корректной посадке.'}</p></div>
+   <div class="class-card"><h4>Comfort</h4><span class="class-status" style="background:${closed?'#e9f7f3':'#fff5df'};color:${closed?'#157252':'#9a6717'}">${closed?'ДОПУСТИМО':'ТРЕБУЕТ ПРОВЕРКИ'}</span><p>Двор без машин обязателен; критичны дистанция, вид из квартир и качество маршрута.</p></div>
+   <div class="class-card"><h4>Comfort+</h4><span class="class-status" style="background:#fff5df;color:#9a6717">ТРЕБУЕТ ПРОВЕРКИ</span><p>${closed?'Закрытый контур с теплым переходом может быть допустим при сильной архитектурной интеграции.':'Открытый вариант без теплого перехода и компенсаций не рекомендуется.'}</p></div>
+ </div>
+ <div class="info-source"><b>Методика:</b> PRODUCT-контур = HARD по классу + SOFT-оценка. Денежно отдельно можно считать дисконт квартир с прямым видом на паркинг.</div>`;openModal('productModal');}
+
+
+function clampNum(v,min,max,fallback){v=Number(v);if(!Number.isFinite(v))return fallback;return Math.min(max,Math.max(min,v));}
+function scenarioFinance(model,mm,soldPct){
+ const f=modelFinance(model,mm);
+ const soldMm=mm*soldPct;
+ const revenue=soldMm*f.market;
+ return {...f,soldMmScenario:soldMm,revenueScenario:revenue,net5:revenue-f.total};
+}
+function renderSalesScenario(){
+ const mmEl=document.getElementById('salesMm'),atEl=document.getElementById('salesAtInput'),in5El=document.getElementById('salesIn5');
+ if(!mmEl||!atEl||!in5El)return;
+ const refApt=state.last?state.last.maxA:normativeMaxApt(state.siteArea);
+ const mm=parkingCountFor(refApt);let at=clampNum(state.salesAtInput,0,100,30),in5=clampNum(state.salesIn5,0,100,40);
+ let warn='';if(at+in5>100){in5=Math.max(0,100-at);state.salesIn5=in5;warn='Доля продаж за 5 лет скорректирована, чтобы сумма не превышала 100%.';}
+ mmEl.value=mm;atEl.value=at;in5El.value=in5;const unsold=100-at-in5,totalSold=(at+in5)/100;
+ const nApt=refApt/Math.max(20,state.avgAptArea||40),nPeople=state.city==='nsk'?refApt/CONST.nskHousingPerPerson:null;
+ const normNote=document.getElementById('salesMmNormNote');if(normNote){normNote.textContent=state.city==='nsk'?`Площадь квартир ${fmt0(refApt)} м² • ≈${Math.round(nPeople)} чел. • ≈${Math.round(nApt)} квартир • NММ=${mm}`:`Рабочий профиль города • NММ=${mm}`;}
+ const a=scenarioFinance('A',mm,totalSold),b=scenarioFinance('B',mm,totalSold);
+ const atMm=mm*at/100,in5Mm=mm*in5/100,unsoldMm=mm*unsold/100;
+ const delta=b.net5-a.net5;
+ set('salesUnsoldPill',`Не продано: ${unsold.toLocaleString('ru-RU',{maximumFractionDigits:1})}%`);
+ set('salesProfilePill',`${at.toLocaleString('ru-RU',{maximumFractionDigits:1})}% к вводу • ${in5.toLocaleString('ru-RU',{maximumFractionDigits:1})}% за 5 лет • ${unsold.toLocaleString('ru-RU',{maximumFractionDigits:1})}% остаток`);
+ const w=document.getElementById('salesWarning');w.textContent=warn;w.style.display=warn?'block':'none';
+ const rows=(f)=>`
+   <div class="sales-kpi"><span>Себестоимость 1 ММ</span><b>${moneyMm(f.unit)}</b></div>
+   <div class="sales-kpi"><span>LCC 5 лет</span><b>${rubM(f.total)}</b></div>
+   <div class="sales-kpi"><span>Цена продажи 1 ММ</span><b>${moneyMm(f.market)}</b></div>
+   <div class="sales-kpi"><span>Продано к вводу</span><b>${atMm.toLocaleString('ru-RU',{maximumFractionDigits:1})} ММ</b></div>
+   <div class="sales-kpi"><span>Продано за следующие 5 лет</span><b>${in5Mm.toLocaleString('ru-RU',{maximumFractionDigits:1})} ММ</b></div>
+   <div class="sales-kpi"><span>Не продано</span><b>${unsoldMm.toLocaleString('ru-RU',{maximumFractionDigits:1})} ММ</b></div>
+   <div class="sales-kpi"><span>Выручка за 5 лет</span><b>${rubM(f.revenueScenario)}</b></div>
+   <div class="sales-kpi"><span>Финрезультат: выручка − LCC5</span><b>${rubM(f.net5)}</b></div>`;
+ document.getElementById('salesAResult').innerHTML=rows(a);document.getElementById('salesBResult').innerHTML=rows(b);
+ set('salesBTitle',state.bType==='open'?'Наземный открытый':'Наземный закрытый');set('salesDelta',rubM(delta));
+ document.getElementById('salesDelta').style.color=delta>=0?'var(--green)':'var(--red)';
+ const soldPct=(at+in5)/100;
+ const lccAdv=a.total-b.total;
+ const sameSalesDen=mm*(a.market-b.market);
+ const sameSalesBreak=sameSalesDen>0?lccAdv/sameSalesDen:Infinity;
+ const ugBreakIfGift=mm*a.market>0?lccAdv/(mm*a.market):Infinity;
+ const agNeedIfUg100=mm*b.market>0?Math.max(0,(mm*a.market-lccAdv)/(mm*b.market)):Infinity;
+ const currentWinner=delta>=0?'НАЗЕМНЫЙ ПАРКИНГ ВЫГОДНЕЕ':'ПОДЗЕМНЫЙ ПАРКИНГ ВЫГОДНЕЕ';
+ set('salesDecisionTitle',currentWinner);
+ document.getElementById('salesDecisionTitle').style.color=delta>=0?'var(--green)':'var(--red)';
+ set('salesDecisionCurrent',`Текущий сценарий: ${at.toLocaleString('ru-RU',{maximumFractionDigits:1})}% продается к вводу, еще ${in5.toLocaleString('ru-RU',{maximumFractionDigits:1})}% — в течение 5 лет, ${unsold.toLocaleString('ru-RU',{maximumFractionDigits:1})}% остается непроданным. При одинаковых ${mm} ММ ${delta>=0?'наземный вариант дает преимущество':'подземный вариант дает преимущество'} ${rubM(Math.abs(delta))}.`);
+ if(ugBreakIfGift<=1){
+   set('salesDecisionGift',`Если НАЗЕМНЫЕ места вообще не продавать, а дарить покупателям, подземный вариант сравняется с ним только при продаже примерно ${(ugBreakIfGift*100).toLocaleString('ru-RU',{maximumFractionDigits:1})}% своих ММ (${Math.ceil(mm*ugBreakIfGift)} из ${mm}). Ниже этой доли выгоднее строить наземный и даже не получать прямую выручку от парковки.`);
+ }else{
+   set('salesDecisionGift',`Если НАЗЕМНЫЕ места вообще не продавать, а дарить покупателям, подземному варианту для равенства потребовалось бы продать ${(ugBreakIfGift*100).toLocaleString('ru-RU',{maximumFractionDigits:1})}% ММ — больше физически возможных 100%. То есть при текущих LCC и ценах наземный остается выгоднее даже при 100% продаже подземного паркинга.`);
+ }
+ if(sameSalesBreak>=0&&sameSalesBreak<=1){
+   set('salesDecisionBreakEven',`Переходная точка при ОДИНАКОВОЙ доле продаж обоих паркингов — около ${(sameSalesBreak*100).toLocaleString('ru-RU',{maximumFractionDigits:1})}%. До нее выгоднее наземный, после нее — подземный.`);
+ }else if(sameSalesBreak>1){
+   const extra=delta>=0?'наземный':'подземный';
+   set('salesDecisionBreakEven',`Переходной точки при одинаковой доле продаж в диапазоне 0–100% нет: расчетная граница находится на ${(sameSalesBreak*100).toLocaleString('ru-RU',{maximumFractionDigits:1})}%. В реальном диапазоне продаж выгоднее ${extra} вариант. Если подземный продан на 100%, наземному для равенства достаточно продать примерно ${(agNeedIfUg100*100).toLocaleString('ru-RU',{maximumFractionDigits:1})}% своих ММ.`);
+ }else{
+   set('salesDecisionBreakEven',`При текущих исходных данных наземный вариант не получает экономического преимущества от роста одинаковой доли продаж; проверьте цены реализации и себестоимость.`);
+ }
+ let action='';
+ if(delta>=0){
+   const giftPossible=ugBreakIfGift<=1;
+   const lowNeed=Number.isFinite(agNeedIfUg100)?agNeedIfUg100:1;
+   if(giftPossible){
+     action=`Практический вывод: базовым решением следует считать НАЗЕМНЫЙ паркинг. При текущей структуре продаж его экономический запас позволяет не стремиться к 100% реализации: часть ММ можно продавать, часть использовать как бонус к квартирам, часть оставить в собственности. Даже при нулевой выручке от наземных ММ подземный начинает конкурировать только примерно с ${(ugBreakIfGift*100).toLocaleString('ru-RU',{maximumFractionDigits:1})}% реализации.`;
+   }else{
+     action=`Практический вывод: НАЗЕМНЫЙ паркинг сохраняет преимущество даже в стресс-сценарии. Можно рассматривать схему «продать часть / часть передать вместе с квартирой / остаток оставить в собственности», не закладывая обязательную полную распродажу паркинга.`;
+   }
+   if(Number.isFinite(lowNeed) && lowNeed>=0 && lowNeed<=1){
+     action+=` Если подземный паркинг реализовать на 100%, наземному для финансового равенства достаточно реализовать около ${(lowNeed*100).toLocaleString('ru-RU',{maximumFractionDigits:1})}% ММ.`;
+   }
+ }else{
+   action=`Практический вывод: при текущих исходных данных преимущество получает ПОДЗЕМНЫЙ паркинг. Решение о переходе на наземный имеет смысл только после изменения цены реализации, себестоимости или доли продаж; ориентир для проверки дан выше в строке переходной точки.`;
+ }
+ set('salesDecisionAction',action);
+ document.getElementById('salesDeltaNote').textContent=`Разница считается как (выручка наземного − LCC5 наземного) − (выручка подземного − LCC5 подземного). Непроданный остаток ${unsold.toLocaleString('ru-RU',{maximumFractionDigits:1})}% не дает выручки. Количество ММ одинаковое. Этот же непроданный остаток используется в основном расчёте; дисконтирование продаж внутри 5-летнего периода пока не применяется.`;
+}
+function showSalesScenario(){renderSalesScenario();openModal('salesScenarioModal');}
+
+['casesBtn2'].forEach(id=>document.getElementById(id).addEventListener('click',showCases));['analysisBtn','analysisBtn2'].forEach(id=>document.getElementById(id).addEventListener('click',showAnalysis));['productBtn','productBtn2'].forEach(id=>document.getElementById(id).addEventListener('click',showProduct));document.getElementById('instructionBtn').addEventListener('click',()=>openModal('instructionModal'));
+['salesScenarioBtn','salesScenarioBtn2'].forEach(id=>document.getElementById(id).addEventListener('click',showSalesScenario));document.getElementById('salesAtInput').addEventListener('input',e=>{state.salesAtInput=clampNum(e.target.value,0,100,30);if(state.salesAtInput+state.salesIn5>100)state.salesIn5=Math.max(0,100-state.salesAtInput);update();renderSalesScenario();});
+document.getElementById('salesIn5').addEventListener('input',e=>{state.salesIn5=clampNum(e.target.value,0,100,40);if(state.salesAtInput+state.salesIn5>100)state.salesIn5=Math.max(0,100-state.salesAtInput);update();renderSalesScenario();});
+const avgAptInput=document.getElementById('avgAptArea');if(avgAptInput){avgAptInput.addEventListener('input',()=>{state.avgAptArea=clampNum(avgAptInput.value,20,150,40);avgAptInput.value=state.avgAptArea;update();});}
+const driveAreaInput=document.getElementById('driveArea');if(driveAreaInput){driveAreaInput.addEventListener('input',()=>{state.driveArea=clampNum(driveAreaInput.value,0,5000,600);driveAreaInput.value=state.driveArea;update();});}
+update();
+</script>
+</body>
+</html>
