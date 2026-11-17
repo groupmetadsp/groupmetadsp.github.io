@@ -11,6 +11,12 @@
           "name": "03 · Мета Массинг",
           "url": "/meta/#massing",
           "status": "verified"
+        },
+        {
+          "id": "meta-korobka",
+          "name": "09 · МЕТАКОРОБКА",
+          "url": "/metakorobka.html",
+          "status": "development"
         }
       ]
     }
