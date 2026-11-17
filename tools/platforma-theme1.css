@@ -49,3 +49,23 @@ body:has(#buildingSvg) h1{font-size:clamp(21px,2.2vw,29px)}
 body:has(#buildingSvg) .panel,body:has(#buildingSvg) .metric,body:has(#buildingSvg) details{background:var(--panel);border-color:var(--line);border-radius:9px;box-shadow:var(--shadow)}
 body:has(#buildingSvg) input,body:has(#buildingSvg) select{font-family:Manrope,"Segoe UI",Arial,sans-serif;background:#fffdf9;border-color:var(--line);color:var(--text);accent-color:var(--blue)}
 body:has(#buildingSvg) #buildingSvg{background:#f8f5ee}
+
+/* Surface parking configurator v1.2 — PLATFORMA Theme 1 LIGHT.
+   Pure colour and type overrides; no geometric / economic algorithms. */
+:root:has(#spans){color-scheme:light;--ink:#333b38;--muted:#777770;--blue:#b95228;--line:#d9d5cb;--bg:#f3f0e9;--red:#b44444;--green:#638464}
+body:has(#spans){background:#f3f0e9;color:var(--ink);font:12px/1.5 Manrope,"Segoe UI",Arial,sans-serif}
+body:has(#spans) header{background:#fcfaf6;color:#333b38;border-bottom:1px solid #d9d5cb;padding:11px 20px}
+body:has(#spans) header h1,body:has(#spans) h2,body:has(#spans) h3,body:has(#spans) .kpi strong,body:has(#spans) .cost-stat strong{font-family:"Roboto Condensed","Arial Narrow",Arial,sans-serif;font-weight:800}
+body:has(#spans) header h1{font-size:19px}
+body:has(#spans) .subtitle{color:#777770}
+body:has(#spans) aside,body:has(#spans) .panel,body:has(#spans) .kpi{background:#fcfaf6;border-color:#d9d5cb;border-radius:9px}
+body:has(#spans) .shell{gap:13px;padding:13px}
+body:has(#spans) .stack{gap:13px}
+body:has(#spans) button{background:#fffdf9;color:#333b38;border-color:#d9d5cb;font-family:Manrope,"Segoe UI",Arial,sans-serif}
+body:has(#spans) button.active{background:#b95228;color:#fff;border-color:#b95228}
+body:has(#spans) button:hover:not(.active){background:#f3e0d3;border-color:#d2ac97}
+body:has(#spans) input,body:has(#spans) select{accent-color:#b95228;border-color:#d9d5cb;font-family:Manrope,"Segoe UI",Arial,sans-serif}
+body:has(#spans) .badge,body:has(#spans) .cost-stat,body:has(#spans) .floorrow,body:has(#spans) .formula{background:#f3e0d3;color:#77432a}
+body:has(#spans) tr.total{background:#eee8dc}
+body:has(#spans) a{color:#b95228}
+@media print{body:has(#spans) header{background:#fff}}
