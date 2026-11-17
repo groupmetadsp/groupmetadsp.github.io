@@ -40,3 +40,12 @@ body:has(#salesScenarioBtn) .card,body:has(#salesScenarioBtn) .kpi,body:has(#sal
 body:has(#salesScenarioBtn) .btn.analysis-main,body:has(#salesScenarioBtn) .main-result.primary-result{background:#b95228;color:#fff}
 body:has(#salesScenarioBtn) .btn.soft,body:has(#salesScenarioBtn) .btn.blue,body:has(#salesScenarioBtn) .btn.product-secondary{background:#f3e0d3;color:#8e4323;border-color:#dfbda9}
 body:has(#salesScenarioBtn) input[type="range"]{accent-color:#b95228}
+
+/* Building height calculator — visual-only PLATFORMA Theme 1 LIGHT. */
+:root:has(#buildingSvg){color-scheme:light!important;--bg:#f3f0e9;--panel:#fcfaf6;--panel-2:#ece8df;--text:#333b38;--muted:#777770;--line:#d9d5cb;--blue:#b95228;--blue-soft:#f3e0d3;--green:#638464;--green-soft:#e6efe2;--amber:#a9652d;--amber-soft:#fff1df;--red:#b44444;--commercial:#be9870;--underground:#92928b;--shadow:0 9px 26px rgba(62,50,35,.06)}
+body:has(#buildingSvg){background:var(--bg);color:var(--text);font-family:Manrope,"Segoe UI",Arial,sans-serif}
+body:has(#buildingSvg) h1,body:has(#buildingSvg) h2,body:has(#buildingSvg) .metric-value{font-family:"Roboto Condensed","Arial Narrow",Arial,sans-serif;font-weight:800}
+body:has(#buildingSvg) h1{font-size:clamp(21px,2.2vw,29px)}
+body:has(#buildingSvg) .panel,body:has(#buildingSvg) .metric,body:has(#buildingSvg) details{background:var(--panel);border-color:var(--line);border-radius:9px;box-shadow:var(--shadow)}
+body:has(#buildingSvg) input,body:has(#buildingSvg) select{font-family:Manrope,"Segoe UI",Arial,sans-serif;background:#fffdf9;border-color:var(--line);color:var(--text);accent-color:var(--blue)}
+body:has(#buildingSvg) #buildingSvg{background:#f8f5ee}
