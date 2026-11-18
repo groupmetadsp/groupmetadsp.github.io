@@ -178,6 +178,55 @@ if(typeof document!=='undefined'){
  });
  $('costPanel').addEventListener('change',event=>{if(VOLUME_IDS.includes(event.target.id))render();});
  $('csv').onclick=()=>{if(!current)return;const m=current,cost=calculateCost(m),rows=[['МЕТА · расчётный сценарий'],['Вариант',m.variant],['Длина, м',m.L],['Ширина, м',m.W],['Ярусы',m.floors],['Центральные пролёты',m.spans],['Мест в пролёте',m.module],['Добавка шва, м',m.j],['КЭП 1',m.k1],['КЭП 2, м²/место',m.k2],['Уклон длинного участка, %',m.longSlope*100],['Уклон торцевого участка, %',m.endSlope*100],['Показатель','На ярус','Всего'],...m.rows.map(([name,val])=>[name,val,val*m.floors]),[],['Конструкции','Бетон, м³','Арматура, т','Опалубка, м²'],...cost.q.rows.map(r=>[r.label,r.vol,r.steel??'не задано',r.form]),[],['Ставки','Материалы, ₽/ед.','Работы, ₽/ед.'],...cost.breakdown.map(r=>[r.label,numOrNull(r.mat)??'не задано',numOrNull(r.work)??'не задано']),[],['Затраты','Материалы, ₽','Работы, ₽','Всего, ₽'],...cost.breakdown.map(r=>[r.label,r.material??'не задано',r.labor??'не задано',r.total??'не задано']),['Учтённые затраты всего, ₽',cost.total??'не задано'],['Затраты на место, ₽',cost.total===null?'не задано':cost.total/(m.n*m.floors)],['Статус','Эскизная оценка, не выгрузка Revit и не полная себестоимость']];const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(typeof v==='number'?v.toFixed(5).replace('.',','):v).replaceAll('"','""')+'"').join(';')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='Паркинг_вариант_'+m.variant+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+
+ // Двусторонняя связь только с объектом «Отдельный» в МЕТА Массинге.
+ const SURFACE_TRANSFER_KEY='meta-surface-parking-transfer-v1';
+ let surfaceSource=null;
+ const transferToMassing=document.createElement('button');
+ transferToMassing.type='button';
+ transferToMassing.id='surfaceTransferToMassing';
+ transferToMassing.textContent='Передать в МЕТА Массинг →';
+ transferToMassing.style.cssText='margin-left:10px;background:#b95228;color:#fff;border:1px solid #b95228;border-radius:6px;padding:9px 13px;font-weight:700;cursor:pointer';
+ $('print').insertAdjacentElement('afterend',transferToMassing);
+ function readSurfaceSource(){
+   try{
+     const transfer=JSON.parse(localStorage.getItem(SURFACE_TRANSFER_KEY)||'null');
+     if(!transfer||transfer.direction!=='to-configurator'||!transfer.source)return null;
+     const age=Date.now()-Number(transfer.created);
+     if(age<0||age>86400000)return null;
+     surfaceSource=transfer.source;
+     if(transfer.params){
+       const p=transfer.params;
+       if([1,2].includes(+p.variant))variant=+p.variant;
+       if([2,3].includes(+p.module)){const radio=document.querySelector('input[name=module][value="'+p.module+'"]');if(radio)radio.checked=true;}
+       if(Number.isInteger(+p.spans)&&+p.spans>=1&&+p.spans<=12){$('spans').value=p.spans;$('spanRange').value=p.spans;}
+       if(Number.isInteger(+p.floors)&&+p.floors>=1&&+p.floors<=10)$('floors').value=p.floors;
+       if(['clear','axis'].includes(p.joint))$('joint').value=p.joint;
+     }else{
+       if(Number.isInteger(+surfaceSource.levels)&&+surfaceSource.levels>=1&&+surfaceSource.levels<=10)$('floors').value=surfaceSource.levels;
+       if(+surfaceSource.w>0){
+         const count=Math.max(1,Math.min(12,Math.round((Number(surfaceSource.w)-15.9)/7.8)));
+         $('spans').value=count;$('spanRange').value=count;
+       }
+     }
+     localStorage.removeItem(SURFACE_TRANSFER_KEY);
+     return transfer;
+   }catch(e){console.warn('Ошибка получения паркинга из Массинга',e);return null;}
+ }
+ transferToMassing.onclick=()=>{
+   const m=render();
+   if(!m){alert('Сначала исправьте параметры паркинга.');return;}
+   if(!surfaceSource||!surfaceSource.id){alert('Для замены объекта сначала откройте «Отдельный» из МЕТА Массинга кнопкой «Разработать в инструменте паркинга».');return;}
+   const payload={direction:'to-massing',created:Date.now(),sourceId:String(surfaceSource.id),
+    width_m:Number(m.L),depth_m:Number(m.W),levels:Number(m.floors),
+    spacesPerFloor:Number(m.n),spaces:Number(m.n*m.floors),
+    area_m2:Number(m.gross),totalFloorArea_m2:Number(m.gross*m.floors),
+    stage:Math.max(1,Math.round(Number(surfaceSource.stage)||1)),
+    params:{...params()},modelVersion:1};
+   localStorage.setItem(SURFACE_TRANSFER_KEY,JSON.stringify(payload));
+   window.top.location.href='/tools/meta-massing/?surface-transfer=1';
+ };
+ readSurfaceSource();
  try{const s=JSON.parse(localStorage.getItem('meta-parking-v1'));if(s){calculate(s);variant=s.variant;['spans','floors','joint','targetK1','targetK2',...COST_IDS].forEach(id=>{if(s[id]!==undefined){if($(id))$(id).value=s[id];if(id in armState)armState[id]=s[id];}});document.querySelector(`input[name=module][value="${s.module}"]`).checked=true;$('spanRange').value=s.spans;}}catch(e){}setVariant(variant);
  window.parkingApp={calculate,calculateCost,qtyStructure,render,getState:()=>current};
 }
