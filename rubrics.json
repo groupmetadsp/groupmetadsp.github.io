@@ -4,14 +4,20 @@
   "tools": [
     {
       "id": "meta-design-tools",
-      "name": "Инструменты проектирования",
+      "name": "Проектирование",
       "materials": [
         {
           "id": "meta-massing",
           "name": "03 · Мета Массинг",
           "url": "/meta/#massing",
           "status": "verified"
-        },
+        }
+      ]
+    },
+    {
+      "id": "meta-cost-tools",
+      "name": "Себестоимость",
+      "materials": [
         {
           "id": "meta-korobka",
           "name": "09 · МЕТАКОРОБКА",
