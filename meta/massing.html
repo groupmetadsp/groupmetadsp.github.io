@@ -132,9 +132,9 @@ body{background:var(--bg)}
           <div class="frow"><label>Длина секции, м</label><input id="blkLen" type="number" step="0.1"></div>
         </div>
         <div id="blkBendFields" style="display:none">
-          <div class="frow"><label>Ширина корпуса, м</label><input id="blkLegWidth" type="number" step="0.1"></div>
-          <div class="frow"><label>Крыло 1 (X), м</label><input id="blkLeg1" type="number" step="0.5"></div>
-          <div class="frow"><label>Крыло 2 (Y), м</label><input id="blkLeg2" type="number" step="0.5"></div>
+          <div class="frow"><label>Ширина стороны 1, м</label><input id="blkLegWidth" type="number" step="0.1"></div>
+          <div class="frow"><label>Ширина стороны 2, м</label><input id="blkLegWidth2" type="number" step="0.1"></div><div class="frow"><label>Длина стороны 1 (X), м</label><input id="blkLeg1" type="number" step="0.5"></div>
+          <div class="frow"><label>Длина стороны 2 (Y), м</label><input id="blkLeg2" type="number" step="0.5"></div>
         </div>
         <div class="statusline" id="blkPreview">—</div>
         <button class="btn primary" id="addBlockBtn" style="width:100%;margin-top:7px">Добавить блок на площадку</button>
@@ -441,7 +441,7 @@ function deep(v){return JSON.parse(JSON.stringify(v))}
 function checkpoint(){state.undo.push(JSON.stringify({objects:state.objects,selected:state.selected,seq:state.seq,pinnedCallouts:state.pinnedCallouts,dimensionChains:state.dimensionChains}));if(state.undo.length>40)state.undo.shift()}
 function undo(){const x=state.undo.pop();if(!x)return;const d=JSON.parse(x);state.objects=d.objects;state.selected=d.selected;state.seq=d.seq;state.pinnedCallouts=d.pinnedCallouts||[];state.dimensionChains=d.dimensionChains||[];renderAll()}
 function isPolygonEditable(o){return !!o && o.type!=='ROAD_PATH' && (['parking','land','stage','road','stylobat','limit','siteboundary'].includes(o.kind) || o.type==='P_UG' || (o.type==='BLOK'&&o.shape==='bend'))}
-function lShapePoints(width,leg1,leg2){width=Math.max(1,Number(width)||1);leg1=Math.max(width+1,Number(leg1)||width+1);leg2=Math.max(width+1,Number(leg2)||width+1);return [[0,0],[leg1,0],[leg1,width],[width,width],[width,leg2],[0,leg2]]}
+function lShapePoints(width,leg1,leg2,width2=width){width=Math.max(1,Number(width)||1);width2=Math.max(1,Number(width2)||1);leg1=Math.max(width2+1,Number(leg1)||width2+1);leg2=Math.max(width+1,Number(leg2)||width+1);return [[0,0],[leg1,0],[leg1,width],[width2,width],[width2,leg2],[0,leg2]]}
 function mopKep(comboKey,avgApt){const combo=MOP_COMBOS[comboKey]||MOP_COMBOS.T3L,ip=interpolateComboParams(comboKey,avgApt);const sKv=combo.sKvEtazh;return sKv/(sKv/ip.k+ip.mopS)}
 function defaultPolyPoints(w,h){return [[-w/2,-h/2],[w/2,-h/2],[w/2,h/2],[-w/2,h/2]]}
 function ensurePolygon(o){if(!isPolygonEditable(o))return;if(!Array.isArray(o.points)||o.points.length<3)o.points=defaultPolyPoints(Number(o.w)||10,Number(o.h)||10);syncPolyBounds(o)}
@@ -548,12 +548,12 @@ function syncBlockMetrics(o){
  if(o.shape==='bend'){
   if(!Array.isArray(o.points)||o.points.length<6){
    const combo=MOP_COMBOS[o.comboKey],width=Math.min(combo.maxW,Math.max(combo.minW,Number(o.legWidth)||combo.maxW));
-   o.legWidth=width;o.leg1=Number(o.leg1)||width*2.4;o.leg2=Number(o.leg2)||width*2.2;
-   o.points=lShapePoints(o.legWidth,o.leg1,o.leg2);
+   o.legWidth=width;o.legWidth2=Number(o.legWidth2)||width;o.leg1=Number(o.leg1)||width*2.4;o.leg2=Number(o.leg2)||width*2.2;
+   o.points=lShapePoints(o.legWidth,o.leg1,o.leg2,o.legWidth2);
   }
   // после любой растяжки за вершины на поле бounding-box (o.w/o.h) — источник истины для полей «крыло 1/2» в инспекторе;
   // legWidth (толщина корпуса) не перетираем — его геометрически не восстановить однозначно из произвольно растянутого контура.
-  syncPolyBounds(o);o.leg1=o.w;o.leg2=o.h;
+  syncPolyBounds(o);o.leg1=o.w;o.leg2=o.h;if(o.points.length===6){o.legWidth=Math.max(.1,o.points[2][1]-o.points[0][1]);o.legWidth2=Math.max(.1,o.points[3][0]-o.points[0][0]);}
  }
  const autoKep=mopKep(o.comboKey,o.avgApt),kep=Number(o.manualKep)>0?Math.min(1,Number(o.manualKep)):autoKep,avgApt=o.avgApt;
  const footprint=objArea(o);
@@ -1172,9 +1172,9 @@ function renderInspector(){const root=$('inspector'),o=selected();if(!o){root.in
      html+=`<div class="frow"><label>Этажность</label><input data-k="floors" type="number" min="1" max="40" value="${o.floors}"></div>`;
      html+=`<div class="frow"><label>1-й этаж</label><select data-k="groundFloorUse"><option value="residential" ${o.groundFloorUse!=='commercial'?'selected':''}>Жилой</option><option value="commercial" ${o.groundFloorUse==='commercial'?'selected':''}>Коммерция</option></select></div>`;
      if(o.shape==='bend'){
-       html+=`<div class="frow"><label>Ширина корпуса, м</label><input data-k="legWidth" type="number" step="0.1" min="1" value="${numAttr(o.legWidth||combo.maxW,2)}"></div>`;
-       html+=`<div class="frow"><label>Крыло 1 (X), м</label><input data-k="leg1" type="number" step="0.5" min="1" value="${numAttr(o.leg1||0,2)}"></div>`;
-       html+=`<div class="frow"><label>Крыло 2 (Y), м</label><input data-k="leg2" type="number" step="0.5" min="1" value="${numAttr(o.leg2||0,2)}"></div>`;
+       html+=`<div class="frow"><label>Ширина стороны 1, м</label><input data-k="legWidth" type="number" step="0.1" min="1" value="${numAttr(o.legWidth||combo.maxW,2)}"></div>`;
+       html+=`<div class="frow"><label>Ширина стороны 2, м</label><input data-k="legWidth2" type="number" step="0.1" min="1" value="${numAttr(o.legWidth2||o.legWidth||combo.maxW,2)}"></div>`;html+=`<div class="frow"><label>Длина стороны 1 (X), м</label><input data-k="leg1" type="number" step="0.5" min="1" value="${numAttr(o.leg1||0,2)}"></div>`;
+       html+=`<div class="frow"><label>Длина стороны 2 (Y), м</label><input data-k="leg2" type="number" step="0.5" min="1" value="${numAttr(o.leg2||0,2)}"></div>`;
        html+=`<div class="polyHint"><b>Г-образный контур:</b> тяните оранжевые вершины на поле — растяжение пересчитывает ТЭП; поля выше делают то же самое вводом чисел.</div>`;
      } else {
        html+=`<div class="frow"><label>Ширина секции, м (каталог форм: ${fmt(combo.minW,1)}–${fmt(combo.maxW,1)})</label><input data-k="h" type="number" step="0.1" min="1" value="${numAttr(o.h,2)}"></div>`;
@@ -1193,7 +1193,7 @@ function renderInspector(){const root=$('inspector'),o=selected();if(!o){root.in
  if(o.kind==='land')html+=`<div class="statusline"><b>Площадь элемента:</b> ${fmt(area)} м²<br><b>Учет в благоустройстве:</b> да</div>`;
  if(o.kind==='stage')html+=`<div class="frow"><label>Цвет абриса</label><input data-k="outlineColor" type="color" value="${o.outlineColor||'#7562a8'}"></div>`;if(['stage','road','limit','stylobat'].includes(o.kind))html+=`<div class="statusline"><b>Площадь элемента:</b> ${fmt(area)} м²</div>`;
  html+=`<div class="row2" style="margin-top:8px"><button class="btn" id="applyInspector">Применить</button><button class="btn danger" id="deleteInspector">Удалить</button></div>`;root.innerHTML=html;
- const applyKey=el=>{checkpoint();const k=el.dataset.k,oldMM=o.kind==='parking'?parkingMM(o):0;let v=el.type==='checkbox'?el.checked:el.value;if(el.type==='number')v=Number(v);if(k==='stage')v=Math.max(1,Math.round(v||1));if(k==='guest')v=String(v)==='true';if(el.type==='checkbox'&&k==='lengthMode')v=el.checked?'manual':'auto';if(k==='sectionType'){const st=SECTION_TYPES[v];if(st){o.comboKey=st.comboKey;o.shape=st.shape}}else if(isPolygonEditable(o)&&(k==='w'||k==='h'))resizePolygonBounds(o,k==='w'?v:o.w,k==='h'?v:o.h);else o[k]=v;if(o.type==='IND'&&(k==='w'||k==='h'||k==='kep'))syncGeometryMetrics(o);if(o.kind==='building'&&!o.metaFixed&&o.type!=='BLOK'&&['w','h','kep'].includes(k)){if(k==='kep')o.manualKep=Math.max(.01,Math.min(1,Number(v)||Number(o.kep)||.7));applyManualHousingMetrics(o)}if(o.type==='BLOK'&&['legWidth','leg1','leg2'].includes(k)&&o.shape==='bend')o.points=lShapePoints(o.legWidth,o.leg1,o.leg2);if(o.type==='BLOK')syncBlockMetrics(o);if(o.type==='P_SURF'&&['placeW','placeH','aisle'].includes(k))resizeSurfaceParkingToMM(o,oldMM,false);
+ const applyKey=el=>{checkpoint();const k=el.dataset.k,oldMM=o.kind==='parking'?parkingMM(o):0;let v=el.type==='checkbox'?el.checked:el.value;if(el.type==='number')v=Number(v);if(k==='stage')v=Math.max(1,Math.round(v||1));if(k==='guest')v=String(v)==='true';if(el.type==='checkbox'&&k==='lengthMode')v=el.checked?'manual':'auto';if(k==='sectionType'){const st=SECTION_TYPES[v];if(st){o.comboKey=st.comboKey;o.shape=st.shape}}else if(isPolygonEditable(o)&&(k==='w'||k==='h'))resizePolygonBounds(o,k==='w'?v:o.w,k==='h'?v:o.h);else o[k]=v;if(o.type==='IND'&&(k==='w'||k==='h'||k==='kep'))syncGeometryMetrics(o);if(o.kind==='building'&&!o.metaFixed&&o.type!=='BLOK'&&['w','h','kep'].includes(k)){if(k==='kep')o.manualKep=Math.max(.01,Math.min(1,Number(v)||Number(o.kep)||.7));applyManualHousingMetrics(o)}if(o.type==='BLOK'&&['legWidth','legWidth2','leg1','leg2'].includes(k)&&o.shape==='bend')o.points=lShapePoints(o.legWidth,o.leg1,o.leg2,o.legWidth2||o.legWidth);if(o.type==='BLOK')syncBlockMetrics(o);if(o.type==='P_SURF'&&['placeW','placeH','aisle'].includes(k))resizeSurfaceParkingToMM(o,oldMM,false);
  // Раньше смена «Уровни»/«м²/ММ» для подземного/наземного паркинга тут же СЖИМАЛА площадь пятна, чтобы удержать
  // прежнее число машиномест (resizeParkingToMM(o,oldMM)) — из-за этого этажность фактически не увеличивала
  // вместимость, что и было найдено как дефект. Теперь при смене этажности/коэффициента площадь пятна не трогается:
@@ -1204,7 +1204,7 @@ function renderInspector(){const root=$('inspector'),o=selected();if(!o){root.in
  root.querySelectorAll('[data-k]').forEach(el=>el.addEventListener('change',()=>applyKey(el)));
  const areaInput=root.querySelector('[data-area]');if(areaInput)areaInput.addEventListener('change',()=>{checkpoint();resizeToArea(o,Number(areaInput.value));renderAll()});
  const mmInput=root.querySelector('[data-mm]');if(mmInput)mmInput.addEventListener('change',()=>{checkpoint();resizeParkingToMM(o,Number(mmInput.value));renderAll()});
- $('applyInspector').onclick=()=>{checkpoint();const oldMM=o.kind==='parking'?parkingMM(o):0;let targetW=o.w,targetH=o.h;root.querySelectorAll('[data-k]').forEach(el=>{const k=el.dataset.k;let v=el.type==='checkbox'?el.checked:el.value;if(el.type==='number')v=Number(v);if(k==='stage')v=Math.max(1,Math.round(v||1));if(k==='guest')v=String(v)==='true';if(el.type==='checkbox'&&k==='lengthMode')v=el.checked?'manual':'auto';if(k==='sectionType'){const st=SECTION_TYPES[v];if(st){o.comboKey=st.comboKey;o.shape=st.shape}}else if(isPolygonEditable(o)&&k==='w')targetW=v;else if(isPolygonEditable(o)&&k==='h')targetH=v;else o[k]=v});if(o.type==='BLOK'&&o.shape==='bend')o.points=lShapePoints(o.legWidth,o.leg1,o.leg2);else if(isPolygonEditable(o))resizePolygonBounds(o,targetW,targetH);if(o.type==='IND')syncGeometryMetrics(o);if(o.kind==='building'&&!o.metaFixed&&o.type!=='BLOK'&&root.querySelector('[data-k="w"]')){if(root.querySelector('[data-k="kep"]'))o.manualKep=Number(root.querySelector('[data-k="kep"]').value);applyManualHousingMetrics(o)}if(o.type==='BLOK')syncBlockMetrics(o);if(o.type==='P_SURF'&&mmInput)resizeSurfaceParkingToMM(o,Number(mmInput.value),false);else if(mmInput)resizeParkingToMM(o,Number(mmInput.value));else if(areaInput)resizeToArea(o,Number(areaInput.value));else if(o.kind==='parking')resizeParkingToMM(o,oldMM);renderAll()};$('deleteInspector').onclick=deleteSelected;
+ $('applyInspector').onclick=()=>{checkpoint();const oldMM=o.kind==='parking'?parkingMM(o):0;let targetW=o.w,targetH=o.h;root.querySelectorAll('[data-k]').forEach(el=>{const k=el.dataset.k;let v=el.type==='checkbox'?el.checked:el.value;if(el.type==='number')v=Number(v);if(k==='stage')v=Math.max(1,Math.round(v||1));if(k==='guest')v=String(v)==='true';if(el.type==='checkbox'&&k==='lengthMode')v=el.checked?'manual':'auto';if(k==='sectionType'){const st=SECTION_TYPES[v];if(st){o.comboKey=st.comboKey;o.shape=st.shape}}else if(isPolygonEditable(o)&&k==='w')targetW=v;else if(isPolygonEditable(o)&&k==='h')targetH=v;else o[k]=v});if(o.type==='BLOK'&&o.shape==='bend')o.points=lShapePoints(o.legWidth,o.leg1,o.leg2,o.legWidth2||o.legWidth);else if(isPolygonEditable(o))resizePolygonBounds(o,targetW,targetH);if(o.type==='IND')syncGeometryMetrics(o);if(o.kind==='building'&&!o.metaFixed&&o.type!=='BLOK'&&root.querySelector('[data-k="w"]')){if(root.querySelector('[data-k="kep"]'))o.manualKep=Number(root.querySelector('[data-k="kep"]').value);applyManualHousingMetrics(o)}if(o.type==='BLOK')syncBlockMetrics(o);if(o.type==='P_SURF'&&mmInput)resizeSurfaceParkingToMM(o,Number(mmInput.value),false);else if(mmInput)resizeParkingToMM(o,Number(mmInput.value));else if(areaInput)resizeToArea(o,Number(areaInput.value));else if(o.kind==='parking')resizeParkingToMM(o,oldMM);renderAll()};$('deleteInspector').onclick=deleteSelected;
 }
 function deleteSelected(){if(!state.selected)return;checkpoint();state.pinnedCallouts=state.pinnedCallouts.filter(p=>p.objId!==state.selected);if(state.calloutId===state.selected)state.calloutId=null;state.objects=state.objects.filter(o=>o.id!==state.selected);state.selected=null;renderAll()}
 function duplicateSelected(){const o=selected();if(!o)return;checkpoint();const n=deep(o);n.id=uid();n.x+=12;n.y+=12;state.objects.push(n);state.selected=n.id;renderAll()}
@@ -1263,7 +1263,7 @@ $('module2T').onclick=()=>addModule('2T');$('moduleTH').onclick=()=>addModule('T
 // === Панель параметрического блока ===============================
 (function initBlockPanel(){
  const elClass=$('blkClass'),elCombo=$('blkCombo'),elFloors=$('blkFloors'),elGround=$('blkGround'),
-       elW=$('blkWidth'),elL=$('blkLen'),elLegWidth=$('blkLegWidth'),elLeg1=$('blkLeg1'),elLeg2=$('blkLeg2'),
+       elW=$('blkWidth'),elL=$('blkLen'),elLegWidth=$('blkLegWidth'),elLegWidth2=$('blkLegWidth2'),elLeg1=$('blkLeg1'),elLeg2=$('blkLeg2'),
        elPrev=$('blkPreview'),strFields=$('blkStraightFields'),bendFields=$('blkBendFields');
  elClass.value='50';
  // Тип МОП/лифты и форма секции — один выбор (Г-тип отдельным пунктом списка, не галочкой поверх Т-типа): см.
@@ -1278,14 +1278,14 @@ $('module2T').onclick=()=>addModule('2T');$('moduleTH').onclick=()=>addModule('T
   const c=currentCombo(),seed=blockCalc(currentType().comboKey,Number(elClass.value)||50,c.maxW);
   elW.value=fmt(c.maxW,2).replace(/\s/g,'');
   elL.value=fmt(seed.length,2).replace(/\s/g,'');
-  elLegWidth.value=fmt(c.maxW,2).replace(/\s/g,'');
+  elLegWidth.value=fmt(c.maxW,2).replace(/\s/g,'');elLegWidth2.value=fmt(c.maxW,2).replace(/\s/g,'');
   elLeg1.value=fmt(c.maxW*2.4,1).replace(/\s/g,'');
   elLeg2.value=fmt(c.maxW*2.2,1).replace(/\s/g,'');
  }
  function footprintArea(){
   if(currentType().shape==='bend'){
-   const width=Number(elLegWidth.value)||currentCombo().maxW,leg1=Number(elLeg1.value)||width*2.4,leg2=Number(elLeg2.value)||width*2.2;
-   return polygonAreaPoints(lShapePoints(width,leg1,leg2));
+   const width=Number(elLegWidth.value)||currentCombo().maxW,width2=Number(elLegWidth2.value)||width,leg1=Number(elLeg1.value)||width*2.4,leg2=Number(elLeg2.value)||width*2.2;
+   return polygonAreaPoints(lShapePoints(width,leg1,leg2,width2));
   }
   const w=Number(elW.value)||currentCombo().maxW,l=Number(elL.value)||w;
   return w*l;
@@ -1299,17 +1299,17 @@ $('module2T').onclick=()=>addModule('2T');$('moduleTH').onclick=()=>addModule('T
   elPrev.innerHTML=`<b>Площадь пятна:</b> ${fmt(footprint)} м² · <b>КЭП:</b> ${fmt(kep,4)}<br><b>Кв/этаж:</b> ${fmt(nKv,2)} · <b>чел/этаж:</b> ${fmt(nChel,1)} · <b>S прод/этаж:</b> ${fmt(saleFloor)} м²<br><b>На здание (×${floors} эт.${ground?', 1-й — коммерция':''}):</b> S прод ≈ ${fmt(saleTotal)} м²<br><b>Ширина секции по каталогу форм:</b> ${fmt(combo.minW,1)}–${fmt(combo.maxW,1)} м<br><b>Лифты по опорным точкам:</b> ${rec.lifts}${rec.extrapolated?' (экстраполяция за пределы опорных точек)':''}${mismatch?` <span style="color:#b94b4b;font-weight:800">⚠ выбранный тип рассчитан на ${nominal}</span>`:''}`;
  }
  elCombo.addEventListener('change',()=>{resetDefaults();toggleShapeFields();updatePreview()});
- [elClass,elFloors,elGround,elW,elL,elLegWidth,elLeg1,elLeg2].forEach(el=>el.addEventListener('input',updatePreview));
+ [elClass,elFloors,elGround,elW,elL,elLegWidth,elLegWidth2,elLeg1,elLeg2].forEach(el=>el.addEventListener('input',updatePreview));
  resetDefaults();toggleShapeFields();updatePreview();
  // Restore both workflows: click = centre of visible 2D field; drag "Жилой дом" = exact drop point.
  function createResidentialAt(cx,cy){
   const floors=Math.max(1,Number(elFloors.value)||1),type=currentType();
   const extra={avgApt:Math.max(40,Math.min(60,Number(elClass.value)||50)),comboKey:type.comboKey,floors,groundFloorUse:elGround.value==='commercial'?'commercial':'residential',shape:type.shape};
   if(type.shape==='bend'){
-   extra.legWidth=Number(elLegWidth.value)||currentCombo().maxW;
+   extra.legWidth=Number(elLegWidth.value)||currentCombo().maxW;extra.legWidth2=Number(elLegWidth2.value)||extra.legWidth;
    extra.leg1=Number(elLeg1.value)||extra.legWidth*2.4;
    extra.leg2=Number(elLeg2.value)||extra.legWidth*2.2;
-   extra.points=lShapePoints(extra.legWidth,extra.leg1,extra.leg2);
+   extra.points=lShapePoints(extra.legWidth,extra.leg1,extra.leg2,extra.legWidth2);
   } else {
    extra.w=Number(elL.value)||currentCombo().maxW*2.4;
    extra.h=Number(elW.value)||currentCombo().maxW;
@@ -1674,7 +1674,7 @@ const roadParkingCentersOnSegment=window.roadParkingCentersOnSegment=(o,si,key)=
    if(o.kind==='parking'){ if(o.type==='RAMP') return `<div><b>Тип:</b> ${o.rampMode==='two'?'двухпутная':'однопутная'}</div><div><b>Длина:</b> ${fmt(o.rampLen,1)} м</div><div><b>Ширина:</b> ${fmt(o.rampWidth,1)} м</div><div><b>Высота:</b> ${fmt(o.rampHeight,1)} м</div><div><b>Уклон:</b> ${fmt(o.rampSlope,1)}%</div>`; return `<div><b>Площадь контура:</b> ${fmt(area)} м²</div><div><b>Уровни:</b> ${fmt(o.levels||1)}</div><div><b>Вместимость:</b> ${fmt(parkingMM(o))} ММ</div><div><b>Тип:</b> ${o.type==='P_UG'?'подземный':o.type==='P_AG'?'наземный':o.type==='P_ST'?'стилобатный':o.type==='P_SURF'?'открытый':'отдельный'}</div>`; }
    if(o.kind==='stylobat') return `<div><b>Площадь:</b> ${fmt(area)} м²</div><div><b>Уровни:</b> ${fmt(o.levels||1)}</div>`;
    return `<div><b>Площадь:</b> ${fmt(area)} м²</div><div><b>Слой 3D:</b> ${modelLayer(o)}</div>`; };
- renderBlockCallout = function(){ const el=$('blkCallout'); if(!state.calloutId){el.style.display='none'; return} const o=state.objects.find(x=>x.id===state.calloutId); if(!o){state.calloutId=null; el.style.display='none'; return} if(o.kind==='stage'){renderStageCallout(el,o);return;} const pinned=state.pinnedCallouts.some(p=>p.objId===o.id); let controls=''; if(o.type==='BLOK'&&!o.surrounding){ controls=`<div class="coRow"><label>Этажность</label><input id="coFloors" type="number" min="1" max="40" value="${o.floors}"></div><div class="coRow"><label>1-й этаж</label><select id="coGround"><option value="residential" ${o.groundFloorUse!=='commercial'?'selected':''}>Жилой</option><option value="commercial" ${o.groundFloorUse==='commercial'?'selected':''}>Коммерция</option></select></div><div class="coRow"><label>Средняя площадь квартиры, м²</label><input id="coAvgApt" type="number" min="40" max="60" step="0.5" value="${numAttr(o.avgApt,1)}"></div>`; } if(o.type==='BLOK'&&!o.surrounding&&!o.metaFixed){
+ renderBlockCallout = function(){ const el=$('blkCallout'); if(!state.calloutId){el.style.display='none'; return} const o=state.objects.find(x=>x.id===state.calloutId); if(!o){state.calloutId=null; el.style.display='none'; return} if(o.kind==='stage'){renderStageCallout(el,o);return;} const pinned=state.pinnedCallouts.some(p=>p.objId===o.id); let controls=''; if(o.type==='BLOK'&&!o.surrounding){ controls=`<div class="coRow"><label>Этажность</label><input id="coFloors" type="number" min="1" max="40" value="${o.floors}"></div><div class="coRow"><label>1-й этаж</label><select id="coGround"><option value="residential" ${o.groundFloorUse!=='commercial'?'selected':''}>Жилой</option><option value="commercial" ${o.groundFloorUse==='commercial'?'selected':''}>Коммерция</option></select></div><div class="coRow"><label>Средняя площадь квартиры, м²</label><input id="coAvgApt" type="number" min="40" max="60" step="0.5" value="${numAttr(o.avgApt,1)}"></div>`; } if(o.type==='BLOK'&&!o.surrounding&&!o.metaFixed){if(o.shape==='bend')controls+='<div class="coRow"><label>Ширина стороны 1, м</label><input id="coLegWidth1" type="number" min="1" step="0.1" value="'+numAttr(o.legWidth||1,1)+'"></div><div class="coRow"><label>Ширина стороны 2, м</label><input id="coLegWidth2" type="number" min="1" step="0.1" value="'+numAttr(o.legWidth2||o.legWidth||1,1)+'"></div>';
  controls+='<div class="coRow"><label>Длина в конструкциях, м</label><input id="coLength41" type="number" min="1" step="0.1" value="'+numAttr(o.w-.4,1)+'"></div><div class="coRow"><label>КЭП</label><input id="coKep41" type="number" min="0.01" max="1" step="0.001" value="'+numAttr(o.manualKep??o.kep,4)+'"></div>';
  } if(o.kind==='building'&&o.surrounding){
  controls='<div class="coRow"><label>Длина, м</label><input id="coExistingLength" type="number" min="1" step="0.1" value="'+numAttr(o.w,1)+'"></div>'+
@@ -1689,7 +1689,7 @@ const roadParkingCentersOnSegment=window.roadParkingCentersOnSegment=(o,si,key)=
  if($('coExistingWidth'))$('coExistingWidth').addEventListener('change',()=>{const h=Number($('coExistingWidth').value);if(!(h>0&&h<10000))return;checkpoint();if(isPolygonEditable(o))resizePolygonBounds(o,o.w,h);else o.h=h;renderAll()});
  if($('coExistingFloors'))$('coExistingFloors').addEventListener('change',()=>{const f=Number($('coExistingFloors').value);if(!Number.isInteger(f)||f<1||f>100)return;checkpoint();o.floors=f;renderAll()});
  if($('coLength41'))$('coLength41').addEventListener('change',()=>{const w=Number($('coLength41').value);if(!(w>0&&w<10000))return;checkpoint();o.w=w+.4;if(o.section41)o.section41.mode='geometry';syncBlockMetrics(o);renderAll()});
- if($('coKep41'))$('coKep41').addEventListener('change',()=>{const k=Number($('coKep41').value);if(!(k>0&&k<=1))return;checkpoint();o.manualKep=k;if(o.section41)o.section41.mode='geometry';syncBlockMetrics(o);renderAll()});
+ for(const [id,key] of [['coLegWidth1','legWidth'],['coLegWidth2','legWidth2']])if($(id))$(id).addEventListener('change',()=>{const w=Number($(id).value);if(!(w>0&&w<10000))return;checkpoint();o[key]=w;o.points=lShapePoints(o.legWidth,o.leg1,o.leg2,o.legWidth2||o.legWidth);syncBlockMetrics(o);renderAll()});if($('coKep41'))$('coKep41').addEventListener('change',()=>{const k=Number($('coKep41').value);if(!(k>0&&k<=1))return;checkpoint();o.manualKep=k;if(o.section41)o.section41.mode='geometry';syncBlockMetrics(o);renderAll()});
  if($('coFloors'))$('coFloors').addEventListener('change',()=>{checkpoint();o.floors=Math.max(1,Number($('coFloors').value)||1);syncBlockMetrics(o);renderAll()}); if($('coGround'))$('coGround').addEventListener('change',()=>{checkpoint();o.groundFloorUse=$('coGround').value==='commercial'?'commercial':'residential';syncBlockMetrics(o);renderAll()}); if($('coAvgApt'))$('coAvgApt').addEventListener('change',()=>{checkpoint();o.avgApt=Math.max(40,Math.min(60,Number($('coAvgApt').value)||50));syncBlockMetrics(o);renderAll()}); if($('coLevels'))$('coLevels').addEventListener('change',()=>{checkpoint();o.levels=Math.max(1,Number($('coLevels').value)||1);renderAll()}); if($('coParkType'))$('coParkType').addEventListener('change',()=>{checkpoint();applyParkingSubtype(o,$('coParkType').value,true);renderAll()}); if($('coRampMode'))$('coRampMode').addEventListener('change',()=>{checkpoint();o.rampMode=$('coRampMode').value;o.rampWidth=o.rampMode==='two'?8:5;syncRamp(o);renderAll()}); $('coPin').addEventListener('change',()=>{ checkpoint(); if($('coPin').checked){ if(!state.pinnedCallouts.some(p=>p.objId===o.id)){ const activeLeft=Math.max(8,Math.min(window.innerWidth-w-8,pos.x+14+off.x)),activeTop=Math.max(8,Math.min(window.innerHeight-h-8,pos.y-h/2+off.y)); const scr={x:Math.min(window.innerWidth-w-8,activeLeft+w+20),y:activeTop}; const pt=svg.createSVGPoint(); pt.x=scr.x+w/2; pt.y=scr.y+h/2; const wp=pt.matrixTransform(svg.getScreenCTM().inverse()); state.pinnedCallouts.push({objId:o.id,x:wp.x,y:wp.y}); } } else state.pinnedCallouts=state.pinnedCallouts.filter(p=>p.objId!==o.id); renderAll() }); el.onpointerdown=e=>startCalloutDrag(e,(dx,dy)=>{state.calloutOffset={x:(off.x||0)+dx,y:(off.y||0)+dy};renderBlockCallout()}); };
  renderPinnedCallouts = function(){ const wrap=$('pinnedCalloutsLayer'),leaders=$('calloutLeaders'); wrap.innerHTML=''; leaders.innerHTML=''; state.pinnedCallouts.forEach(pin=>{ const o=state.objects.find(x=>x.id===pin.objId); if(!o)return; const ln=document.createElementNS(ns,'line'); ln.setAttribute('x1',o.x);ln.setAttribute('y1',o.y);ln.setAttribute('x2',pin.x);ln.setAttribute('y2',pin.y);ln.setAttribute('stroke','#0f7a52');ln.setAttribute('stroke-width','1.4');ln.setAttribute('stroke-dasharray','5 3');ln.setAttribute('vector-effect','non-scaling-stroke');leaders.appendChild(ln); const dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',pin.x);dot.setAttribute('cy',pin.y);dot.setAttribute('r','2.5');dot.setAttribute('fill','#0f7a52');leaders.appendChild(dot); const scr=worldToScreen(pin.x,pin.y); const div=document.createElement('div');div.className='blkCallout pinned'; div.innerHTML=`<button class="coClose" title="Открепить">×</button><div class="coTitle">${o.label}</div><div class="coStats">${calloutStatsHtml(o)}</div>`; wrap.appendChild(div); const w=div.offsetWidth||250,h=div.offsetHeight||110; div.style.left=(scr.x-w/2)+'px';div.style.top=(scr.y-h/2)+'px'; div.querySelector('.coClose').onclick=()=>{state.pinnedCallouts=state.pinnedCallouts.filter(p=>p.objId!==pin.objId);renderAll()}; div.onpointerdown=e=>{ const startWorld={x:pin.x,y:pin.y}; startCalloutDrag(e,(dx,dy)=>{ const k=svg.getScreenCTM().a||1; pin.x=startWorld.x+dx/k; pin.y=startWorld.y+dy/k; renderPinnedCallouts(); }); }; }); };
  const _renderInspectorOld = renderInspector;
