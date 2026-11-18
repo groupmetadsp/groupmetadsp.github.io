@@ -153,13 +153,13 @@ renderInspector=function(){
   root.querySelector("#metaFixedFloors").onchange=function(){var v=Number(this.value);if(!Number.isInteger(v)||v<1||v>100){this.value=o.floors;return;}checkpoint();o.floors=v;renderAll();later();};
  }
  if(o.metaFixed){
-   var control=document.createElement("div");control.innerHTML='<div class="frow"><label>Окружающая застройка (не учитывается в ТЭП)</label><input id="metaFixedSurrounding" type="checkbox" '+(o.surrounding?'checked':'')+'></div><div class="frow"><label>Этап</label><input id="metaFixedStage" type="number" min="1" step="1" value="'+(o.stage||1)+'"></div>';
+   var control=document.createElement("div");control.innerHTML='<div class="frow"><label>Окружающая застройка (не учитывается в ТЭП)</label><input id="metaFixedSurrounding" type="checkbox" '+(o.surrounding?'checked':'')+'></div><div class="frow"><label>Этап проектирования</label><select id="metaFixedStage">'+Array.from({length:10},function(_,i){return '<option value="'+(i+1)+'" '+(Math.max(1,Math.min(10,Number(o.stage)||1))===i+1?'selected':'')+'>'+(i+1)+'</option>'}).join("")+'</select></div>';
    root.appendChild(control);
    control.querySelector("#metaFixedSurrounding").onchange=function(){checkpoint();o.surrounding=this.checked;renderAll();later();};
-   control.querySelector("#metaFixedStage").onchange=function(){checkpoint();o.stage=Math.max(1,Math.round(Number(this.value)||1));renderAll();later();};
+   control.querySelector("#metaFixedStage").onchange=function(){checkpoint();o.stage=Math.max(1,Math.min(10,Math.round(Number(this.value)||1)));renderAll();later();};
    if(o.surrounding){Array.from(root.querySelectorAll(".statusline")).forEach(function(el){if(/На здание|ТЭП закреплены/.test(el.textContent))el.innerHTML="<b>Окружающая застройка. Не учитывается в ТЭП.</b>";});}
   }
-  if(o.surrounding){Array.from(root.querySelectorAll(".statusline")).forEach(function(el){if(/Площадь пятна|КЭП|Квартир|S прод|На здание|жилой/.test(el.textContent))el.innerHTML="<b>Окружающая застройка — не учитывается в ТЭП.</b>";});}
+  if(o.surrounding){Array.from(root.querySelectorAll(".statusline")).forEach(function(el){if(/Площадь пятна|КЭП|Квартир|S прод|На здание|жилой/.test(el.textContent))el.innerHTML="<b>Окружающая застройка — не учитывается в ТЭП.</b>";});if(o.metaFixed)Array.from(root.querySelectorAll(".frow")).forEach(function(el){if(/Квартир \/ этаж|S квартир \/ этаж|Средняя площадь|S МОП \/ этаж|Площадь по контуру|S строительная|КЭП типового/.test(el.textContent))el.remove();});}
   var configureBtn=root.querySelector("#metaConfigureSectionBtn");
  if(configureBtn)configureBtn.onclick=function(){try{metaSendSectionToConfigurator(o);}catch(e){alert(e.message||e);}};
 };
