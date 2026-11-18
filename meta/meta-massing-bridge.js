@@ -278,6 +278,7 @@ overlay.querySelector("#metaPrev").disabled=!snapshot;
    o=add("P_AG",x,y,{w:w,h:h,levels:Math.max(1,Math.round(+p.floors||1)),stage:Math.max(1,Math.round(+p.stage||1))});
   }
   o.w=w;o.h=h;o.levels=Math.max(1,Math.round(+p.floors||1));o.stage=Math.max(1,Math.round(+p.stage||1));
+  if(o.metaSurfaceParking)delete o.metaSurfaceParking;
   o.label="МЕТА ПАРКИНГ";o.metaParking={spaces:Math.max(0,Math.round(+p.spaces||0)),area_m2:Math.max(0,+p.area_m2||0),excluded_area_m2:Math.max(0,+p.excluded_area_m2||0),layout:p.layout};
   if(o.kind==="parking"&&Array.isArray(o.points))o.points=Array.isArray(p.contour_m)&&p.contour_m.length>=3?p.contour_m.map(function(q){return [Number(q[0])||0,Number(q[1])||0];}):defaultPolyPoints(w,h);
   if(Number.isFinite(+p.rot))o.rot=+p.rot;
@@ -296,8 +297,7 @@ overlay.querySelector("#metaPrev").disabled=!snapshot;
    var el=document.createElement("div");el.className="statusline";el.innerHTML="<b>По компоновке Мета Паркинг:</b> "+fmt(o.metaParking.spaces)+" ММ · S паркинга "+fmt(o.metaParking.area_m2)+" м² · исключаемая площадь "+fmt(o.metaParking.excluded_area_m2)+" м²";
    root.appendChild(el);
   }
-  if(o.type==="P_FREE")return;
-  var btn=document.createElement("button");btn.type="button";btn.className="btn primary";btn.style.cssText="width:100%;margin-top:10px";btn.textContent="Открыть в Мета Паркинг →";
+  var btn=document.createElement("button");btn.type="button";btn.className="btn primary";btn.style.cssText="width:100%;margin-top:10px";btn.textContent="Открыть в МЕТА Паркинг →";
   btn.onclick=function(){
    var data={direction:"to-parking",created:Date.now(),source:{id:o.id,x:o.x,y:o.y,rot:o.rot||0,w:o.w,h:o.h,levels:o.levels,stage:o.stage,area_m2:o.metaParking&&o.metaParking.area_m2||objArea(o)},layout:o.metaParking&&o.metaParking.layout||null};
    localStorage.setItem(PARKING_TRANSFER,JSON.stringify(data));store();
@@ -319,12 +319,13 @@ overlay.querySelector("#metaPrev").disabled=!snapshot;
    if(!active)return;
    if(!p||p.direction!=="to-massing"||!p.sourceId)return;
    var o=state.objects.find(function(x){return String(x.id)===String(p.sourceId);});
-   if(!o||o.type!=="P_FREE")throw Error("Исходный объект «Отдельный» не найден. Откройте предыдущий проект Массинга, не новый.");
+   if(!o||!["P_FREE","P_AG"].includes(o.type))throw Error("Исходный наземный паркинг не найден. Откройте предыдущий проект Массинга, не новый.");
    var w=Number(p.width_m),h=Number(p.depth_m),levels=Number(p.levels),spaces=Number(p.spaces);
    if(!(w>0&&h>0&&levels>=1&&Number.isInteger(levels)&&spaces>=0&&Number.isInteger(spaces)))throw Error("Некорректные габариты, этажность или количество ММ.");
    checkpoint();
    o.w=w;o.h=h;o.levels=levels;
    if(Array.isArray(o.points))o.points=defaultPolyPoints(w,h);
+   if(o.metaParking)delete o.metaParking;
    o.metaSurfaceParking={params:p.params||null,spaces:spaces,spacesPerFloor:Number(p.spacesPerFloor)||0,areaFloor_m2:Number(p.area_m2)||w*h,totalFloorArea_m2:Number(p.totalFloorArea_m2)||w*h*levels};
    o.stage=Math.max(1,Math.round(Number(p.stage)||Number(o.stage)||1));
    state.selected=o.id;state.calloutId=null;state.armed=null;
@@ -335,7 +336,7 @@ overlay.querySelector("#metaPrev").disabled=!snapshot;
  renderInspector=function(){
    originalSurfaceInspector();
    var o=selected();
-   if(!o||o.type!=="P_FREE")return;
+   if(!o||!["P_FREE","P_AG"].includes(o.type))return;
    var root=document.getElementById("inspector");
    if(o.metaSurfaceParking){
      Array.from(root.querySelectorAll('[data-mm],[data-area],[data-k="w"],[data-k="h"],[data-k="levels"],[data-k="m2mm"]')).forEach(function(el){el.disabled=true;el.title="Разрабатывается в конфигураторе наземной автостоянки";});
@@ -346,10 +347,10 @@ overlay.querySelector("#metaPrev").disabled=!snapshot;
    }
    var btn=document.createElement("button");btn.className="btn primary";btn.type="button";
    btn.style.cssText="width:100%;margin-top:9px";
-   btn.textContent="Разработать в инструменте паркинга →";
+   btn.textContent="Открыть в Наземном паркинге →";
    btn.onclick=function(){
      var p={direction:"to-configurator",created:Date.now(),
-       source:{id:String(o.id),type:"P_FREE",w:o.w,h:o.h,levels:o.levels,stage:o.stage,x:o.x,y:o.y},
+       source:{id:String(o.id),type:o.type,w:o.w,h:o.h,levels:o.levels,stage:o.stage,x:o.x,y:o.y},
        params:o.metaSurfaceParking&&o.metaSurfaceParking.params||null};
      localStorage.setItem(SURFACE_TRANSFER,JSON.stringify(p));
      store();
