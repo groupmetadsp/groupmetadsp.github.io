@@ -148,7 +148,7 @@ body{background:var(--bg)}
         <h3 class="secHead"><span class="chev">▾</span>Паркинг</h3>
         <div class="secBody">
         <div class="palette">
-          <button class="tool" data-arm="P_UG"><span class="sw" style="background:#d7e2e4;border-color:#50686e"></span><b>Подземный</b><small>30 м² / ММ</small></button>
+          <button class="tool" data-arm="P_UG"><span class="sw" style="background:#d7e2e4;border-color:#50686e"></span><b>Подземный</b><small>30 м² / ММ</small></button><button class="tool" id="undergroundDrawBtn" type="button"><span class="sw" style="background:#d7e2e4;border-color:#50686e"></span><b>Контур подземного паркинга</b><small>по точкам · замкнуть</small></button><div id="undergroundDrawHint" style="display:none;grid-column:1/-1"><p class="note">Отмечайте вершины периметра. Замкните по первой точке или кнопкой.</p><div style="display:flex;gap:6px"><button class="btn primary" id="finishUndergroundDrawBtn" type="button">Завершить контур</button><button class="btn" id="cancelUndergroundDrawBtn" type="button">Отмена</button></div></div>
           <button class="tool" data-arm="P_AG"><span class="sw" style="background:#f2c978;border-color:#b37a18"></span><b>Наземный</b><small>28 м² / ММ</small></button>
           <button class="tool" data-arm="P_FREE"><span class="sw" style="background:#e5aa72;border-color:#9b6027"></span><b>Отдельный</b><small>5 уровней</small></button>
           <button class="tool" data-arm="P_ST"><span class="sw" style="background:#b9d7d5;border-color:#3c7976"></span><b>Стилобатный</b><small>паркинг + кровля</small></button>
@@ -440,7 +440,7 @@ function snap(v,s=1){return Math.round(v/s)*s}
 function deep(v){return JSON.parse(JSON.stringify(v))}
 function checkpoint(){state.undo.push(JSON.stringify({objects:state.objects,selected:state.selected,seq:state.seq,pinnedCallouts:state.pinnedCallouts,dimensionChains:state.dimensionChains}));if(state.undo.length>40)state.undo.shift()}
 function undo(){const x=state.undo.pop();if(!x)return;const d=JSON.parse(x);state.objects=d.objects;state.selected=d.selected;state.seq=d.seq;state.pinnedCallouts=d.pinnedCallouts||[];state.dimensionChains=d.dimensionChains||[];renderAll()}
-function isPolygonEditable(o){return !!o && o.type!=='ROAD_PATH' && (['parking','land','stage','road','stylobat','limit','siteboundary'].includes(o.kind) || (o.type==='BLOK'&&o.shape==='bend'))}
+function isPolygonEditable(o){return !!o && o.type!=='ROAD_PATH' && (['parking','land','stage','road','stylobat','limit','siteboundary'].includes(o.kind) || o.type==='P_UG' || (o.type==='BLOK'&&o.shape==='bend'))}
 function lShapePoints(width,leg1,leg2){width=Math.max(1,Number(width)||1);leg1=Math.max(width+1,Number(leg1)||width+1);leg2=Math.max(width+1,Number(leg2)||width+1);return [[0,0],[leg1,0],[leg1,width],[width,width],[width,leg2],[0,leg2]]}
 function mopKep(comboKey,avgApt){const combo=MOP_COMBOS[comboKey]||MOP_COMBOS.T3L,ip=interpolateComboParams(comboKey,avgApt);const sKv=combo.sKvEtazh;return sKv/(sKv/ip.k+ip.mopS)}
 function defaultPolyPoints(w,h){return [[-w/2,-h/2],[w/2,-h/2],[w/2,h/2],[-w/2,h/2]]}
@@ -869,6 +869,18 @@ $('roadToolBtn').onclick=()=>{$('roadPanel').style.display=$('roadPanel').style.
 ['roadLaneWidth','roadLeftEnable','roadRightEnable','roadLGreen','roadLGreenW','roadLBike','roadLSidewalk','roadLSidewalkW','roadRGreen','roadRGreenW','roadRBike','roadRSidewalk','roadRSidewalkW'].forEach(id=>{['change','input'].forEach(ev=>$(id).addEventListener(ev,syncRoadEditingLive))});
 
 let siteDraw=null;
+function startUndergroundContourDraw(){
+ if(siteDraw)cancelSiteDraw();
+ if(roadDraw)cancelRoadDraw();
+ if(rulerMode)setRulerMode(false);
+ siteDraw={points:[],type:'P_UG'};state.armed=null;
+ document.querySelectorAll('.tool').forEach(b=>b.classList.remove('active'));
+ $('undergroundDrawBtn').classList.add('active');$('undergroundDrawHint').style.display='block';
+ renderAll();
+}
+$('undergroundDrawBtn').addEventListener('click',startUndergroundContourDraw);
+$('finishUndergroundDrawBtn').addEventListener('click',finishSiteDraw);
+$('cancelUndergroundDrawBtn').addEventListener('click',cancelSiteDraw);
 function startStageContourDraw(){
  if(siteDraw)cancelSiteDraw();
  if(rulerMode)setRulerMode(false);
@@ -887,16 +899,17 @@ $('drawSiteBoundBtn').addEventListener('click',()=>{
  $('siteDrawHint').style.display='block';
  renderAll();
 });
-function cancelSiteDraw(){const stage=siteDraw?.type==='STAGE';siteDraw=null;$('drawSiteBoundBtn').style.display='';$('siteDrawHint').style.display='none';if(stage){$('stageDrawHint').style.display='none';document.querySelector('[data-arm="STAGE"]').classList.remove('active')}renderAll()}
+function cancelSiteDraw(){const stage=siteDraw?.type==='STAGE',underground=siteDraw?.type==='P_UG';siteDraw=null;$('drawSiteBoundBtn').style.display='';$('siteDrawHint').style.display='none';if(stage){$('stageDrawHint').style.display='none';document.querySelector('[data-arm="STAGE"]').classList.remove('active')}if(underground){$('undergroundDrawHint').style.display='none';$('undergroundDrawBtn').classList.remove('active')}renderAll()}
 $('cancelSiteDrawBtn').addEventListener('click',cancelSiteDraw);
 function finishSiteDraw(){
  if(!siteDraw||siteDraw.points.length<3)return;
  checkpoint();
- const stage=siteDraw.type==='STAGE';
- if(!stage)state.objects=state.objects.filter(o=>o.type!=='SITE_BOUND');
+ const stage=siteDraw.type==='STAGE',underground=siteDraw.type==='P_UG';
+ if(!stage&&!underground)state.objects=state.objects.filter(o=>o.type!=='SITE_BOUND');
  const first=siteDraw.points[0];
  const localPts=siteDraw.points.map(p=>[p[0]-first[0],p[1]-first[1]]);
- const created=add(stage?'STAGE':'SITE_BOUND',first[0],first[1],{points:localPts});
+ const created=add(stage?'STAGE':underground?'P_UG':'SITE_BOUND',first[0],first[1],{points:localPts});
+  if(underground){syncPolyBounds(created);state.selected=created.id;$('undergroundDrawHint').style.display='none';$('undergroundDrawBtn').classList.remove('active');}
  if(stage){created.stage=Math.max(0,...state.objects.filter(o=>o.kind==='stage'&&o.id!==created.id).map(o=>Number(o.stage)||0))+1;state.selected=created.id;state.calloutId=created.id;state.calloutPos={x:window.innerWidth/2,y:window.innerHeight/2};$('stageDrawHint').style.display='none';document.querySelector('[data-arm="STAGE"]').classList.remove('active');}
  siteDraw=null;
  $('drawSiteBoundBtn').style.display='';$('drawSiteBoundBtn').textContent='✏ Перерисовать границу ЗУ по точкам';
@@ -908,8 +921,8 @@ function renderSiteDraw(){
  const layer=$('siteDrawLayer');layer.innerHTML='';
  if(!siteDraw||!siteDraw.points.length)return;
  const pts=siteDraw.points;
- if(pts.length>1){const pl=document.createElementNS(ns,'polyline');pl.setAttribute('points',pts.map(p=>p.join(',')).join(' '));pl.setAttribute('fill','none');pl.setAttribute('stroke',siteDraw.type==='STAGE'?'#7562a8':'#0f7a52');pl.setAttribute('stroke-width',siteDraw.type==='STAGE'?'2.4':'1.6');pl.setAttribute('vector-effect','non-scaling-stroke');pl.setAttribute('stroke-dasharray','5 3');layer.appendChild(pl)}
- pts.forEach((p,i)=>{const c=document.createElementNS(ns,'circle');c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r',i===0?5:3);c.setAttribute('fill',i===0?'#ff8a00':siteDraw.type==='STAGE'?'#7562a8':'#0f7a52');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','1');c.setAttribute('vector-effect','non-scaling-stroke');layer.appendChild(c)});
+ if(pts.length>1){const pl=document.createElementNS(ns,'polyline');pl.setAttribute('points',pts.map(p=>p.join(',')).join(' '));pl.setAttribute('fill','none');pl.setAttribute('stroke',siteDraw.type==='STAGE'?'#7562a8':siteDraw.type==='P_UG'?'#50686e':'#0f7a52');pl.setAttribute('stroke-width',siteDraw.type==='STAGE'?'2.4':'1.6');pl.setAttribute('vector-effect','non-scaling-stroke');pl.setAttribute('stroke-dasharray','5 3');layer.appendChild(pl)}
+ pts.forEach((p,i)=>{const c=document.createElementNS(ns,'circle');c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r',i===0?5:3);c.setAttribute('fill',i===0?'#ff8a00':siteDraw.type==='STAGE'?'#7562a8':siteDraw.type==='P_UG'?'#50686e':'#0f7a52');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','1');c.setAttribute('vector-effect','non-scaling-stroke');layer.appendChild(c)});
 }
 // Пользователь: «добавь на верхней панели режим линейки с функцией суммарной длины по нескольким точкам» — новый
 // самостоятельный инструмент измерения (не создаёт постоянный объект на поле, в отличие от инструмента границы ЗУ):
@@ -1668,9 +1681,10 @@ const roadParkingCentersOnSegment=window.roadParkingCentersOnSegment=(o,si,key)=
  '<div class="coRow"><label>Ширина, м</label><input id="coExistingWidth" type="number" min="1" step="0.1" value="'+numAttr(o.h,1)+'"></div>'+
  '<div class="coRow"><label>Этажность</label><input id="coExistingFloors" type="number" min="1" max="100" step="1" value="'+(o.floors||1)+'"></div>';
  } else if(['P_UG','P_AG'].includes(o.type)){ controls=`<div class="coRow"><label>Тип</label><select id="coParkType"><option value="P_UG" ${o.type==='P_UG'?'selected':''}>Подземный</option><option value="P_AG" ${o.type==='P_AG'?'selected':''}>Наземный</option></select></div><div class="coRow"><label>Уровни</label><input id="coLevels" type="number" min="1" max="12" value="${o.levels||1}"></div>`; } else if(o.type==='RAMP'){ controls=`<div class="coRow"><label>Тип</label><select id="coRampMode"><option value="one" ${o.rampMode!=='two'?'selected':''}>Однопутная</option><option value="two" ${o.rampMode==='two'?'selected':''}>Двухпутная</option></select></div>`; }
-   el.innerHTML=`<button class="coClose" id="coCloseBtn" title="Закрыть">×</button><div class="coTitle">${o.label}</div>${o.kind==='building'?(!o.surrounding?'<div class="coRow"><label>Этап проектирования</label><select id="coStage41">'+Array.from({length:10},(_,i)=>'<option value="'+(i+1)+'" '+(Math.max(1,Math.min(10,Number(o.stage)||1))===i+1?'selected':'')+'>'+(i+1)+'</option>').join('')+'</select></div><div class="coRow"><label>Окружающая застройка (не учитывать в ТЭП)</label><input type="checkbox" id="coSurrounding41" '+(o.surrounding?'checked':'')+'></div>':'<div class="coRow"><label>Окружающая застройка (не учитывать в ТЭП)</label><input type="checkbox" id="coSurrounding41" checked></div>'):''}${controls}${o.surrounding?'<div class="coStats">Окружающая застройка — не учитывается в ТЭП.</div>':'<div class="coStats">'+calloutStatsHtml(o)+'</div>'}<div class="coRow" style="margin-top:7px;padding-top:7px;border-top:1px solid var(--line)"><label>📌 Закрепить на поле</label><input type="checkbox" id="coPin" ${pinned?'checked':''}></div><p class="note" style="margin:4px 0 0">Перетащите облако за заголовок.</p>`;
+   el.innerHTML=`<button class="coClose" id="coCloseBtn" title="Закрыть">×</button><div class="coTitle">${o.label}</div>${o.kind==='building'?(!o.surrounding?'<div class="coRow"><label>Этап проектирования</label><select id="coStage41">'+Array.from({length:10},(_,i)=>'<option value="'+(i+1)+'" '+(Math.max(1,Math.min(10,Number(o.stage)||1))===i+1?'selected':'')+'>'+(i+1)+'</option>').join('')+'</select></div><div class="coRow"><label>Окружающая застройка (не учитывать в ТЭП)</label><input type="checkbox" id="coSurrounding41" '+(o.surrounding?'checked':'')+'></div>':'<div class="coRow"><label>Окружающая застройка (не учитывать в ТЭП)</label><input type="checkbox" id="coSurrounding41" checked></div>'):''}${controls}<div class="coRow"><label>Угол поворота, °</label><input id="coRotation" type="number" step="0.1" min="-3600" max="3600" value="${numAttr(o.rot||0,1)}"></div>${o.surrounding?'<div class="coStats">Окружающая застройка — не учитывается в ТЭП.</div>':'<div class="coStats">'+calloutStatsHtml(o)+'</div>'}<div class="coRow" style="margin-top:7px;padding-top:7px;border-top:1px solid var(--line)"><label>📌 Закрепить на поле</label><input type="checkbox" id="coPin" ${pinned?'checked':''}></div><p class="note" style="margin:4px 0 0">Перетащите облако за заголовок.</p>`;
    el.style.display='block'; const pos=state.calloutPos||{x:140,y:140},off=state.calloutOffset||{x:0,y:0},w=el.offsetWidth||250,h=el.offsetHeight||220; el.style.left=Math.max(8,Math.min(window.innerWidth-w-8,pos.x+14+off.x))+'px'; el.style.top=Math.max(8,Math.min(window.innerHeight-h-8,pos.y-h/2+off.y))+'px'; $('coCloseBtn').onclick=()=>{state.calloutId=null;renderAll()}; if($('coStage41'))$('coStage41').addEventListener('change',()=>{checkpoint();o.stage=Math.max(1,Math.min(10,Math.round(Number($('coStage41').value)||1)));renderAll()});
- if($('coSurrounding41'))$('coSurrounding41').addEventListener('change',()=>{checkpoint();o.surrounding=$('coSurrounding41').checked;renderAll()});
+ if($('coRotation'))$('coRotation').addEventListener('change',()=>{const deg=Number($('coRotation').value);if(!Number.isFinite(deg))return;checkpoint();o.rot=((deg%360)+360)%360;renderAll()});
+  if($('coSurrounding41'))$('coSurrounding41').addEventListener('change',()=>{checkpoint();o.surrounding=$('coSurrounding41').checked;renderAll()});
  if($('coExistingLength'))$('coExistingLength').addEventListener('change',()=>{const w=Number($('coExistingLength').value);if(!(w>0&&w<10000))return;checkpoint();if(isPolygonEditable(o))resizePolygonBounds(o,w,o.h);else o.w=w;renderAll()});
  if($('coExistingWidth'))$('coExistingWidth').addEventListener('change',()=>{const h=Number($('coExistingWidth').value);if(!(h>0&&h<10000))return;checkpoint();if(isPolygonEditable(o))resizePolygonBounds(o,o.w,h);else o.h=h;renderAll()});
  if($('coExistingFloors'))$('coExistingFloors').addEventListener('change',()=>{const f=Number($('coExistingFloors').value);if(!Number.isInteger(f)||f<1||f>100)return;checkpoint();o.floors=f;renderAll()});
