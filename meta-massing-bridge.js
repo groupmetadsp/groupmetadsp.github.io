@@ -289,6 +289,7 @@ overlay.querySelector("#metaPrev").disabled=!snapshot;
    var el=document.createElement("div");el.className="statusline";el.innerHTML="<b>По компоновке Мета Паркинг:</b> "+fmt(o.metaParking.spaces)+" ММ · S паркинга "+fmt(o.metaParking.area_m2)+" м² · исключаемая площадь "+fmt(o.metaParking.excluded_area_m2)+" м²";
    root.appendChild(el);
   }
+  if(o.type==="P_FREE")return;
   var btn=document.createElement("button");btn.type="button";btn.className="btn primary";btn.style.cssText="width:100%;margin-top:10px";btn.textContent="Открыть в Мета Паркинг →";
   btn.onclick=function(){
    var data={direction:"to-parking",created:Date.now(),source:{id:o.id,x:o.x,y:o.y,rot:o.rot||0,w:o.w,h:o.h,levels:o.levels,stage:o.stage,area_m2:o.metaParking&&o.metaParking.area_m2||objArea(o)},layout:o.metaParking&&o.metaParking.layout||null};
