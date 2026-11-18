@@ -304,6 +304,58 @@ overlay.querySelector("#metaPrev").disabled=!snapshot;
   };
   root.appendChild(btn);
  };
+
+ // Отдельный наземный паркинг: связь с параметрическим конфигуратором автостоянки.
+ var SURFACE_TRANSFER="meta-surface-parking-transfer-v1";
+ function pendingSurfaceTransfer(){
+   try{
+     var p=JSON.parse(localStorage.getItem(SURFACE_TRANSFER)||"null");
+     var age=p?Date.now()-Number(p.created):Infinity;
+     return p&&p.direction==="to-massing"&&age>=0&&age<86400000?p:null;
+   }catch(e){return null;}
+ }
+ function importSurfaceParking(p){
+   if(!active)return;
+   if(!p||p.direction!=="to-massing"||!p.sourceId)return;
+   var o=state.objects.find(function(x){return String(x.id)===String(p.sourceId);});
+   if(!o||o.type!=="P_FREE")throw Error("Исходный объект «Отдельный» не найден. Откройте предыдущий проект Массинга, не новый.");
+   var w=Number(p.width_m),h=Number(p.depth_m),levels=Number(p.levels),spaces=Number(p.spaces);
+   if(!(w>0&&h>0&&levels>=1&&Number.isInteger(levels)&&spaces>=0&&Number.isInteger(spaces)))throw Error("Некорректные габариты, этажность или количество ММ.");
+   checkpoint();
+   o.w=w;o.h=h;o.levels=levels;
+   if(Array.isArray(o.points))o.points=defaultPolyPoints(w,h);
+   o.metaSurfaceParking={params:p.params||null,spaces:spaces,spacesPerFloor:Number(p.spacesPerFloor)||0,areaFloor_m2:Number(p.area_m2)||w*h,totalFloorArea_m2:Number(p.totalFloorArea_m2)||w*h*levels};
+   o.stage=Math.max(1,Math.round(Number(p.stage)||Number(o.stage)||1));
+   state.selected=o.id;state.calloutId=null;state.armed=null;
+   localStorage.removeItem(SURFACE_TRANSFER);renderAll();later();
+ }
+ // Встраиваем только в окно выбранного объекта, оставляя остальные панели без изменений.
+ var originalSurfaceInspector=renderInspector;
+ renderInspector=function(){
+   originalSurfaceInspector();
+   var o=selected();
+   if(!o||o.type!=="P_FREE")return;
+   var root=document.getElementById("inspector");
+   if(o.metaSurfaceParking){
+     Array.from(root.querySelectorAll('[data-mm],[data-area],[data-k="w"],[data-k="h"],[data-k="levels"],[data-k="m2mm"]')).forEach(function(el){el.disabled=true;el.title="Разрабатывается в конфигураторе наземной автостоянки";});
+     var apply=root.querySelector("#applyInspector");if(apply)apply.style.display="none";
+     var stat=document.createElement("div");stat.className="statusline";
+     stat.innerHTML="<b>Конфигуратор наземной автостоянки:</b><br>Габариты "+fmt(o.w,2)+" × "+fmt(o.h,2)+" м · "+fmt(o.levels)+" этажей · "+fmt(o.metaSurfaceParking.spaces)+" ММ";
+     root.appendChild(stat);
+   }
+   var btn=document.createElement("button");btn.className="btn primary";btn.type="button";
+   btn.style.cssText="width:100%;margin-top:9px";
+   btn.textContent="Разработать в инструменте паркинга →";
+   btn.onclick=function(){
+     var p={direction:"to-configurator",created:Date.now(),
+       source:{id:String(o.id),type:"P_FREE",w:o.w,h:o.h,levels:o.levels,stage:o.stage,x:o.x,y:o.y},
+       params:o.metaSurfaceParking&&o.metaSurfaceParking.params||null};
+     localStorage.setItem(SURFACE_TRANSFER,JSON.stringify(p));
+     store();
+     window.top.location.href="/tools/surface-parking-configurator/";
+   };
+   root.appendChild(btn);
+ };
  function readParkingTransfer(){try{var p=JSON.parse(localStorage.getItem(PARKING_TRANSFER)||"null");return p&&p.direction==="to-massing"&&Date.now()-Number(p.created)<86400000?p:null;}catch(e){return null;}}
 
 
@@ -316,6 +368,7 @@ function activate(usePrevious){
  }
  if(queued){var p=queued;queued=null;setTimeout(function(){try{importSection(p);}catch(e){alert("Ошибка передачи секции: "+e.message);}},usePrevious?250:25);}
  var parking=readParkingTransfer();if(parking)setTimeout(function(){try{parkingTransferToMassing(parking);}catch(e){alert("Ошибка передачи паркинга: "+e.message);}},usePrevious?350:80);
+ var surface=pendingSurfaceTransfer();if(surface)setTimeout(function(){try{importSurfaceParking(surface);}catch(e){alert("Ошибка возврата наземного паркинга: "+e.message);}},usePrevious?450:160);
 }
 overlay.querySelector("#metaNew").onclick=function(){activate(false);};
 overlay.querySelector("#metaPrev").onclick=function(){activate(true);};
