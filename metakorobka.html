@@ -1730,7 +1730,7 @@ function foundationScreen(){
  ${get(CALC,'H119')==='Да'&&get(CALC,'H124')==='Да'?`<div class="technical-warning"><strong>Контроль двойного учёта:</strong> одновременно включены усиление и сваи. Подтвердите, что это разные участки/технологии; автоматического взаимного исключения методика ядра не задаёт.</div>`:''}
  ${[139,140].filter(i=>get(CALC,'Q'+i)===null).length?`<div class="technical-warning">Количество испытаний или мониторинг не заданы; итог свайного основания неполный.</div>`:''}</section>`,
   `<section class="tech-panel"><h3>Объёмы, расценки и стоимость</h3><h4>Усиление</h4>${addonTechRows([121,122])}<h4>Сваи</h4>${addonTechRows([133,134,135,136,137,138,139,140])}<p class="technical-notice">Ставки исходного ядра не дублируются и не изменяются в данном модуле. В итог объекта входят T118 + T123 по одному разу.</p></section>`,
-  `<section class="tech-panel"><h3>Результат и контроль состава</h3><div class="tech-amount-grid">${addonRow('Стоимость усиления',up,'₽')}${addonRow('Свайное основание',piles,'₽')}${addonRow('На весь дом',(Number(up)||0)+(Number(piles)||0),'₽')}${addonRow('На 1 м² Sпрод',a?((Number(up)||0)+(Number(piles)||0))/a:null,'₽/м²')}</div><p class="technical-notice">Не смешивать расчёт усиления грунта, стоимость монолитного фундамента, свайное основание и испытания. Неподтверждённые объёмы показываются пустыми, а не как нулевая работа.</p><button class="todo-launch" data-todo-open="Усиление">Доделать · усиление</button> <button class="todo-launch" data-todo-open="Свайное основание">Доделать · сваи</button></section>`
+  `<section class="tech-panel"><h3>Результат и контроль состава</h3><div class="tech-amount-grid">${addonRow('Стоимость усиления',up,'₽')}${addonRow('Свайное основание',piles,'₽')}${addonRow('На весь дом',(Number(up)||0)+(Number(piles)||0),'₽')}${addonRow('На 1 м² Sпрод',a?((Number(up)||0)+(Number(piles)||0))/a:null,'₽/м²')}</div><p class="technical-notice">Не смешивать расчёт усиления грунта, стоимость монолитного фундамента, свайное основание и испытания. Неподтверждённые объёмы показываются пустыми, а не как нулевая работа.</p><button class="todo-launch" data-todo-open="Усиление">Блокнот · усиление</button> <button class="todo-launch" data-todo-open="Свайное основание">Блокнот · сваи</button></section>`
  ];return addonFrame('Усиление + свайное основание','Два самостоятельных стоимостных контура в едином технологическом калькуляторе; формулы ядра Q121–Q140.', ['Усиление · ИД','Сваи · ИД','Расчёт объёмов','Расценки и состав','Итог'],step,header+parts[step],'T118 + T123 · без дублей');
 }
 function balconyScreen(){
@@ -1771,8 +1771,8 @@ for(const [k,v] of Object.entries(TODO_INIT)){
 }
 function todoSave(){store(TODO_KEY,todoData)}todoSave();
 function todoCount(k){return (todoData[k]||[]).filter(x=>!x.done).length}
-function todoButton(group){return `<button class="todo-launch" data-todo-open="${esc(group)}" title="Открыть блокнот Доделать для группы ${esc(group)}">Доделать <span class="count">${todoCount(group)}</span></button>`}
-function todoModal(group){const items=todoData[group]||[];document.getElementById('todo-layer')?.remove();const el=document.createElement('div');el.id='todo-layer';el.className='todo-layer';el.innerHTML=`<div class="todo-modal" role="dialog" aria-modal="true"><div class="todo-head"><div><small style="color:var(--muted)">МЕТАСЕБЕС · БЛОКНОТ</small><h2>Доделать · ${esc(group)}</h2></div><button class="btn" data-todo-close="1">Закрыть ×</button></div><div class="todo-list">${items.length?items.map((x,i)=>`<div class="todo-item ${x.done?'done':''}"><input type="checkbox" data-todo-toggle="${i}" ${x.done?'checked':''}><div class="todo-text">${esc(x.text)}<small>${esc(x.source||'Заметка')}</small></div><button title="Удалить заметку" data-todo-delete="${i}">✕</button></div>`).join(''):'<p class="technical-notice">Записей пока нет.</p>'}</div><textarea id="todo-entry" placeholder="Добавить замечание, номер ID, ответственное действие…"></textarea><div class="todo-actions"><button class="btn" data-todo-export="1">Сохранить блокнот JSON</button><button class="btn primary" data-todo-add="1">+ Добавить запись</button></div></div>`;el.dataset.group=group;document.body.appendChild(el);}
+function todoButton(group){return `<button class="todo-launch" data-todo-open="${esc(group)}" title="Открыть блокнот замечаний для группы ${esc(group)}">Блокнот <span class="count">${todoCount(group)}</span></button>`}
+function todoModal(group){const items=todoData[group]||[];document.getElementById('todo-layer')?.remove();const el=document.createElement('div');el.id='todo-layer';el.className='todo-layer';el.innerHTML=`<div class="todo-modal" role="dialog" aria-modal="true"><div class="todo-head"><div><small style="color:var(--muted)">МЕТАСЕБЕС · БЛОКНОТ</small><h2>Замечания · ${esc(group)}</h2></div><button class="btn" data-todo-close="1">Закрыть ×</button></div><div class="todo-list">${items.length?items.map((x,i)=>`<div class="todo-item ${x.done?'done':''}"><input type="checkbox" data-todo-toggle="${i}" ${x.done?'checked':''}><div class="todo-text">${esc(x.text)}<small>${esc(x.source||'Заметка')}</small></div><button title="Удалить заметку" data-todo-delete="${i}">✕</button></div>`).join(''):'<p class="technical-notice">Записей пока нет.</p>'}</div><textarea id="todo-entry" placeholder="Добавить замечание, номер ID, ответственное действие…"></textarea><div class="todo-actions"><button class="btn" data-todo-export="1">Сохранить блокнот JSON</button><button class="btn primary" data-todo-add="1">+ Добавить запись</button></div></div>`;el.dataset.group=group;document.body.appendChild(el);}
 const _addonRender=render;
 render=function(){_addonRender();const root=$('content');if(!root||root.querySelector('[data-todo-open]')||!['inputs','results','rates','modules','admin','home'].includes(view))return;
  let group=view==='modules'?moduleGroup:view==='results'?groupFilter||'Расчёт':view==='inputs'?'Исходные данные':view==='rates'||view==='admin'?'Расценки оператора':'Общее';
@@ -1837,7 +1837,7 @@ function todoOverview(){
   const points=notes.map(x=>`<div class="todo-page-point ${x.done?'done':''}"><span>${esc(x.text)}</span></div>`).join('');
   return `<section class="todo-page-group"><div class="todo-page-group-head"><h2>${esc(k)}</h2><span class="todo-page-count">${todoCount(k)} / ${notes.length}</span></div><div class="todo-page-points">${points||'<p>Пока нет записей.</p>'}</div><button class="todo-launch" data-todo-open="${esc(k)}">Открыть блокнот</button></section>`;
  }).join('');
- return `<div class="todo-page"><div class="todo-page-top"><div><div class="eyebrow">МЕТАСЕБЕС / КОНТРОЛЬ ЗАМЕЧАНИЙ</div><h1>Доделать</h1><p>Общий реестр замечаний по всем группам. Красная кнопка внутри каждого раздела открывает тот же блокнот, без дублирования данных.</p></div><div class="todo-page-stats"><span class="todo-page-count">Открыто: <b>${open}</b></span><span class="todo-page-count">Всего: <b>${total}</b></span></div></div><div class="todo-page-grid">${groups}</div></div>`;
+ return `<div class="todo-page"><div class="todo-page-top"><div><div class="eyebrow">МЕТАСЕБЕС / КОНТРОЛЬ ЗАМЕЧАНИЙ</div><h1>Доделать</h1><p>Общий реестр замечаний по всем группам.</p></div><div class="todo-page-stats"><span class="todo-page-count">Открыто: <b>${open}</b></span><span class="todo-page-count">Всего: <b>${total}</b></span></div></div><div class="todo-page-grid">${groups}</div></div>`;
 }
 const _navFixedRender=render;
 render=function(){
@@ -1861,10 +1861,319 @@ document.addEventListener('click',e=>{
   if(moduleGroup===ADDON_FND){addonSettings.reinforceStep=0;addonStore()}
   expand=true;
   go('modules');
+  if(typeof setMobileMenu==='function')setMobileMenu(false);
 },true);
 // Keep TODO dashboard in sync after notebook changes, including update/delete.
 const _navFixedTodoModal=todoModal;
 todoModal=function(group){_navFixedTodoModal(group);if(view==='todo')$('nav').innerHTML=navItems()};
+render();
+
+
+/* 18.11.2026 UI fix: remove inline TODO mentions, reorder modules, fix group columns and overlap */
+const __finalPatchStyle=document.createElement('style');
+__finalPatchStyle.textContent=`
+.sheet-table th,.sheet-table td,.data-table th,.data-table td{overflow:hidden;overflow-wrap:anywhere;word-break:break-word;line-height:1.25}
+.sheet-table td.long,.sheet-table td.code,.data-table td.long,.data-table td.code{white-space:normal}
+.sheet-table .rnum,.data-table .rnum{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sheet-table.rates-table col:first-child{width:58px!important}
+.sheet-table.rates-table td,.sheet-table.rates-table th{font-size:11.4px}
+.group-row td.group-cost,.group-row td.group-perm2,.group-row td.group-count{font-weight:700}
+.tech-nav-sub,.direct-module-link{margin-left:18px}
+.todo-page .todo-page-top p{max-width:720px}
+`;
+document.head.appendChild(__finalPatchStyle);
+
+// Rebuild left navigation so all calculation modules are in one place and in order.
+navItems=function(){
+  const inCreate=['inputs','modules','rates','results'].includes(view);
+  const activeCreate=(view==='create'||inCreate)?' active':'';
+  const todoOpen=Object.values(todoData||{}).reduce((n,a)=>n+(Array.isArray(a)?a.filter(x=>!x.done).length:0),0);
+  const sub=expand?`<div class="subnav module-stack">
+    <button class="${view==='inputs'?'active':''}" data-go="inputs">Исходные данные</button>
+    <button class="${view==='modules' && ![TECH_ENVELOPE,TECH_HYDRO,ADDON_BAL,ADDON_FND].includes(moduleGroup)?'active':''}" data-go="modules">Расчётные модули</button>
+    <button class="tech-nav-sub ${view==='modules'&&moduleGroup===TECH_ENVELOPE?'active':''}" data-tech-open="envelope">Фасад + остекление</button>
+    <button class="tech-nav-sub ${view==='modules'&&moduleGroup===TECH_HYDRO?'active':''}" data-tech-open="hydro">Гидроизоляция</button>
+    <button class="direct-module-link ${view==='modules'&&moduleGroup===ADDON_BAL?'active':''}" data-module-quick="${esc(ADDON_BAL)}">Балконы и лоджии</button>
+    <button class="direct-module-link ${view==='modules'&&moduleGroup===ADDON_FND?'active':''}" data-module-quick="${esc(ADDON_FND)}">Усиление + свайное основание</button>
+    <button class="${view==='rates'?'active':''}" data-go="rates">Расценки</button>
+    <button class="${view==='results'?'active':''}" data-go="results">Расчёт</button>
+  </div>`:'';
+  const btn=(id,name,icon,extra='')=>`<button class="${view===id? 'active':''}" data-go="${id}"><span class="navicon">${svgIcon(icon)}</span><span>${name}</span>${extra}</button>`;
+  return ''+
+    btn('home','Главная','home')+
+    `<button class="${activeCreate}" data-go="create"><span class="navicon">${svgIcon('calculator')}</span><span>Сделать расчёт</span><span style="margin-left:auto">${svgIcon(expand?'chevron-down':'chevron-right')}</span></button>`+
+    sub+
+    `<button data-go="todo" class="todo-nav-link${view==='todo'?' active':''}" title="Реестр замечаний по всем группам"><span class="navicon">${svgIcon('clipboard-list')}</span><span>Доделать</span><b style="margin-left:auto">${todoOpen}</b></button>`+
+    btn('open','Открыть расчёт','folder-open')+
+    btn('admin','Администрирование','settings')+
+    btn('engine','Расчётное ядро','database');
+};
+
+// Remove inline TODO buttons everywhere; keep only the dedicated section.
+render=function(){
+  _addonRender();
+  if(view==='todo'){
+    $('content').innerHTML='<div class="wrap app">'+todoOverview()+'</div>';
+    $('nav').innerHTML=navItems();
+    $('topname').textContent='Доделать';
+    document.body.classList.remove('inputs-mode');
+  }
+  adaptTablesToWidth();
+};
+
+// Correct group presentation: cost and ₽/м² must be in separate adjacent columns.
+calcRow=function(a,scope){
+  const simple=scope==='groups',cols=simple?5:9;
+  if(a.kind==='group'){
+    const g=a.r.group,closed=isClosed(scope,g),v=get(CALC,'T'+a.r.r),u=get(CALC,'U'+a.r.r);
+    if(simple){
+      return `<tr class="group-row"><td class="rnum"><button class="fold" data-toggle-group="${esc(g)}" aria-expanded="${!closed}" title="${closed?'Развернуть':'Свернуть'}">${closed?'+':'−'}</button></td><td><button class="group-title" data-toggle-group="${esc(g)}">${esc(g)}</button></td><td class="number group-cost">${money(v,2)}</td><td class="number group-perm2">${money(u,2)}</td><td class="number group-count">${a.count}</td></tr>`;
+    }
+    return `<tr class="group-row"><td class="rnum"><button class="fold" data-toggle-group="${esc(g)}" aria-expanded="${!closed}" title="${closed?'Развернуть':'Свернуть'}">${closed?'+':'−'}</button></td><td colspan="${cols-3}"><button class="group-title" data-toggle-group="${esc(g)}">${esc(g)} <span>${a.count} поз.</span></button></td><td class="number group-cost">${money(v,2)}</td><td class="number group-perm2">${money(u,2)}</td></tr>`;
+  }
+  const r=a.r,cv=c=>get(CALC,c+r.r),q=cv('Q'),t=cv('T'),u=cv('U');
+  if(simple)return `<tr><td class="rnum">${esc(r.id)}</td><td class="long" title="${esc(r.name)}">${esc(r.name)}</td><td class="number">${money(t,2)}</td><td class="number">${money(u,2)}</td><td></td></tr>`;
+  return `<tr><td class="rnum">${esc(r.id)}</td><td class="long" title="${esc(r.name)}">${scope==='transparent'?`<button class="inspect-link" data-inspect="${r.r}" title="Посмотреть формулу и правило">${esc(r.name)} <span>${svgIcon('info')}</span></button>`:esc(r.name)}</td><td class="unit">${esc(r.unit)}</td><td class="number">${money(q,3)}</td><td class="number">${money(cv('N'),2)}</td><td class="number">${money(cv('O'),2)}</td><td class="number">${money(cv('P'),2)}</td><td class="number">${money(t,2)}</td><td class="number">${money(u,2)}</td></tr>`;
+};
+
+// Rates/admin tables: widen subgroup column and avoid compressed column mixes on narrow screens.
+const __ratesBase=rates;
+rates=function(edit=false){
+  let html=__ratesBase(edit);
+  html=html.replace('<colgroup><col style="width:50px"><col><col style="width:16%"><col style="width:62px"><col style="width:132px"><col style="width:132px"><col style="width:132px"></colgroup>',
+                    '<colgroup><col style="width:58px"><col><col style="width:170px"><col style="width:72px"><col style="width:132px"><col style="width:132px"><col style="width:132px"></colgroup>');
+  return html;
+};
+
+// Keep the title map aware of the dedicated TODO section.
+const __renderPatchBase=render;
+render=function(){
+  document.body.classList.toggle('inputs-mode',view==='inputs');
+  document.body.classList.toggle('paged-mode',['inputs','rates','results','admin'].includes(view));
+  $('nav').innerHTML=navItems();
+  $('topname').textContent={home:'Главная',inputs:'Исходные данные',rates:'Расценки',results:'Расчёт',open:'Открыть расчёт',admin:'Администрирование',engine:'Расчётное ядро',todo:'Доделать'}[view]||view;
+  $('content').innerHTML='<div class="wrap app">'+({home,inputs,modules:moduleScreen,rates:()=>rates(false),results,open:openPage,admin:()=>rates(true),engine:enginePage,todo:todoOverview}[view]||home)()+'</div>';
+  adaptTablesToWidth();
+  $('back').disabled=view==='home'&&navIndex===0;
+  $('next').disabled=(view==='open'||view==='engine'||view==='todo')||(view==='admin'&&ratePage>=pagesForActive()-1)||(view==='results'&&resultMode==='transparent'&&detailPage>=pagesForActive()-1);
+  const close=$('theme-panel');if(close)close.hidden=true;
+  if(['rates','admin'].includes(view)||(view==='results'&&resultMode!=='summary')){
+    const panel=$('content').querySelector('.sheet-panel');
+    if(panel){
+      const rows=[...panel.querySelectorAll('tbody tr')];
+      const last=rows[rows.length-1];
+      if(last&&rows.length>2){
+        const extra=last.getBoundingClientRect().bottom-panel.getBoundingClientRect().bottom+4;
+        if(extra>0.5 && pageLimit()>2){
+          const heights=rows.map(r=>r.getBoundingClientRect().height).filter(x=>x>0);
+          const typical=Math.max(27,Math.min(58,heights.reduce((a,b)=>a+b,0)/heights.length));
+          layoutPageLimit=Math.max(2,pageLimit()-Math.max(1,Math.ceil(extra/typical)));
+          const stamp=''+view+'|'+resultMode+'|'+ratePage+'|'+detailPage;
+          if(render._lastShrink!==stamp){render._lastShrink=stamp;render();return}
+        }else{render._lastShrink='';}
+      }
+    }
+  }
+};
+render();
+
+/* 18.11.2026 · Independent calculation-price regimes for the Results page.
+   Operator engine remains unchanged. Four groups are replaced, not added, in averages mode. */
+let costMode=read('costMode','operator');
+let costClass=read('costClass','standard');
+if(!['operator','average'].includes(costMode))costMode='operator';
+if(!['business','standard'].includes(costClass))costClass='standard';
+
+const AVERAGE_RATES={
+  'Фасад':{business:9917,standard:6777.909091,source:'4.7 Фасады',classDependent:true},
+  'Отделка':{business:13913,standard:9023.636364,source:'4.10 Внутренние отделочные работы',classDependent:true},
+  'Лифты':{business:1633.5,standard:1370.727273,source:'4.12 Лифты',classDependent:true},
+  'Инженерия':{business:11728.54545,standard:11728.54545,source:'4.11 Внутренние инженерные системы',classDependent:false}
+};
+function costRows(){
+  const base=getTotals(),area=Number(base.area)||0;
+  return sections.map(g=>{
+    const raw=Number(get(CALC,'T'+g.r))||0;
+    const avg=costMode==='average'?AVERAGE_RATES[g.group]:null;
+    const rate=avg?avg[costClass]:(area>0?raw/area:0);
+    const sum=avg?rate*area:raw;
+    return {group:g.group,original:raw,rate,sum,delta:sum-raw,averaged:!!avg,ref:avg?.source||'Оператор',classDependent:avg?.classDependent??null};
+  });
+}
+function costTotals(){
+  const t=getTotals(),lines=costRows(),total=lines.reduce((sum,row)=>sum+row.sum,0),area=Number(t.area)||0;
+  return {...t,total,perM2:area>0?total/area:0,operatorTotal:t.total,operatorPerM2:t.perM2,averagedGroups:lines.filter(r=>r.averaged).length};
+}
+function costSelector(){
+  return `<section class="cost-selector" aria-label="Режим расчёта стоимости">
+    <div class="cost-selector-title"><b>Режим расчёта</b><small>Объёмы и ставки оператора не изменяются при переключении</small></div>
+    <div class="cost-mode-buttons" role="group" aria-label="Расчёт по ставкам">
+      <button type="button" data-cost-mode="operator" aria-pressed="${costMode==='operator'}" class="${costMode==='operator'?'chosen':''}">Оператор</button>
+      <button type="button" data-cost-mode="average" aria-pressed="${costMode==='average'}" class="${costMode==='average'?'chosen':''}">Средние</button>
+    </div>
+    <label class="cost-class-picker"><span>Класс объекта</span><select id="cost-class" class="field" data-cost-class ${costMode==='operator'?'disabled title="Класс применяется в режиме средних расценок"':''}>
+      <option value="standard" ${costClass==='standard'?'selected':''}>Стандарт / Комфорт</option>
+      <option value="business" ${costClass==='business'?'selected':''}>Бизнес</option>
+    </select></label>
+  </section>`;
+}
+const _operatorResultsBeforeAverage=results;
+results=function(){
+  const selector=costSelector();
+  if(costMode==='operator'){
+    // Retain all original detailed groups, positions, transparent formula mode and export.
+    let output=_operatorResultsBeforeAverage();
+    const insertAt='<div class="result-modes"';
+    if(output.includes(insertAt))output=output.replace(insertAt,selector+insertAt);
+    else output=output.replace('</div>', '</div>'+selector);
+    return output;
+  }
+  const total=costTotals(), lines=costRows(),a=Number(total.area)||0;
+  const moneyPerM2=n=>money(n,2);
+  const table=lines.map(row=>`<tr class="${row.averaged?'cost-averaged-row':''}"><td title="${esc(row.ref)}">${esc(row.group)}</td><td class="cost-source">${row.averaged?'Средняя · '+esc(costClass==='business'?'Бизнес':'Стандарт / Комфорт'):'Оператор'}</td><td class="number">${money(row.original,2)}</td><td class="number">${moneyPerM2(row.rate)}</td><td class="number"><b>${money(row.sum,2)}</b></td><td class="number">${row.averaged?(row.delta>=0?'+':'')+money(row.delta,2):'—'}</td></tr>`).join('');
+  return `<div class="paged-frame results-frame average-results">${heading('Расчёт себестоимости','Режим средних укрупнённых расценок · контроль замены четырёх групп')}
+    ${selector}
+    <div class="cost-kpi-grid"><div class="stat"><small>Итог по выбранному режиму</small><strong>${money(total.total,2)} ₽</strong></div>
+      <div class="stat"><small>На 1 м² Sпрод</small><strong>${money(total.perM2,2)} ₽/м²</strong></div>
+      <div class="stat"><small>Площадь объекта</small><strong>${money(total.area,2)} м²</strong></div>
+      <div class="stat"><small>Изменение к оператору</small><strong>${total.total>=total.operatorTotal?'+':''}${money(total.total-total.operatorTotal,2)} ₽</strong></div></div>
+    <div class="cost-average-description">В четырёх группах — <b>Фасад, Отделка, Инженерия, Лифты</b> — стоимость оператора заменяется на Sпрод × укрупнённую ставку (₽/м²), а не прибавляется к ней. Все остальные группы сохраняют исходный расчёт. Детализация позиций и формул остаётся доступна в режиме «Оператор».</div>
+    <section class="panel cost-table-panel"><div class="cost-table-scroll"><table class="data-table cost-comparison-table"><thead><tr><th>Группа</th><th>Метод</th><th>Оператор, ₽</th><th>Принято, ₽/м²</th><th>Принято, ₽</th><th>Разница, ₽</th></tr></thead><tbody>${table}<tr class="cost-total-row"><td colspan="2"><b>ИТОГО</b></td><td class="number">${money(total.operatorTotal,2)}</td><td class="number">${money(total.perM2,2)}</td><td class="number"><b>${money(total.total,2)}</b></td><td class="number">${money(total.total-total.operatorTotal,2)}</td></tr></tbody></table></div></section>
+    <p class="cost-method-note"><b>Инженерия (4.11)</b> обозначена в исходных данных как не зависящая от класса. Поэтому используется единая средняя ставка <b>${money(AVERAGE_RATES['Инженерия'].business,2)} ₽/м²</b> для обоих классов: среднее 11 значений из предоставленной таблицы (среди них две бизнес-башни). Отдельный показатель 14 001 ₽/м² по двум башням не используется как классовая надбавка.</p>
+    <p class="cost-method-note">Котлован, сваи, каркас, стены, остекление, двери, гидроизоляция, кровля и остальные группы не переключаются на укрупнённые ставки. Их стоимость остаётся по оператору. Поэтому гибридный итог не равен сумме всех 10 статей из предоставленной таблицы.</p>
+    <div class="footer-actions"><button class="btn primary" data-act="save">Сохранить расчёт</button><button class="btn" data-act="downloadXLSX">Экспорт XLSX · средние</button></div>
+  </div>`;
+};
+
+// Preserve the previous detailed XLSX for operator mode and export a distinctly labeled
+// group-level XLSX for the averages mode. Never label operator detail as averaged results.
+const _operatorExportBeforeAverage=exportXLSX;
+exportXLSX=function(){
+  if(costMode==='operator')return _operatorExportBeforeAverage();
+  const t=costTotals(),rows=costRows(),now=new Date();
+  const sheets=[
+    {name:'Итог',rows:[['МЕТАСЕБЕС КОРОБКА — СРЕДНИЕ РАСЦЕНКИ'],['Объект',String(get(INPUT,'D3')||'')],['Режим','Средние'],['Класс',costClass==='business'?'Бизнес':'Стандарт / Комфорт'],['Sпрод, м²',t.area],['Стоимость объекта, ₽',t.total],['Себестоимость, ₽/м²',t.perM2],[],['Группа','Метод','Оператор, ₽','Ставка, ₽/м²','Принято, ₽','Разница, ₽'],...rows.map(r=>[r.group,r.averaged?'Средние':'Оператор',r.original,r.rate,r.sum,r.delta]),['ИТОГО','',t.operatorTotal,t.perM2,t.total,t.total-t.operatorTotal]],widths:[29,22,24,23,25,25],head:9,freeze:9,money:[3,4,5,6],summaryRows:[6,7]},
+    {name:'Методика',rows:[['Показатель','Правило / источник'],['Метод','Гибрид: 4 группы на средних, остальные на расценках оператора'],['Основа','Стоимость укрупнённой группы = Sпрод × ставка ₽/м²'],['Фасад','4.7 · '+costClass+' · '+AVERAGE_RATES['Фасад'][costClass]],['Отделка','4.10 · '+costClass+' · '+AVERAGE_RATES['Отделка'][costClass]],['Лифты','4.12 · '+costClass+' · '+AVERAGE_RATES['Лифты'][costClass]],['Инженерия','4.11 · общий средний по 11 колонкам · '+AVERAGE_RATES['Инженерия'][costClass]],['Контроль','Средние заменяют стоимость группы, двойное начисление исключено'],['Оператор','Исходные объёмы и расценки не изменены'],['Дата выгрузки',now.toLocaleString('ru-RU')]],widths:[28,100],head:1,freeze:1}
+  ];
+  const bytes=buildXlsx(sheets),blob=new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;
+  a.download='МЕТАСЕБЕС_Коробка_Средние_'+costClass+'_'+now.toISOString().slice(0,10)+'.xlsx';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+  toast('Укрупнённый расчёт выгружен в XLSX');
+};
+
+const _snapshotBeforeAverage=snapshot;
+snapshot=function(name){
+  const d=_snapshotBeforeAverage(name);d.costMode=costMode;d.costClass=costClass;d.totals=costTotals();d.operatorTotals=getTotals();return d;
+};
+const _loadEntryBeforeAverage=loadEntry;
+loadEntry=function(d){if(d?.costMode)costMode=d.costMode;if(d?.costClass)costClass=d.costClass;store('costMode',costMode);store('costClass',costClass);return _loadEntryBeforeAverage(d)};
+
+// Controls use event capture so they survive re-rendering of the Results page.
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-cost-mode]');if(!b)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  costMode=b.dataset.costMode==='average'?'average':'operator';
+  store('costMode',costMode);detailPage=0;layoutPageLimit=null;render();
+},true);
+document.addEventListener('change',e=>{
+  const sel=e.target.closest('[data-cost-class]');if(!sel)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  costClass=sel.value==='business'?'business':'standard';
+  store('costClass',costClass);layoutPageLimit=null;render();
+},true);
+
+
+// A collapsed group must retain cost and ₽/m² in separate columns on compact widths.
+const _adaptTableBeforeAverage=adaptTablesToWidth;
+adaptTablesToWidth=function(){
+  _adaptTableBeforeAverage();
+  const table=$('content')?.querySelector('.sheet-table');
+  if(!table)return;
+  for(const td of table.querySelectorAll('tbody tr:not(.group-row) > td.rnum')){
+    const id=td.textContent.trim();if(id.length>7){td.title=id;td.textContent='—';}
+  }
+  if(window.innerWidth>=1150||table.classList.contains('rates-table'))return;
+  for(const row of table.querySelectorAll('tbody tr.group-row')){
+    const toggle=row.querySelector('[data-toggle-group]');if(!toggle)continue;
+    const group=toggle.getAttribute('data-toggle-group');const g=sections.find(x=>x.group===group);
+    if(!g||row.cells.length<2)continue;
+    const id=row.cells[0],label=row.cells[1];label.colSpan=1;
+    const value=Number(get(CALC,'T'+g.r))||0, area=Number(get(CALC,'R252'))||0;
+    const cost=document.createElement('td');cost.className='number group-cost';cost.textContent=money(value,2);cost.title=money(value,2)+' ₽';
+    if(window.innerWidth<=510)row.replaceChildren(id,label,cost);
+    else{const u=document.createElement('td');u.className='number group-perm2';u.textContent=money(area>0?value/area:0,2);row.replaceChildren(id,label,cost,u)}
+  }
+};
+
+const avgStyles=document.createElement('style');avgStyles.textContent=`
+body:has(.results-frame)::after,body:has(.results-frame)::before{display:none!important}
+.cost-selector{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 15px;margin:10px 0 12px;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.cost-selector-title{display:flex;flex-direction:column;gap:3px;min-width:205px;flex:1}.cost-selector-title b{font-size:13px;color:var(--ink-strong)}.cost-selector-title small{font-size:11px;color:var(--muted)}
+.cost-mode-buttons{display:flex;border-radius:10px;border:1px solid var(--line);overflow:hidden;flex-shrink:0}
+.cost-mode-buttons button{padding:10px 15px;border:0;background:var(--surface2);color:var(--ink);font-size:13px;font-weight:700}
+.cost-mode-buttons button.chosen{background:var(--accent);color:white}
+.cost-class-picker{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:700;color:var(--ink-strong)}
+.cost-class-picker select{min-width:190px;max-width:245px}
+.cost-class-picker select:disabled{opacity:.55;cursor:not-allowed}
+.cost-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:12px 0}
+.cost-kpi-grid .stat{min-width:0;padding:15px}.cost-kpi-grid .stat strong{font-size:clamp(17px,1.8vw,23px);white-space:normal;overflow-wrap:anywhere}
+.cost-average-description,.cost-method-note{font-size:12px;line-height:1.6;color:var(--muted);margin:9px 0 12px}
+.cost-table-panel{padding:0;overflow:hidden}.cost-table-scroll{width:100%;max-height:47vh;overflow:auto}
+.cost-comparison-table{table-layout:auto;width:100%;min-width:880px;border-collapse:collapse}
+.cost-comparison-table th,.cost-comparison-table td{padding:8px 11px;vertical-align:middle;border-bottom:1px solid var(--line);font-size:12px;line-height:1.35}
+.cost-comparison-table thead th{position:sticky;top:0;z-index:2;background:var(--surface2);color:var(--ink-strong)}
+.cost-comparison-table td:first-child{font-weight:600;min-width:165px}
+.cost-comparison-table .number{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cost-comparison-table .cost-averaged-row{background:var(--accent-soft)}
+.cost-comparison-table .cost-total-row{background:var(--surface2)}
+.cost-comparison-table .cost-source{min-width:170px}
+@media(max-width:1050px){.cost-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.cost-kpi-grid{grid-template-columns:1fr}.cost-selector{align-items:stretch}.cost-class-picker{flex-wrap:wrap}.cost-class-picker select{min-width:0;width:100%;max-width:none}}
+`;document.head.appendChild(avgStyles);
+
+
+// Mobile sidebar: show the complete same module list in a collapsible drawer.
+const sidebarEl=document.querySelector('.sidebar');
+const mobileMenuButton=document.createElement('button');
+mobileMenuButton.type='button';mobileMenuButton.id='mobile-menu-toggle';mobileMenuButton.className='iconbtn mobile-menu-toggle';
+mobileMenuButton.title='Открыть меню модулей';mobileMenuButton.setAttribute('aria-label','Открыть меню модулей');
+mobileMenuButton.innerHTML=svgIcon('menu');
+document.querySelector('header .brand')?.before(mobileMenuButton);
+const mobileShade=document.createElement('div');mobileShade.id='mobile-sidebar-shade';document.body.append(mobileShade);
+function setMobileMenu(open){sidebarEl?.classList.toggle('mobile-expanded',!!open);document.body.classList.toggle('mobile-menu-open',!!open);mobileMenuButton.setAttribute('aria-expanded',String(!!open))}
+mobileMenuButton.addEventListener('click',()=>setMobileMenu(!sidebarEl.classList.contains('mobile-expanded')));
+mobileShade.addEventListener('click',()=>setMobileMenu(false));
+const _goBeforeMobileDrawer=go;
+go=function(target,remember=true){const result=_goBeforeMobileDrawer(target,remember);if(window.innerWidth<=760&&target!=='create')setMobileMenu(false);return result};
+document.addEventListener('click',event=>{
+  if(window.innerWidth>760)return;
+  const nav=event.target.closest('.sidebar [data-go],.sidebar [data-tech-open],.sidebar [data-module-quick]');
+  if(!nav)return;
+  // "Сделать расчёт" only expands its submenu; keep the drawer open for selection.
+  if(nav.dataset.go==='create')return;
+  setMobileMenu(false);
+},false);
+window.addEventListener('resize',()=>{if(window.innerWidth>760)setMobileMenu(false)});
+const mobileStyles=document.createElement('style');mobileStyles.textContent=`
+.mobile-menu-toggle{display:none!important}
+@media(max-width:760px){
+  .mobile-menu-toggle{display:inline-flex!important;flex:0 0 33px!important;width:33px!important;height:33px!important;margin-right:7px!important;z-index:101}
+  body.focus-mode .mobile-menu-toggle{display:none!important}
+  #mobile-sidebar-shade{display:none;position:fixed;inset:var(--top) 0 0;z-index:89;background:rgba(5,12,18,.67)}
+  body.mobile-menu-open #mobile-sidebar-shade{display:block}
+  .sidebar.mobile-expanded{z-index:90!important;width:min(285px,calc(100vw - 50px))!important;padding:13px 10px!important;box-shadow:5px 0 28px rgba(0,0,0,.3);background:var(--surface)!important}
+  .sidebar.mobile-expanded .side-label,.sidebar.mobile-expanded .nav button>span:nth-child(2),.sidebar.mobile-expanded .side-bottom{display:block!important}
+  .sidebar.mobile-expanded .nav button{display:flex!important;justify-content:flex-start!important;padding:10px!important;gap:9px!important;font-size:12px!important;min-height:35px!important}
+  .sidebar.mobile-expanded .subnav{display:grid!important;margin-left:10px!important;gap:3px!important}
+  .sidebar.mobile-expanded .subnav button{display:flex!important;justify-content:flex-start!important;font-size:12px!important;line-height:1.2!important}
+  .sidebar:not(.mobile-expanded) .subnav{display:none!important}
+  .sidebar.mobile-expanded .navicon{display:grid!important}
+  .sidebar.mobile-expanded .direct-module-link,.sidebar.mobile-expanded .tech-nav-sub{margin-left:5px!important}
+  .sidebar:not(.mobile-expanded) .todo-nav-link b{display:none}
+}
+`;
+document.head.appendChild(mobileStyles);
 render();
 
 </script></body></html>
