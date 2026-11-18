@@ -40,6 +40,18 @@
           "url": ""
         }
       ]
+    },
+    {
+      "id": "sub-mwlm8sy5-f74093",
+      "name": "Атрибутивная модель",
+      "materials": [
+        {
+          "id": "mat-mwlmajms-lzn6hb",
+          "name": "Атрибутивная модель",
+          "url": "",
+          "primary": true
+        }
+      ]
     }
   ],
   "development": []
