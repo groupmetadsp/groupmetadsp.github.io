@@ -650,7 +650,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
  opacity:1!important;
 }
 </style>
-<meta name="platform-release" content="2026-11-17-github-canonical-v3">
+<meta name="platform-release" content="2026-11-18-save-html-v1">
 </head>
 <body><div id="water-ripple-layer" aria-hidden="true"></div>
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
@@ -732,6 +732,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
         <p>Звуки работают без интернета. Настройки сохраняются в этом браузере.</p>
       </div>
     </div>
+    <button class="iconbtn" id="save-html" type="button" title="Сохранить HTML" aria-label="Сохранить HTML"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v3h16v-3"/></svg></button>
     <button class="iconbtn" id="fullscreen" title="На весь экран" aria-label="На весь экран"><svg><use href="#i-full"></use></svg></button>
   </div>
 </header>
@@ -923,6 +924,29 @@ function updateFullscreenButton(){
   $('fullscreen').innerHTML = active ? icon('exit') : icon('full');
   $('fullscreen').title = active ? 'Выйти из полноэкранного режима' : 'На весь экран';
 }
+// Download an HTML snapshot without changing the live interface or local data.
+$('save-html').onclick = () => {
+  try {
+    const snapshot = document.documentElement.cloneNode(true);
+    const base = snapshot.querySelector('head base');
+    if (base) base.setAttribute('href', location.origin + '/');
+    // Keep the current HTML and use the published site for linked assets.
+    const html = '<!doctype html>\n' + snapshot.outerHTML;
+    const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const now = new Date();
+    const date = [now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+    a.href=url;
+    a.download='PLATFORMA_'+date+'.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  } catch(e) {
+    alert('Не удалось сохранить HTML: '+(e&&e.message?e.message:'ошибка браузера'));
+  }
+};
 $('fullscreen').onclick = toggleFullscreen;
 document.addEventListener('fullscreenchange', ()=>{
   if(!document.fullscreenElement) document.body.classList.remove('focus-mode');
