@@ -150,8 +150,8 @@ function migrateLegacy(){
   if(dirty)persist(false);
 }
 migrateLegacy();
-function mergedSections(rubric){
-  if(!localEditingSession){
+function mergedSections(rubric, includeLocalDrafts=false){
+  if(!localEditingSession && !includeLocalDrafts){
     // Do not let stale local deletions, renames or sorting mask the GitHub version.
     return published[rubric]||[];
   }
@@ -660,6 +660,29 @@ async function fetchData(path){
     return response.ok?await response.json():null;
   }catch(e){return null;}
 }
+let catalogLoaded=false;
+// Expose full catalog for transfer: sections and materials from EVERY rubric.
+window.platformExportCatalog = function(){
+  if(!catalogLoaded)throw new Error('Каталог ещё загружается. Повторите сохранение.');
+  const effective={},original={},local={};
+  for(const rubric of IDS){
+    effective[rubric]=mergedSections(rubric,true).map(({published:unused,...rest})=>rest);
+    original[rubric]=published[rubric].map(({published:unused,...rest})=>rest);
+    local[rubric]=drafts[rubric];
+  }
+  return {
+    format:'PLATFORMA_CATALOG_EXPORT',
+    version:2,
+    exportedAt:new Date().toISOString(),
+    includesAllRubrics:true,
+    effectiveCatalog:effective,
+    publishedCatalog:original,
+    localDrafts:local,
+    deleted:removed,
+    ordering:ordering,
+    localEditsShownInBrowser:localEditingSession
+  };
+};
 async function loadCatalog(){
   const [next,old,legacyTools]=await Promise.all([
     fetchData('rubrics.json'),fetchData('catalogs.json'),fetchData('tools.json')
@@ -685,6 +708,7 @@ async function loadCatalog(){
     }
   }
   removeCopies();
+  catalogLoaded=true;
   if(isRubric(current))render();
 }
 loadCatalog();
