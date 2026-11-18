@@ -304,6 +304,21 @@ overlay.querySelector("#metaPrev").disabled=!snapshot;
    window.top.location.href="/tools/meta-parking/";
   };
   root.appendChild(btn);
+  // Обе кнопки создаются в одном обработчике панели, чтобы последующие обёртки не скрывали выбор.
+  if(["P_AG","P_FREE"].includes(o.type)){
+   var surfaceBtn=document.createElement("button");
+   surfaceBtn.id="metaOpenSurfaceParking";
+   surfaceBtn.type="button";surfaceBtn.className="btn primary";
+   surfaceBtn.style.cssText="width:100%;margin-top:9px";
+   surfaceBtn.textContent="Открыть в Наземном паркинге →";
+   surfaceBtn.onclick=function(){
+    var source={id:String(o.id),type:o.type,w:o.w,h:o.h,levels:o.levels,stage:o.stage,x:o.x,y:o.y};
+    localStorage.setItem(SURFACE_TRANSFER,JSON.stringify({direction:"to-configurator",created:Date.now(),source:source,params:o.metaSurfaceParking&&o.metaSurfaceParking.params||null}));
+    store();
+    window.top.location.href="/tools/surface-parking-configurator/";
+   };
+   root.appendChild(surfaceBtn);
+  }
  };
 
  // Отдельный наземный паркинг: связь с параметрическим конфигуратором автостоянки.
@@ -345,6 +360,7 @@ overlay.querySelector("#metaPrev").disabled=!snapshot;
      stat.innerHTML="<b>Конфигуратор наземной автостоянки:</b><br>Габариты "+fmt(o.w,2)+" × "+fmt(o.h,2)+" м · "+fmt(o.levels)+" этажей · "+fmt(o.metaSurfaceParking.spaces)+" ММ";
      root.appendChild(stat);
    }
+   if(root.querySelector("#metaOpenSurfaceParking"))return;
    var btn=document.createElement("button");btn.className="btn primary";btn.type="button";
    btn.style.cssText="width:100%;margin-top:9px";
    btn.textContent="Открыть в Наземном паркинге →";
