@@ -226,8 +226,7 @@ if(typeof document!=='undefined'){
    localStorage.setItem(SURFACE_TRANSFER_KEY,JSON.stringify(payload));
    window.top.location.href='/tools/meta-massing/?surface-transfer=1';
  };
- readSurfaceSource();
- try{const s=JSON.parse(localStorage.getItem('meta-parking-v1'));if(s){calculate(s);variant=s.variant;['spans','floors','joint','targetK1','targetK2',...COST_IDS].forEach(id=>{if(s[id]!==undefined){if($(id))$(id).value=s[id];if(id in armState)armState[id]=s[id];}});document.querySelector(`input[name=module][value="${s.module}"]`).checked=true;$('spanRange').value=s.spans;}}catch(e){}setVariant(variant);
+ try{const s=JSON.parse(localStorage.getItem('meta-parking-v1'));if(s){calculate(s);variant=s.variant;['spans','floors','joint','targetK1','targetK2',...COST_IDS].forEach(id=>{if(s[id]!==undefined){if($(id))$(id).value=s[id];if(id in armState)armState[id]=s[id];}});document.querySelector(`input[name=module][value="${s.module}"]`).checked=true;$('spanRange').value=s.spans;}}catch(e){}readSurfaceSource();setVariant(variant);
  window.parkingApp={calculate,calculateCost,qtyStructure,render,getState:()=>current};
 }
 </script></body></html>
