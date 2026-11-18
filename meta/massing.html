@@ -71,7 +71,7 @@ body{background:var(--bg)}
       <button class="btn dark" id="viewSplitBtn">2D + 3D</button>
       <button class="btn dark" id="undoBtn">↶ Назад</button>
       <button class="btn dark" id="saveScenarioBtn">Сохранить сценарий</button>
-      <button class="btn dark" id="compareBtn">Сравнить</button>
+      <button class="btn dark" id="compareBtn">Сравнить</button><label class="btn dark" style="display:inline-flex;align-items:center;gap:5px"><input id="metaStagesQuick" type="checkbox"> ТЭП по этапам</label>
       <button class="btn dark" id="exportBtn">JSON</button>
       <label class="btn dark" for="importFile">Загрузить</label><input type="file" id="importFile" accept="application/json,.json" hidden>
       <button class="btn blue" id="platformExportBtn">→ МЕТАПЛАТФОРМА</button>
@@ -521,6 +521,18 @@ function isResizable(o){return !!o && !['T','H'].includes(o.type)}
 function layerKey(o){if(o.kind==='parking')return 'parking';if(o.kind==='land')return 'land';if(o.kind==='stage')return 'stage';if(o.kind==='road')return 'road';if(o.kind==='stylobat')return 'stylobat';if(o.kind==='limit')return 'limit';return null}
 function isVisible(o){const ml=modelLayer(o);if(ml&&state.layers['model'+ml]===false)return false;const k=layerKey(o);return !k || state.layers[k]!==false}
 function syncGeometryMetrics(o){if(o?.type==='IND'){o.grossFloor=Math.round(objArea(o));o.saleFloor=Math.round(o.grossFloor*(Number(o.kep)||.70))}}
+function applyManualHousingMetrics(o){
+ if(!o||o.kind!=='building'||o.metaFixed)return;
+ const k=Number(o.manualKep??o.kep);
+ if(!(k>0&&k<=1))return;
+ o.kep=Math.round(k*10000)/10000;
+ o.grossFloor=Math.round(objArea(o)*100)/100;
+ o.saleFloor=Math.round(o.grossFloor*o.kep*100)/100;
+ if(o.type==='BLOK'){
+  const avg=Number(o.avgApt)||50,nKv=o.saleFloor/avg;
+  o.blockCalc={...(o.blockCalc||{}),footprint:objArea(o),kep:o.kep,saleFloor:o.saleFloor,nKv,nChel:nKv*2};
+ }
+}
 function syncBlockMetrics(o){
  // Единый источник истины — ТЕКУЩАЯ геометрия (o.w×o.h для прямой секции, o.points для Г-типа).
  // Геометрию сюда не подставляем и не перетираем (кроме первого создания Г-типа без контура) — так
@@ -543,7 +555,7 @@ function syncBlockMetrics(o){
   // legWidth (толщина корпуса) не перетираем — его геометрически не восстановить однозначно из произвольно растянутого контура.
   syncPolyBounds(o);o.leg1=o.w;o.leg2=o.h;
  }
- const kep=mopKep(o.comboKey,o.avgApt),avgApt=o.avgApt;
+ const autoKep=mopKep(o.comboKey,o.avgApt),kep=Number(o.manualKep)>0?Math.min(1,Number(o.manualKep)):autoKep,avgApt=o.avgApt;
  const footprint=objArea(o);
  const saleFloor=footprint*kep,nKv=saleFloor/avgApt,nChel=nKv*2;
  o.saleFloor=Math.round(saleFloor*100)/100;
@@ -566,7 +578,7 @@ function metrics(){
  const pTH=b.filter(o=>o.type==='T'||o.type==='H').length,ind=b.filter(o=>o.type==='IND').length,pTHSale=b.filter(o=>o.type==='T'||o.type==='H').reduce((sum,o)=>sum+buildingSale(o),0),indSale=b.filter(o=>o.type==='IND').reduce((sum,o)=>sum+buildingSale(o),0),share=(pTHSale+indSale)?pTHSale/(pTHSale+indSale)*100:0;
  const parkingRatio=8593.75/128,needMM=Math.round(sale/parkingRatio),roadMM=state.objects.filter(o=>o.type==='ROAD_PATH').reduce((s,o)=>s+roadParkingStats(o).total,0),haveMM=park.reduce((s,o)=>s+parkingMM(o),0)+roadMM,needLand=sale*.14,haveLand=land.reduce((s,o)=>s+landArea(o),0);
  const targetSale=state.siteArea*state.densityTarget,targetMM=Math.round(targetSale/parkingRatio),targetLand=targetSale*.14;
- const stages=[...new Set(state.objects.map(o=>Number(o.stage)||1))].filter(Boolean),sun=sunSummary();
+ const stages=[...new Set(state.objects.filter(o=>['building','parking','land','stylobat','stage'].includes(o.kind)&&!o.surrounding).map(o=>Number(o.stage)||1))].filter(Boolean),sun=sunSummary();
  return {sale,gross,foot,density:sale/state.siteArea,apts,avg,pTH,ind,share,needMM,haveMM,roadMM,needLand,haveLand,targetSale,targetMM,targetLand,stages:stages.length,sun};
 }
 function remainLabel(remain,unit='',dec=0){const abs=fmt(Math.abs(remain),dec);return remain>0?`Осталось ${abs}${unit}`:remain<0?`Превышение ${abs}${unit}`:`Цель достигнута`}
@@ -578,8 +590,32 @@ function updateTargets(m){
  $('tMM').textContent=`${fmt(m.haveMM)} / ${fmt(m.targetMM)}`;setRemain('tMMRemain',m.targetMM-m.haveMM,'');
  $('tLand').textContent=`${fmt(m.haveLand)} / ${fmt(m.targetLand)} м²`;setRemain('tLandRemain',m.targetLand-m.haveLand,' м²');
 }
-function updateMetaStageMetrics(){const box=$('metaStageTeps'),toggle=$('metaShowStageTeps');if(!box||!toggle)return;box.style.display=toggle.checked?'block':'none';if(!toggle.checked)return;const all=state.objects.filter(o=>!o.surrounding&&(o.kind==='building'||o.kind==='parking'||o.kind==='land'||o.type==='ROAD_PATH'));const stages=[...new Set(all.map(o=>Math.max(1,Math.round(+o.stage||1))))].sort((a,b)=>a-b);box.innerHTML='<table style="width:100%;border-collapse:collapse"><tr><th>Этап</th><th>S прод.</th><th>S стр.</th><th>Квартир</th><th>ММ</th><th>Благоустр.</th></tr>'+stages.map(n=>{const a=all.filter(o=>Math.max(1,Math.round(+o.stage||1))===n),b=a.filter(o=>o.kind==='building');return '<tr><td>'+n+'</td><td>'+fmt(b.reduce((v,o)=>v+buildingSale(o),0))+'</td><td>'+fmt(b.reduce((v,o)=>v+buildingGross(o),0))+'</td><td>'+fmt(b.reduce((v,o)=>v+(typeof window.metaMassingApartmentCount==='function'?window.metaMassingApartmentCount(o):Math.floor(buildingSale(o)/(+o.avgApt||product().avg))),0))+'</td><td>'+fmt(a.filter(o=>o.kind==='parking').reduce((v,o)=>v+parkingMM(o),0)+a.filter(o=>o.type==='ROAD_PATH').reduce((v,o)=>v+roadParkingStats(o).total,0))+'</td><td>'+fmt(a.filter(o=>o.kind==='land').reduce((v,o)=>v+landArea(o),0))+'</td></tr>'}).join('')+'</table>'}
+// Stage allocation: every requested object type except roads.
+function metaStageEligible(o){return !!o&&!o.surrounding&&['building','parking','land','stylobat','stage'].includes(o.kind)}
+function metaStageRows(){
+ const all=state.objects.filter(metaStageEligible),ids=[...new Set(all.map(o=>Math.max(1,Math.round(Number(o.stage)||1))))].sort((a,b)=>a-b);
+ return ids.map(stage=>{
+  const a=all.filter(o=>Math.max(1,Math.round(Number(o.stage)||1))===stage),b=a.filter(o=>o.kind==='building'),p=a.filter(o=>o.kind==='parking');
+  const footprint=kind=>a.filter(o=>o.type===kind).reduce((v,o)=>v+objArea(o),0);
+  const mm=types=>p.filter(o=>types.includes(o.type)).reduce((v,o)=>v+parkingMM(o),0);
+  return {stage,sale:b.reduce((v,o)=>v+buildingSale(o),0),gross:b.reduce((v,o)=>v+buildingGross(o),0),
+   apts:b.reduce((v,o)=>v+(typeof window.metaMassingApartmentCount==='function'?window.metaMassingApartmentCount(o):Math.floor(buildingSale(o)/(Number(o.avgApt)||product().avg))),0),
+   mm:p.reduce((v,o)=>v+parkingMM(o),0),mmUnderground:mm(['P_UG']),mmAboveground:mm(['P_AG','P_FREE','P_ST']),mmOpen:mm(['P_SURF']),
+   green:footprint('GREEN'),yard:footprint('YARD'),play:footprint('PLAY'),
+   stylobat:a.filter(o=>o.kind==='stylobat').reduce((v,o)=>v+objArea(o),0),
+   stageBoundary:a.filter(o=>o.kind==='stage').reduce((v,o)=>v+objArea(o),0),
+   land:a.filter(o=>o.kind==='land').reduce((v,o)=>v+landArea(o),0)};
+ });
+}
+window.metaMassingStageRows=metaStageRows;
+function updateMetaStageMetrics(){
+ const box=$('metaStageTeps'),toggle=$('metaShowStageTeps');if(!box||!toggle)return;
+ $('metaStagesQuick').checked=toggle.checked;box.style.display=toggle.checked?'block':'none';if(!toggle.checked)return;
+ const rows=metaStageRows(),columns=[['S квартир, м²','sale'],['S строительная, м²','gross'],['Квартиры, шт.','apts'],['ММ всего','mm'],['ММ подземные','mmUnderground'],['ММ наземные','mmAboveground'],['ММ открытые','mmOpen'],['Детские площадки, м²','play'],['Озеленение, м²','green'],['Дворы, м²','yard'],['Стилобаты, м²','stylobat'],['Площадь границ этапов, м²','stageBoundary']];
+ box.innerHTML=rows.length?'<table class="table" style="font-size:11px"><thead><tr><th>Показатель</th>'+rows.map(r=>'<th>Этап '+r.stage+'</th>').join('')+'</tr></thead><tbody>'+columns.map(([label,key])=>'<tr><td>'+label+'</td>'+rows.map(r=>'<td>'+fmt(r[key])+'</td>').join('')+'</tr>').join('')+'</tbody></table><p class="note">Проезды не распределяются по этапам. Границы этапов — справочная площадь, не сумма благоустройства.</p>':'<p class="note">Пока нет объектов с назначенными этапами.</p>';
+}
 $('metaShowStageTeps').addEventListener('change',updateMetaStageMetrics);
+$('metaStagesQuick').addEventListener('change',e=>{$('metaShowStageTeps').checked=e.target.checked;updateMetaStageMetrics();});
 function updateMetrics(){const m=metrics();updateTargets(m);updateMetaStageMetrics();$('mDensity').textContent=`${fmt(m.density,2)} / ${fmt(state.densityTarget,2)}`;$('mSale').textContent=fmt(m.sale);$('mGross').textContent=fmt(m.gross);$('mApts').textContent=fmt(m.apts);$('mAvg').textContent=fmt(m.avg,1);$('mFootprint').textContent=fmt(m.foot);$('mFootprintPct').textContent=fmt(m.foot/state.siteArea*100,1)+'% участка';$('mShare').textContent=`${fmt(m.share,0)} / ${fmt(100-m.share,0)}%`;$('mNeedMM').textContent=fmt(m.needMM);$('mHaveMM').textContent=fmt(m.haveMM);if($('mRoadMM'))$('mRoadMM').textContent=fmt(m.roadMM||0);$('mMMDelta').textContent=(m.haveMM>=m.needMM?'запас ':'дефицит ')+fmt(Math.abs(m.haveMM-m.needMM));$('mNeedLand').textContent=fmt(m.needLand);$('mHaveLand').textContent=fmt(m.haveLand);$('mLandDelta').textContent=(m.haveLand>=m.needLand?'запас ':'дефицит ')+fmt(Math.abs(m.haveLand-m.needLand));$('mStages').textContent=fmt(m.stages);$('mSun').textContent=`${m.sun.pass}/${m.sun.risk}/${m.sun.fail}`;
  const pct=Math.min(100,Math.max(0,m.density/state.densityTarget*100));$('densityBar').style.width=pct+'%';$('densityBar').className=m.density>state.densityTarget*1.03?'bad':m.density<state.densityTarget*.95?'warn':'';$('densityDelta').textContent=`Осталось ${fmt(Math.max(0,m.targetSale-m.sale))} м² до целевого объема`;
 }
