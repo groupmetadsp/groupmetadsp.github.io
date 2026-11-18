@@ -12,7 +12,23 @@ const button=document.createElement("button");button.id="mpLibraryOpen";button.t
 const wrap=document.createElement("div");wrap.id="mpLibraryOverlay";wrap.innerHTML='<div id="mpLibraryPanel" role="dialog" aria-modal="true" aria-label="Библиотека проектов"><div class="flex" style="justify-content:space-between"><b style="font-size:20px">МЕТА · Библиотека проектов</b><button id="mpClose">Закрыть ×</button></div><div class="columns"><div class="side"><b>Объект</b><select id="mpProject"></select><div class="flex"><button id="mpNewProject">+ Объект</button><button id="mpRenameProject">Переименовать</button></div><b>Площадка</b><select id="mpSite"></select><div class="flex"><button id="mpNewSite">+ Площадка</button><button id="mpRenameSite">Переименовать</button></div><p class="hint">Площадки хранят общую топооснову отдельно от вариантов. Все данные остаются в этом браузере.</p><b>Резервные копии</b><div class="flex"><button id="mpBackup">Выгрузить всю библиотеку JSON</button><button id="mpImport">Загрузить резервную копию</button><input type="file" id="mpFile" accept=".json,application/json" hidden></div><p class="hint">Очищение браузера может удалить IndexedDB. Регулярно сохраняйте резервные копии на диск.</p></div><div><b>Варианты компоновки</b><select id="mpVariant"></select><div class="flex"><button class="primary" id="mpSaveNew">+ Новый вариант</button><button id="mpSave">Сохранить изменения</button><button id="mpOpen">Открыть</button><button id="mpRenameVariant">Переименовать</button><button id="mpDelete">Удалить</button></div><b>Сравнение ТЭП вариантов</b><div class="flex"><label><input type="checkbox" id="mpStages"> По этапам</label><button id="mpExport">Выгрузить ТЭП в CSV / Excel</button></div><div class="scroll" id="mpTable"></div><p class="hint">Сравниваются показатели на момент последнего сохранения каждого варианта.</p><div id="mpStatus" style="min-height:20px;color:#39713d"></div></div></div></div>';document.body.appendChild(wrap);
 const $=k=>wrap.querySelector("#mp"+k),notify=t=>{$("Status").textContent=t;},report=e=>{console.error(e);notify("Ошибка: "+(e.message||e));};
 function current(){return variants.filter(v=>v.siteId===site).sort((a,b)=>a.name.localeCompare(b.name,"ru"));}
-function stageTotals(){const out=new Map();for(const o of state.objects){if(o.surrounding)continue;let stage=Math.max(1,Math.round(Number(o.stage)||1));if(!out.has(stage))out.set(stage,{stage,sale:0,gross:0,apts:0,mm:0,land:0});let m=out.get(stage);if(o.kind==="building"){m.sale+=buildingSale(o);m.gross+=buildingGross(o);m.apts+=window.metaMassingApartmentCount?window.metaMassingApartmentCount(o):Math.floor(buildingSale(o)/(Number(o.avgApt)||product().avg));}if(o.kind==="parking")m.mm+=parkingMM(o);if(o.type==="ROAD_PATH")m.mm+=roadParkingStats(o).total;if(o.kind==="land")m.land+=landArea(o);}return [...out.values()].sort((a,b)=>a.stage-b.stage);}
+function stageTotals(){
+ if(typeof window.metaMassingStageRows==='function')return copy(window.metaMassingStageRows());
+ // Fallback for older Massing builds. Roads are intentionally excluded.
+ const groups=new Map();
+ for(const o of state.objects){
+  if(o.surrounding||!['building','parking','land','stylobat','stage'].includes(o.kind))continue;
+  const n=Math.max(1,Math.round(Number(o.stage)||1));
+  if(!groups.has(n))groups.set(n,{stage:n,sale:0,gross:0,apts:0,mm:0,mmUnderground:0,mmAboveground:0,mmOpen:0,green:0,yard:0,play:0,stylobat:0,stageBoundary:0,land:0});
+  const v=groups.get(n);
+  if(o.kind==='building'){v.sale+=buildingSale(o);v.gross+=buildingGross(o);v.apts+=window.metaMassingApartmentCount?window.metaMassingApartmentCount(o):Math.floor(buildingSale(o)/(Number(o.avgApt)||product().avg));}
+  if(o.kind==='parking'){const mm=parkingMM(o);v.mm+=mm;if(o.type==='P_UG')v.mmUnderground+=mm;else if(o.type==='P_SURF')v.mmOpen+=mm;else v.mmAboveground+=mm;}
+  if(o.kind==='land'){v.land+=landArea(o);if(o.type==='PLAY')v.play+=objArea(o);if(o.type==='GREEN')v.green+=objArea(o);if(o.type==='YARD')v.yard+=objArea(o);}
+  if(o.kind==='stylobat')v.stylobat+=objArea(o);
+  if(o.kind==='stage')v.stageBoundary+=objArea(o);
+ }
+ return [...groups.values()].sort((a,b)=>a.stage-b.stage);
+}
 const shared=()=>({underlay:copy(state.underlay||null),terrain33:copy(state.terrain33||null),insol34:copy(state.insol34||null),sun33:copy(state.sun33||null)});
 const name=(question,def)=>{let s=prompt(question,def);return s&&s.trim()?s.trim().slice(0,120):null;};
 async function refresh(){
@@ -32,7 +48,7 @@ function draw(){
  for(const [label,read,digits] of cols)html+='<tr><td>'+label+'</td>'+vv.map(v=>'<td>'+fmt(read(v),digits||0)+'</td>').join("")+'</tr>';
  if(detail){
   let stages=[...new Set(vv.flatMap(v=>(v.stageMetrics||[]).map(x=>x.stage)))].sort((a,b)=>a-b);
-  for(let n of stages){html+='<tr><th colspan="'+(vv.length+1)+'" style="text-align:left">Этап '+n+'</th></tr>';for(const [label,k] of [["S продаваемая","sale"],["S строительная","gross"],["Квартир","apts"],["Машиномест","mm"],["Благоустройство","land"]])html+='<tr><td>'+label+'</td>'+vv.map(v=>'<td>'+fmt((v.stageMetrics||[]).find(x=>x.stage===n)?.[k])+'</td>').join("")+'</tr>';}
+  for(let n of stages){html+='<tr><th colspan="'+(vv.length+1)+'" style="text-align:left">Этап '+n+'</th></tr>';for(const [label,k] of [["S продаваемая","sale"],["S строительная","gross"],["Квартир","apts"],["Машиномест всего","mm"],["ММ подземные","mmUnderground"],["ММ наземные","mmAboveground"],["ММ открытые","mmOpen"],["Детские площадки, м²","play"],["Озеленение, м²","green"],["Стилобаты, м²","stylobat"],["Границы этапов, м²","stageBoundary"]])html+='<tr><td>'+label+'</td>'+vv.map(v=>'<td>'+fmt((v.stageMetrics||[]).find(x=>x.stage===n)?.[k])+'</td>').join("")+'</tr>';}
  }
  $("Table").innerHTML=html+'</tbody></table>';
 }
@@ -78,7 +94,7 @@ $("Project").onchange=()=>{project=$("Project").value;site=null;variant=null;ref
 $("Site").onchange=()=>{site=$("Site").value;variant=null;refresh().catch(report);};
 $("Variant").onchange=()=>{variant=$("Variant").value;};
 $("Stages").onchange=()=>{detail=$("Stages").checked;draw();};
-action("Export",()=>{let vv=current();if(!vv.length)throw Error("Нет вариантов");let rows=[["Вариант","S продаваемая","S строительная","Квартиры","Плотность","КЭП","ММ размещено","ММ требуется","Благоустройство"]];for(let v of vv){let m=v.metrics;rows.push([v.name,m.sale,m.gross,m.apts,m.density,m.gross?m.sale/m.gross:0,m.haveMM,m.needMM,m.haveLand]);}rows.push([],["Вариант","Этап","S продаваемая","S строительная","Квартиры","ММ","Благоустройство"]);for(let v of vv)for(let x of v.stageMetrics||[])rows.push([v.name,x.stage,x.sale,x.gross,x.apts,x.mm,x.land]);let csv="\uFEFF"+rows.map(a=>a.map(x=>'"'+String(x??"").replaceAll('"','""')+'"').join(";")).join("\r\n");download("META_Сравнение_ТЭП.csv",csv,"text/csv;charset=utf-8");notify("CSV выгружен для Excel");});
+action("Export",()=>{let vv=current();if(!vv.length)throw Error("Нет вариантов");let rows=[["Вариант","S продаваемая","S строительная","Квартиры","Плотность","КЭП","ММ размещено","ММ требуется","Благоустройство"]];for(let v of vv){let m=v.metrics;rows.push([v.name,m.sale,m.gross,m.apts,m.density,m.gross?m.sale/m.gross:0,m.haveMM,m.needMM,m.haveLand]);}rows.push([],["Вариант","Этап","S продаваемая","S строительная","Квартиры","ММ","Благоустройство","ММ подземные","ММ наземные","ММ открытые","Детские площадки","Озеленение","Стилобаты","Границы этапов"]);for(let v of vv)for(let x of v.stageMetrics||[])rows.push([v.name,x.stage,x.sale,x.gross,x.apts,x.mm,x.land,x.mmUnderground,x.mmAboveground,x.mmOpen,x.play,x.green,x.stylobat,x.stageBoundary]);let csv="\uFEFF"+rows.map(a=>a.map(x=>'"'+String(x??"").replaceAll('"','""')+'"').join(";")).join("\r\n");download("META_Сравнение_ТЭП.csv",csv,"text/csv;charset=utf-8");notify("CSV выгружен для Excel");});
 action("Import",()=>$("File").click());
 $("File").onchange=async()=>{let f=$("File").files?.[0];if(f)try{await importBackup(f);}catch(e){report(e);}finally{$("File").value="";}};
 button.onclick=async()=>{wrap.style.display="flex";notify("");try{await refresh();}catch(e){report(e);}};
