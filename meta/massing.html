@@ -209,6 +209,7 @@ body{background:var(--bg)}
         <div class="secBody">
         <div class="layerGrid">
           <button class="layerBtn active" data-layer="parking">Паркинги</button>
+          <button class="layerBtn active" data-layer="surrounding">Окружающая застройка</button>
           <button class="layerBtn active" data-layer="land">Благоустройство</button>
           <button class="layerBtn active" data-layer="stage">Контуры этапов</button>
           <button class="layerBtn active" data-layer="road">Проезды</button>
@@ -429,7 +430,7 @@ function sectionTypeKeyFor(comboKey,shape){
  const want=shape==='bend'?'bend':'straight';
  return Object.keys(SECTION_TYPES).find(k=>SECTION_TYPES[k].comboKey===comboKey&&SECTION_TYPES[k].shape===want)||'T3L_T';
 }
-let state={siteArea:458835.66,siteW:800,siteH:458835.66/800,densityTarget:2.5,platformShare:80,individualShare:20,product:'standard',objects:[],selected:null,armed:null,seq:1,zoom:1,panX:0,panY:0,showSun:true,undo:[],drag:null,resize:null,vertex:null,edgeDrag:null,roadVertex:null,calloutId:null,calloutPos:null,calloutOffset:null,calloutClassOpen:false,pinnedCallouts:[],dimensionChains:[],underlay:null,layers:{parking:true,land:true,stage:true,road:true,stylobat:true,limit:true,firegap:true,sangap:true,underlay:true,model1:true,model2:true,model3:true,model4:true}};
+let state={siteArea:458835.66,siteW:800,siteH:458835.66/800,densityTarget:2.5,platformShare:80,individualShare:20,product:'standard',objects:[],selected:null,armed:null,seq:1,zoom:1,panX:0,panY:0,showSun:true,undo:[],drag:null,resize:null,vertex:null,edgeDrag:null,roadVertex:null,calloutId:null,calloutPos:null,calloutOffset:null,calloutClassOpen:false,pinnedCallouts:[],dimensionChains:[],underlay:null,layers:{surrounding:true,parking:true,land:true,stage:true,road:true,stylobat:true,limit:true,firegap:true,sangap:true,underlay:true,model1:true,model2:true,model3:true,model4:true}};
 const svg=$('canvas'), objLayer=$('objects'), shadowLayer=$('shadows'), ruleLayer=$('rules'), underlayLayer=$('underlayLayer');
 function fmt(n,d=0){return Number(n||0).toLocaleString('ru-RU',{maximumFractionDigits:d,minimumFractionDigits:d})}
 // fmt() даёт русское форматирование (запятая-разделитель) — годится только для текста. В value="" инпута
@@ -518,7 +519,7 @@ function parkingSanitaryGap(o,target='housing'){if(o.type!=='P_SURF')return 0;if
 function landArea(o){return o.kind==='land'?objArea(o):0}
 function selected(){return state.objects.find(o=>o.id===state.selected)||null}
 function isResizable(o){return !!o && !['T','H'].includes(o.type)}
-function layerKey(o){if(o.kind==='parking')return 'parking';if(o.kind==='land')return 'land';if(o.kind==='stage')return 'stage';if(o.kind==='road')return 'road';if(o.kind==='stylobat')return 'stylobat';if(o.kind==='limit')return 'limit';return null}
+function layerKey(o){if(o.kind==='building'&&o.surrounding)return 'surrounding';if(o.kind==='parking')return 'parking';if(o.kind==='land')return 'land';if(o.kind==='stage')return 'stage';if(o.kind==='road')return 'road';if(o.kind==='stylobat')return 'stylobat';if(o.kind==='limit')return 'limit';return null}
 function isVisible(o){const ml=modelLayer(o);if(ml&&state.layers['model'+ml]===false)return false;const k=layerKey(o);return !k || state.layers[k]!==false}
 function syncGeometryMetrics(o){if(o?.type==='IND'){o.grossFloor=Math.round(objArea(o));o.saleFloor=Math.round(o.grossFloor*(Number(o.kep)||.70))}}
 function applyManualHousingMetrics(o){
