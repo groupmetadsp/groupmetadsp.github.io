@@ -1374,11 +1374,28 @@ $('compareBtn').onclick=()=>{const list=readSc();const body=$('compareBody');if(
 $('zoomIn').onclick=()=>{state.zoom=state.zoom*1.18;applyZoom()};$('zoomOut').onclick=()=>{state.zoom=state.zoom/1.18;applyZoom()};$('fitBtn').onclick=()=>{state.zoom=1;state.panX=0;state.panY=0;applyZoom()};
 // translate ПЕРЕД scale — так 1px движения мыши на экране всегда двигает поле на 1px независимо от текущего
 // масштаба (если бы порядок был обратный, drag на приближённом виде двигал бы поле в разы быстрее курсора).
-function applyZoom(){svg.style.transform=`translate(${state.panX}px,${state.panY}px) scale(${state.zoom})`;svg.style.transformOrigin='center center';$('zoomLabel').textContent=fmt(state.zoom*100,0)+'%';
- // Экранные позиции закреплённых HTML-облаков ТЭП зависят от текущей CTM (см. worldToScreen) — при панорамировании/
- // зуме её нужно пересчитывать на каждом кадре, иначе облако «отстанет» от здания на поле (полный renderAll() тут
- // был бы слишком тяжёлым при частом вызове на pointermove/wheel).
- if(typeof renderPinnedCallouts==='function')renderPinnedCallouts();
+// Оптимизация только навигации: один transform на кадр, без полной пересборки облаков и без расчётов.
+let navigationFrame=0;
+svg.style.willChange='transform';
+function updatePinnedCalloutPositions(){
+ const wrap=$('pinnedCalloutsLayer'),pins=state.pinnedCallouts.filter(pin=>state.objects.some(o=>o.id===pin.objId));
+ if(!wrap||!pins.length)return;
+ if(wrap.children.length!==pins.length){if(typeof renderPinnedCallouts==='function')renderPinnedCallouts();return}
+ for(let i=0;i<pins.length;i++){
+  const pin=pins[i],div=wrap.children[i],scr=worldToScreen(pin.x,pin.y);
+  const w=div.offsetWidth||250,h=div.offsetHeight||110;
+  div.style.left=(scr.x-w/2)+'px';div.style.top=(scr.y-h/2)+'px';
+ }
+}
+function applyZoom(){
+ if(navigationFrame)return;
+ navigationFrame=requestAnimationFrame(()=>{
+  navigationFrame=0;
+  svg.style.transform=`translate(${state.panX}px,${state.panY}px) scale(${state.zoom})`;
+  svg.style.transformOrigin='center center';
+  $('zoomLabel').textContent=fmt(state.zoom*100,0)+'%';
+  updatePinnedCalloutPositions();
+ });
 }
 // Пользователь: «Рабочее пространство можно двигать зажимая левую кнопку мыши. приближать и отдалять колесом
 // мыши когда мышь на рабочем пространстве» — панорамирование (drag ЛКМ по пустому полю) и зум колесом мыши.
