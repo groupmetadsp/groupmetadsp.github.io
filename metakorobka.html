@@ -2138,7 +2138,7 @@ const sidebarEl=document.querySelector('.sidebar');
 const mobileMenuButton=document.createElement('button');
 mobileMenuButton.type='button';mobileMenuButton.id='mobile-menu-toggle';mobileMenuButton.className='iconbtn mobile-menu-toggle';
 mobileMenuButton.title='Открыть меню модулей';mobileMenuButton.setAttribute('aria-label','Открыть меню модулей');
-mobileMenuButton.innerHTML=svgIcon('menu');
+mobileMenuButton.innerHTML='<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
 document.querySelector('header .brand')?.before(mobileMenuButton);
 const mobileShade=document.createElement('div');mobileShade.id='mobile-sidebar-shade';document.body.append(mobileShade);
 function setMobileMenu(open){sidebarEl?.classList.toggle('mobile-expanded',!!open);document.body.classList.toggle('mobile-menu-open',!!open);mobileMenuButton.setAttribute('aria-expanded',String(!!open))}
@@ -2168,6 +2168,8 @@ const mobileStyles=document.createElement('style');mobileStyles.textContent=`
   .sidebar.mobile-expanded .subnav{display:grid!important;margin-left:10px!important;gap:3px!important}
   .sidebar.mobile-expanded .subnav button{display:flex!important;justify-content:flex-start!important;font-size:12px!important;line-height:1.2!important}
   .sidebar:not(.mobile-expanded) .subnav{display:none!important}
+  .sidebar:not(.mobile-expanded) .nav .navicon{display:grid!important}
+  .sidebar:not(.mobile-expanded) .nav button{justify-content:center!important}
   .sidebar.mobile-expanded .navicon{display:grid!important}
   .sidebar.mobile-expanded .direct-module-link,.sidebar.mobile-expanded .tech-nav-sub{margin-left:5px!important}
   .sidebar:not(.mobile-expanded) .todo-nav-link b{display:none}
