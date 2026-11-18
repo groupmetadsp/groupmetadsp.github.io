@@ -769,6 +769,7 @@ function renderBlockCallout(){
   <div class="coRow"><label>Этап</label><input id="coStageValue" type="number" min="1" step="1" value="${o.stage||1}"></div><div class="coRow"><label>Окружающая застройка (не учитывается в ТЭП)</label><input id="coSurrounding" type="checkbox" ${o.surrounding?'checked':''}></div><div class="coRow"><label>Этажность</label><input id="coFloors" type="number" min="1" max="40" value="${o.floors}"></div>
   <div class="coRow"><label>1-й этаж</label><select id="coGround"><option value="residential" ${o.groundFloorUse!=='commercial'?'selected':''}>Жилой</option><option value="commercial" ${o.groundFloorUse==='commercial'?'selected':''}>Коммерция</option></select></div>
   ${avgRow}
+  ${!o.metaFixed?'<div class="coRow"><label>Длина секции, м</label><input id="coLength" type="number" min="1" step="0.1" value="'+numAttr(o.w,2)+'"></div><div class="coRow"><label>КЭП вручную</label><input id="coManualKep" type="number" min="0.01" max="1" step="0.001" value="'+numAttr(o.manualKep??o.kep,4)+'"></div>':''}
   <div class="coStats">${calloutStatsHtml(o)}</div>
   <div class="coRow" style="margin-top:7px;padding-top:7px;border-top:1px solid var(--line)"><label>📌 Закрепить на поле</label><input type="checkbox" id="coPin" ${pinned?'checked':''}></div>
   <p class="note" style="margin:4px 0 0">Перетащите облако за заголовок — можно вынести выноску в свободное место поля.</p>`;
@@ -779,6 +780,8 @@ function renderBlockCallout(){
  $('coCloseBtn').onclick=()=>{state.calloutId=null;renderAll()};
  $('coStageValue').addEventListener('change',()=>{checkpoint();o.stage=Math.max(1,Math.round(+$('coStageValue').value||1));renderAll()});$('coSurrounding').addEventListener('change',()=>{checkpoint();o.surrounding=$('coSurrounding').checked;renderAll()});$('coFloors').addEventListener('change',()=>{checkpoint();o.floors=Math.max(1,Number($('coFloors').value)||1);syncBlockMetrics(o);renderAll()});
  $('coGround').addEventListener('change',()=>{checkpoint();o.groundFloorUse=$('coGround').value==='commercial'?'commercial':'residential';syncBlockMetrics(o);renderAll()});
+ if($('coLength'))$('coLength').addEventListener('change',()=>{const w=Number($('coLength').value);if(!(w>0&&w<10000))return;checkpoint();if(o.shape==='bend'&&Array.isArray(o.points))resizePolygonBounds(o,w,o.h);else o.w=w;syncBlockMetrics(o);renderAll()});
+ if($('coManualKep'))$('coManualKep').addEventListener('change',()=>{const k=Number($('coManualKep').value);if(!(k>0&&k<=1))return;checkpoint();o.manualKep=k;syncBlockMetrics(o);renderAll()});
  if($('coAvgApt'))$('coAvgApt').addEventListener('change',()=>{checkpoint();o.avgApt=Math.max(40,Math.min(60,Number($('coAvgApt').value)||50));syncBlockMetrics(o);renderAll()});
  $('coPin').addEventListener('change',()=>{
   checkpoint();
