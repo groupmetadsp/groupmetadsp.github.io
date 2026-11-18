@@ -1,28 +1,103 @@
 {
   "system": [],
-  "method": [],
+  "method": [
+    {
+      "id": "sub-mwlmf5mm-t9ztr4",
+      "name": "Параметризация",
+      "materials": [
+        {
+          "id": "mat-mwlmg1sl-ricom4",
+          "name": "Параметризация это ?  КЭП это ?",
+          "url": "https://groupmetadsp.github.io/parametrizaciya_kep.html?utm_source=chatgpt.com",
+          "primary": false,
+          "status": "",
+          "archived": false
+        }
+      ]
+    }
+  ],
   "tools": [
     {
       "id": "meta-design-tools",
-      "name": "Проектирование",
+      "name": "Проектирования",
       "materials": [
+        {
+          "id": "apartment-catalog",
+          "name": "01 · Каталог квартир",
+          "url": "/meta/#catalog",
+          "primary": false,
+          "status": "verified",
+          "archived": false
+        },
+        {
+          "id": "parking-comparison",
+          "name": "05 · Сравнение паркингов",
+          "url": "/tools/parking-comparison/",
+          "primary": false,
+          "status": "verified",
+          "archived": false
+        },
+        {
+          "id": "floor-configurator",
+          "name": "02 · Конфигуратор этажа",
+          "url": "/meta/#configurator",
+          "primary": false,
+          "status": "verified",
+          "archived": false
+        },
         {
           "id": "meta-massing",
           "name": "03 · Мета Массинг",
           "url": "/meta/#massing",
-          "status": "verified"
+          "primary": true,
+          "status": "verified",
+          "archived": false
+        },
+        {
+          "id": "above-ground-parking",
+          "name": "04 · Надземный паркинг",
+          "url": "/meta/#massing",
+          "primary": false,
+          "status": "verified",
+          "archived": false
+        },
+        {
+          "id": "building-height",
+          "name": "06 · Калькулятор этажности и высоты здания",
+          "url": "/tools/building-height/",
+          "primary": false,
+          "status": "verified",
+          "archived": false
+        },
+        {
+          "id": "surface-parking-configurator",
+          "name": "07 · Конфигуратор наземного паркинга",
+          "url": "/tools/surface-parking-configurator/",
+          "primary": false,
+          "status": "verified",
+          "archived": false
+        },
+        {
+          "id": "massing-platforms",
+          "name": "08 · Платформы для массинга · LITE / FULL",
+          "url": "/tools/massing-platforms/",
+          "primary": false,
+          "status": "verified",
+          "archived": false
         }
       ]
     },
     {
-      "id": "meta-cost-tools",
+      "id": "sub-mwkgvw83-y1o04f",
       "name": "Себестоимость",
       "materials": [
         {
-          "id": "meta-korobka",
-          "name": "09 · МЕТАКОРОБКА",
-          "url": "/metakorobka.html?v=20261117-nav3",
-          "status": "development"
+          "id": "mat-mwkgx76m-m08whg",
+          "name": "МЕТАКОРОБКА",
+          "url": "https://groupmetadsp.github.io/metakorobka.html?v=20261117-nav3&utm_source=chatgpt.com",
+          "primary": false,
+          "status": "development",
+          "archived": false
         }
       ]
     }
@@ -31,17 +106,6 @@
   "analytics": [],
   "knowledge": [
     {
-      "id": "technical-assignment",
-      "name": "Техническое задание",
-      "materials": [
-        {
-          "id": "alternative-assembly-immutable",
-          "name": "Альтернативная сборка (с неизменяемой частью)",
-          "url": ""
-        }
-      ]
-    },
-    {
       "id": "sub-mwlm8sy5-f74093",
       "name": "Атрибутивная модель",
       "materials": [
@@ -49,7 +113,31 @@
           "id": "mat-mwlmajms-lzn6hb",
           "name": "Атрибутивная модель",
           "url": "https://docs.google.com/spreadsheets/d/16Mvwna99V-SG4RIBH1vAbUZmCm0_NEqNRsBo0hBKiB8/edit?usp=sharing",
-          "primary": true
+          "primary": true,
+          "status": "",
+          "archived": false
+        }
+      ]
+    },
+    {
+      "id": "legacy-knowledge",
+      "name": "Техническое задание",
+      "materials": [
+        {
+          "id": "item-mwesepxr-hobxvb",
+          "name": "Типовое техническое задание",
+          "url": "https://docs.google.com/document/d/1iavcsuDzIobJdakPuoPg_CBSxfW9ZFoK/edit?usp=sharing&ouid=118147239248724855146&rtpof=true&sd=true",
+          "primary": true,
+          "status": "verified",
+          "archived": false
+        },
+        {
+          "id": "item-mwesi0t4-a63645",
+          "name": "Альтернативная сборка ( с не изм. частью)",
+          "url": "https://docs.google.com/document/d/13H29u4VqC_c_wEfXtyb5v6-Pt3ITZ3CA/edit?usp=sharing&ouid=104364252641130601749&rtpof=true&sd=true",
+          "primary": false,
+          "status": "development",
+          "archived": false
         }
       ]
     }
