@@ -10,8 +10,7 @@ const PLATFORM_TOOLS=[
   {id:'parking-comparison',name:'05 · Сравнение паркингов',url:'/tools/parking-comparison/',status:'verified'},
   {id:'building-height',name:'06 · Калькулятор этажности и высоты здания',url:'/tools/building-height/',status:'verified'},
   {id:'surface-parking-configurator',name:'07 · Конфигуратор наземного паркинга',url:'/tools/surface-parking-configurator/',status:'verified'},
-  {id:'massing-platforms',name:'08 · Платформы для массинга · LITE / FULL',url:'/tools/massing-platforms/',status:'verified'},
-  {id:'meta-korobka',name:'09 · МЕТАКОРОБКА',url:'/metakorobka.html?v=20261117-nav3',status:'development'}
+  {id:'massing-platforms',name:'08 · Платформы для массинга · LITE / FULL',url:'/tools/massing-platforms/',status:'verified'}
 ];
 const STORAGE='platform-hierarchy-v2';
 const DELETED_KEY='platform-hierarchy-deleted-v1';
@@ -673,7 +672,7 @@ async function loadCatalog(){
     const extra=designTools.materials.filter(m=>!PLATFORM_TOOLS.some(t=>t.id===m.id));
     designTools.materials=PLATFORM_TOOLS.map(t=>({...t})).concat(extra);
   }else{
-    published.tools.unshift({id:'meta-design-tools',name:'Инструменты проектирования',materials:PLATFORM_TOOLS.map(t=>({...t}))});
+    published.tools.unshift({id:'meta-design-tools',name:'Проектирование',materials:PLATFORM_TOOLS.map(t=>({...t}))});
   }
   // Сохраняем ранее опубликованные материалы в подразделе "Ранее добавленные".
   for(const id of IDS){
