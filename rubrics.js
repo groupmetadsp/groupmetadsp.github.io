@@ -691,10 +691,9 @@ async function loadCatalog(){
     for(const id of IDS)published[id]=sectionsList(next[id]);
   }
   const designTools=published.tools.find(s=>s.id==='meta-design-tools');
-  if(designTools){
-    const extra=designTools.materials.filter(m=>!PLATFORM_TOOLS.some(t=>t.id===m.id));
-    designTools.materials=PLATFORM_TOOLS.map(t=>({...t})).concat(extra);
-  }else{
+  // The published catalog is authoritative: never replace edited titles, links,
+  // statuses or card order with defaults from PLATFORM_TOOLS.
+  if(!designTools){
     published.tools.unshift({id:'meta-design-tools',name:'Проектирование',materials:PLATFORM_TOOLS.map(t=>({...t}))});
   }
   // Сохраняем ранее опубликованные материалы в подразделе "Ранее добавленные".
