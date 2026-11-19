@@ -700,7 +700,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
     --line:#556449; --accent:#99f2dc; --accent-soft:#214349;
     --ink:#e2e9ed; --ink-strong:#f8fafb; --muted:#bdcbc6;
     --edge-glow:#99f2dc; --glow:transparent; --landscape-highlight:#ffcd9c;
-    --landscape-photo:url("/theme-assets/sea.webp"); --landscape-position:52% 53%;
+    --landscape-photo:url("/theme-assets/sea.webp");
   }
   .theme-swatch.sea { background:linear-gradient(140deg,#ffcd9c 0 28%,#99f2dc 28% 62%,#173238 62%); }
   :root[data-design="5"] {
@@ -708,7 +708,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
     --line:#486476; --accent:#b2dcfa; --accent-soft:#2c4355;
     --ink:#e2e9ed; --ink-strong:#f8fafb; --muted:#c0cedb;
     --edge-glow:#b2dcfa; --glow:transparent; --landscape-highlight:#eef8ff;
-    --landscape-photo:url("/theme-assets/mountains.webp"); --landscape-position:52% 39%;
+    --landscape-photo:url("/theme-assets/mountains.webp");
   }
   .theme-swatch.mountains { background:linear-gradient(140deg,#eef8ff 0 28%,#b2dcfa 28% 62%,#213140 62%); }
   :root[data-design="6"] {
@@ -716,7 +716,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
     --line:#53664c; --accent:#c2e69e; --accent-soft:#304334;
     --ink:#e2e9ed; --ink-strong:#f8fafb; --muted:#c7d3be;
     --edge-glow:#c2e69e; --glow:transparent; --landscape-highlight:#eff5de;
-    --landscape-photo:url("/theme-assets/forest.webp"); --landscape-position:60% 49%;
+    --landscape-photo:url("/theme-assets/forest.webp");
   }
   .theme-swatch.forest { background:linear-gradient(140deg,#eff5de 0 28%,#c2e69e 28% 62%,#202f23 62%); }
   :root[data-design="7"] {
@@ -724,38 +724,43 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
     --line:#5c627b; --accent:#ffc5ab; --accent-soft:#374761;
     --ink:#e2e9ed; --ink-strong:#f8fafb; --muted:#ced6e8;
     --edge-glow:#ffc5ab; --glow:transparent; --landscape-highlight:#f5f5ff;
-    --landscape-photo:url("/theme-assets/sheregesh.webp"); --landscape-position:66% 53%;
+    --landscape-photo:url("/theme-assets/sheregesh.webp");
   }
   .theme-swatch.sheregesh { background:linear-gradient(140deg,#f5f5ff 0 28%,#ffc5ab 28% 62%,#29354d 62%); }
   :root[data-landscape] :is(header,.sidebar) { background:var(--surface)!important; }
   :root[data-landscape] .home-wrap .hero {
-    min-height:clamp(260px,29vw,365px);
-    align-items:center;
-    padding:clamp(22px,4vw,50px);
-    overflow:hidden;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);
+    gap:12px clamp(16px,3vw,40px);
+    align-content:center;
+    padding:clamp(18px,2.5vw,36px);
     border:1px solid var(--line);
     border-radius:14px;
-    background:
-      linear-gradient(90deg,rgba(8,17,23,.95),rgba(8,17,23,.76) 49%,rgba(8,17,23,.15) 100%),
-      var(--landscape-photo) var(--landscape-position)/cover no-repeat,
-      var(--surface);
+    background:var(--surface);
   }
-  :root[data-design="7"] .home-wrap .hero { --landscape-position: center 56%; }
+  :root[data-landscape] .home-wrap .hero::after {
+    content:"";
+    grid-area:1 / 2 / 3 / 3;
+    align-self:stretch;
+    min-height:clamp(210px,24vw,340px);
+    border-radius:10px;
+    background:var(--landscape-photo) center/contain no-repeat;
+  }
   :root[data-landscape] .home-wrap .hero .slogan { color:var(--landscape-highlight)!important; }
   :root[data-landscape] .home-wrap .lead { color:#e2e9ed; }
-  :root[data-landscape] .home-wrap .badge { align-self:flex-start; }
+  :root[data-landscape] .home-wrap .hero .badge { grid-area:2 / 1; justify-self:start; }
   :root[data-landscape] .brand-mark { background:#f8fafb!important; border-radius:9px!important; }
   .theme-menu { max-height:calc(100dvh - var(--top) - 24px); overflow:auto; }
   @media(max-width:760px) {
     :root[data-landscape] .home-wrap .hero {
-      justify-content:flex-end;
-      align-items:flex-start;
-      min-height:300px;
-      background:
-        linear-gradient(0deg,rgba(8,17,23,.96),rgba(8,17,23,.79) 57%,rgba(8,17,23,.19)),
-        var(--landscape-photo) var(--landscape-position)/cover no-repeat,
-        var(--surface);
+      grid-template-columns:minmax(0,1fr);
+      align-items:start;
     }
+    :root[data-landscape] .home-wrap .hero::after {
+      grid-area:2 / 1;
+      min-height:clamp(170px,54vw,310px);
+    }
+    :root[data-landscape] .home-wrap .hero .badge { grid-area:3 / 1; }
     .mobile-settings .theme-menu { max-height:none; }
   }
 </style>
