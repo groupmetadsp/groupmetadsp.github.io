@@ -55,6 +55,31 @@ summary{font-weight:700;padding:12px 0}details.card summary{padding:14px 17px}de
 #drawings[data-highlight=kind] [data-feature=kind]{filter:drop-shadow(0 0 2px #b9522899)}
 #drawing-caption{min-height:36px}
 @media(max-width:515px){.draw-grid{grid-template-columns:1fr}.draw-grid figure+figure svg{max-width:245px;margin:auto}}
+.result-link,.expand-drawings{display:none}
+#drawing-dialog{color:var(--ink);background:var(--paper);border:1px solid var(--line);padding:16px;max-width:none;max-height:none;width:100%;height:100%;margin:0;overscroll-behavior:contain}
+#drawing-dialog .drawing-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#drawing-dialog button{width:auto}
+@media(max-width:760px){
+  main{padding:20px 14px 30px}
+  .layout,.fields{grid-template-columns:minmax(0,1fr)}
+  .layout>.panel,.result{min-width:0}
+  .fields{row-gap:6px}
+  .fields>label:not(.check){margin-top:5px;font-weight:650}
+  .fields input:not([type=checkbox]),.fields select{min-height:44px;font-size:16px}
+  .step-field{grid-template-columns:minmax(0,1fr) auto}
+  .step-buttons{grid-template-columns:repeat(2,44px);grid-template-rows:1fr}
+  .step-buttons button{font-size:10px}
+  .step-buttons button+button{border-top:0;border-left:1px solid var(--line)}
+  .actions{align-items:center;flex-wrap:wrap}
+  .actions button,.result-link,.expand-drawings{min-height:44px}
+  .result-link,.expand-drawings{display:inline-flex;align-items:center;justify-content:center}
+  .result-link{padding:0 10px;font-weight:700}
+  .result{scroll-margin-top:12px}
+  .expand-drawings{width:auto;margin-top:10px}
+  .table{max-width:100%}
+  .table table{min-width:400px}
+}
+@media print{.result-link,.expand-drawings{display:none}}
 </style>
 </head>
 <body>
@@ -96,9 +121,9 @@ summary{font-weight:700;padding:12px 0}details.card summary{padding:14px 17px}de
 <label class="check full"><input type="checkbox" id="reinforced">В проекте подтверждено продольное армирование в горизонтальных швах по п. 9.23 (μ = 0,05%)</label></div>
 <p class="hint">Для сплошной кладки из кирпича М50 и выше группа по табл. 9.1 определяется маркой раствора.</p>
 </details>
-<div class="actions"><button type="reset">Вернуть пример</button></div>
+<div class="actions"><a class="result-link" href="#result">К результату</a><button type="reset">Вернуть пример</button></div>
 </form>
-<section class="result" aria-label="Результат проверки">
+<section class="result" id="result" tabindex="-1" aria-label="Результат проверки">
 <div id="status" class="status" role="status" aria-live="polite"><h2 id="title"></h2><p id="message"></p><p id="next-action" class="action" hidden></p></div>
 <div class="metrics" id="metrics">
 <div class="metric"><span id="actual-label">По проекту</span><strong id="actual"></strong></div>
@@ -108,6 +133,7 @@ summary{font-weight:700;padding:12px 0}details.card summary{padding:14px 17px}de
 <div class="panel" id="drawings">
   <h2>Схема кладки</h2>
   <p class="hint">Выберите поле, чтобы подсветить его на схеме. Размеры и детали показаны условно.</p>
+  <button class="expand-drawings" id="expand-drawings" type="button">Развернуть схему</button>
   <div class="draw-grid">
     <figure><figcaption>Развёртка</figcaption><svg id="elevation" viewBox="0 0 410 335" role="img" aria-label="Развёртка кладки с размерами и боковыми опорами"></svg></figure>
     <figure><figcaption>Вертикальный разрез</figcaption><svg id="section" viewBox="0 0 240 335" role="img" aria-label="Вертикальный разрез кладки с узлами опирания и закрепления"></svg></figure>
@@ -118,7 +144,7 @@ summary{font-weight:700;padding:12px 0}details.card summary{padding:14px 17px}de
 <div class="bar-row"><div class="bar-label"><span id="bar-actual-label"></span><b id="bar-actual"></b></div><div class="track"><div id="fill-actual" class="fill"></div></div></div>
 <div class="bar-row"><div class="bar-label"><span id="bar-limit-label"></span><b id="bar-limit"></b></div><div class="track"><div id="fill-limit" class="fill limit"></div></div></div>
 </div><p class="hint" id="criterion"></p></div>
-<details class="card" id="breakdown"><summary>Как получен результат</summary><div class="table"><table><thead><tr><th>Параметр</th><th>Значение</th><th>Основание</th></tr></thead><tbody id="coefficients"></tbody></table></div></details>
+<details class="card" id="breakdown"><summary>Как получен результат</summary><div class="table" tabindex="0" role="region" aria-label="Таблица параметров расчёта"><table><thead><tr><th>Параметр</th><th>Значение</th><th>Основание</th></tr></thead><tbody id="coefficients"></tbody></table></div></details>
 <details class="card"><summary>Что проверить самостоятельно</summary>
 <p>Сверьте перечисленные ниже условия по рабочей документации и на площадке.</p>
 <ul>
@@ -133,6 +159,29 @@ summary{font-weight:700;padding:12px 0}details.card summary{padding:14px 17px}de
 </section>
 </div>
 </main>
+<dialog id="drawing-dialog" aria-labelledby="drawing-dialog-title">
+  <div class="drawing-header">
+    <h2 id="drawing-dialog-title">Схема кладки</h2>
+    <form method="dialog"><button type="submit">Закрыть</button></form>
+  </div>
+</dialog>
+<script>
+(function () {
+  const trigger = document.getElementById('expand-drawings');
+  const dialog = document.getElementById('drawing-dialog');
+  const drawings = document.getElementById('drawings');
+  const grid = drawings.querySelector('.draw-grid');
+
+  trigger.addEventListener('click', () => {
+    dialog.append(grid);
+    dialog.showModal();
+  });
+  dialog.addEventListener('close', () => {
+    trigger.after(grid);
+    trigger.focus();
+  });
+})();
+</script>
 <script>
 "use strict";
 

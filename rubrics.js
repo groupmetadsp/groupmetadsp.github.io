@@ -264,6 +264,17 @@ navMarkup=function(){
     +'<button class="sidebar-add" type="button" data-new-subsection title="Добавить подраздел">'
       +icon('plus')+'<span>Добавить подраздел</span></button>';
 };
+const toolDescriptions={
+  'apartment-catalog':'Просмотр типовых планировок квартир.',
+  'parking-comparison':'Сравнение вариантов паркинга.',
+  'floor-configurator':'Компоновка этажа и проверка его параметров.',
+  'meta-massing':'Объёмное моделирование застройки.',
+  'above-ground-parking':'Проработка надземного паркинга.',
+  'building-height':'Оценка этажности и высоты здания.',
+  'surface-parking-configurator':'Компоновка наземных парковочных мест.',
+  'massing-platforms':'Переход к версиям LITE и FULL для массинга.',
+  'masonry-sp15':'Проверка гибкости кирпичных стен и перегородок по СП 15.13330.2020.'
+};
 function renderRubric(rubric){
   const section=sectionInfo(rubric);
   const selected=pick(rubric);
@@ -283,6 +294,7 @@ function renderRubric(rubric){
           +'<div class="material-card-head-actions">'+materialBadges(t)
           +'<button type="button" class="material-drag-handle" data-drag-handle="materials" title="Перетащить материал" aria-label="Перетащить материал «'+name+'». Стрелки меняют порядок">'+gripIcon()+'</button>'
           +'</div></div>'
+        +(rubric==='tools' && Object.hasOwn(toolDescriptions,t.id)?'<p class="tool-mobile-description">'+esc(toolDescriptions[t.id])+'</p>':'')
         +'<div class="tool-state"><span class="dot"></span>'
            +(hasLink?'Ссылка подключена':'Ссылка пока не назначена')
         +'</div>'
@@ -297,7 +309,7 @@ function renderRubric(rubric){
       +'<h2>'+esc(selected.name)+'</h2>'
       +'<p class="tool-count">Материалов: '+selected.materials.length+'</p></div>'
       +'</div>'
-      +'<div class="tool-grid">'+cards
+      +'<div class="tool-grid" data-mobile-catalog="'+rubric+'">'+cards
       +'<button type="button" class="tool-card rubric-add-card" data-new-material aria-label="Добавить материал">'
       +'<span class="rubric-add-icon" aria-hidden="true">'+icon('plus')+'</span>'
       +'<span class="rubric-add-title">Добавить материал</span>'

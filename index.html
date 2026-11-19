@@ -651,6 +651,48 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 }
 </style>
 <meta name="platform-release" content="2026-11-18-full-catalog-export-v2">
+<style>
+.mobile-menu-toggle,.mobile-settings,.tool-mobile-description{display:none}
+@media(max-width:760px){
+  header{justify-content:flex-start;gap:12px}
+  header .brand{display:none}
+  header .topname{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px}
+  .mobile-menu-toggle{display:grid;flex:none;width:44px;height:44px}
+  .sidebar{display:none;width:min(320px,100%);padding:12px 14px 16px;z-index:29;overscroll-behavior:contain;box-shadow:var(--shadow)}
+  body.mobile-menu-open .sidebar{display:flex}
+  .sidebar .side-label,.nav span,.side-bottom{display:block}
+  .sidebar .nav button{justify-content:flex-start;text-align:left;min-height:44px;padding:10px 12px}
+  .sidebar .nav .sidebar-add{font-size:13px}
+  .sidebar .nav .rubric-nav-row{grid-template-columns:20px minmax(0,1fr) 34px 34px;grid-template-rows:auto}
+  .sidebar .nav .rubric-nav-row>button{grid-row:1;min-height:44px;padding:4px}
+  .sidebar .nav .rubric-nav-row .rubric-nav-item{grid-column:2;display:flex;align-items:center}
+  .sidebar .nav .rubric-nav-item span{display:block;overflow-wrap:anywhere}
+  .sidebar .nav .rubric-nav-row .rubric-nav-edit,.sidebar .nav .rubric-nav-row .rubric-nav-delete{width:34px}
+  .desktop-nav-note{display:none}
+  .tool-mobile-description{display:block;margin:0;color:var(--muted);line-height:1.5}
+  [data-mobile-catalog="tools"] .tool-card{min-height:auto;padding:16px}
+  [data-mobile-catalog="tools"] .tool-card-actions button{min-height:44px}
+  .sidebar .nav button.active::before{left:-14px}
+  .mobile-settings{display:block;margin:14px 0;padding-top:12px;border-top:1px solid var(--line)}
+  .mobile-settings .actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding-top:10px}
+  .mobile-settings .actions .iconbtn{width:100%;height:44px}
+  .mobile-settings .separator{display:none}
+  .mobile-settings :is(.theme-control,.audio-control){grid-column:1/-1}
+  .mobile-settings :is(.theme-menu,.audio-panel){position:static;width:100%!important;margin-top:8px}
+  .mobile-settings #sound{display:flex;justify-content:center;align-items:center;gap:8px}
+  .mobile-settings #sound::after{content:'Звук'}
+  .main{margin-left:0}
+  .hero{flex-direction:column;gap:8px}
+  .hero>div{min-width:0}
+  .hero h1{overflow-wrap:anywhere}
+  .panel,.state{padding:16px}
+  .home-wrap{display:flex;flex-direction:column}
+  .home-wrap .home-panels{display:contents}
+  .home-wrap .home-quick{order:-1;margin-bottom:18px}
+  .home-wrap .hero{order:-2}
+  body.focus-mode .mobile-menu-toggle{display:none}
+}
+</style>
 </head>
 <body><div id="water-ripple-layer" aria-hidden="true"></div>
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
@@ -693,12 +735,15 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 </svg>
 
 <header>
+  <button class="iconbtn mobile-menu-toggle" id="mobile-menu-toggle" type="button" aria-label="Меню разделов" aria-controls="platform-sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
   <div class="brand">
     <div class="brand-mark"><svg><use href="#i-platform"></use></svg></div>
     <div class="brand-title">ПЛАТФОРМА</div>
   </div>
   <div class="topname" id="topname">Главная / Обзор</div>
-  <div class="actions">
+  <div class="actions" id="platform-actions">
     <button class="iconbtn" id="back" title="Назад" aria-label="Назад"><svg><use href="#i-left"></use></svg></button>
     <button class="iconbtn" id="forward" title="Вперёд" aria-label="Вперёд"><svg><use href="#i-right"></use></svg></button>
     <div class="separator"></div>
@@ -737,9 +782,12 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
   </div>
 </header>
 
-<aside class="sidebar">
+<aside class="sidebar" id="platform-sidebar">
   <div class="side-label">Разделы</div>
-  <nav class="nav" id="nav"></nav>
+  <nav class="nav" id="nav" aria-label="Разделы Платформы"></nav>
+  <details class="mobile-settings" id="mobile-settings">
+    <summary>Настройки и действия</summary>
+  </details>
   <div class="side-bottom">
     <div class="version">Концепция интерфейса<br>ПЛАТФОРМА · v1.4</div>
   </div>
@@ -774,12 +822,12 @@ function navMarkup(){
 
 function renderHome(){
   return `
-    <div class="wrap">
+    <div class="wrap home-wrap">
       <section class="hero">
         <div>
           <div class="eyebrow">Стартовый экран</div>
           <div class="home-title-line"><h1>ПЛАТФОРМА</h1><p class="slogan">НЕ ПРОЕКТИРУЕМ ЗДАНИЕ.<br>ВЫЧИСЛЯЕМ, КАКИМ ОНО ДОЛЖНО БЫТЬ.</p></div>
-          <p class="lead">Единая рабочая среда для методологии, инструментов, проектов и аналитики. Навигация всегда остается слева, а содержимое открывается в свободной рабочей области.</p>
+          <p class="lead">Единая рабочая среда для методологии, инструментов, проектов и аналитики.<span class="desktop-nav-note"> Навигация всегда остается слева, а содержимое открывается в свободной рабочей области.</span></p>
         </div>
         <div class="badge"><span class="dot"></span> Навигационный портал</div>
       </section>
@@ -795,7 +843,7 @@ function renderHome(){
 <div class="architecture-foot">Данные и проектные решения формируют связанную систему <span>МЕТА / ПЛАТФОРМА</span></div>
 </section>
 
-      <section class="grid">
+      <section class="grid home-panels">
         <div class="panel">
           <h2>Что уже зафиксировано</h2>
           <p>Единая оболочка Платформы с самостоятельными каталогами материалов для каждого раздела.</p>
@@ -806,7 +854,7 @@ function renderHome(){
             <div class="item">Полноэкранный режим только для рабочего экрана</div>
           </div>
         </div>
-        <div class="panel">
+        <div class="panel home-quick">
           <h2>Быстрый переход</h2>
           <p>В каждой рубрике можно создавать карточки, назначать ссылки и переходить к материалам.</p>
           <div class="quick">
@@ -1088,8 +1136,49 @@ document.addEventListener('pointermove', e=>{
   panel.style.setProperty('--my',(e.clientY-r.top)+'px');
 },{passive:true});
 render();
+(function () {
+  const mobile = matchMedia('(max-width:760px)');
+  const toggle = $('mobile-menu-toggle');
+  const sidebar = $('platform-sidebar');
+  const settings = $('mobile-settings');
+  const header = toggle.closest('header');
+  const actions = $('platform-actions');
+
+  function setMenu(open, restoreFocus = false) {
+    document.body.classList.toggle('mobile-menu-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    if (restoreFocus) toggle.focus();
+  }
+
+  function placeActions() {
+    const inMenu = mobile.matches && !document.body.classList.contains('focus-mode');
+    const target = inMenu ? settings : header;
+    if (actions.parentElement !== target) target.append(actions);
+    if (!inMenu) setMenu(false);
+  }
+
+  toggle.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') !== 'true';
+    setMenu(open);
+    if (open) sidebar.querySelector('nav button')?.focus();
+  });
+  document.addEventListener('click', event => {
+    if (!document.body.classList.contains('mobile-menu-open')) return;
+    if (event.target.closest('[data-go], [data-subsection]') || !event.target.closest('#platform-sidebar, #mobile-menu-toggle')) {
+      setMenu(false, !event.target.closest('#content') && event.target instanceof HTMLElement);
+    }
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && document.body.classList.contains('mobile-menu-open') &&
+        !event.target.closest('dialog[open]')) setMenu(false, true);
+  });
+  mobile.addEventListener('change', placeActions);
+  new MutationObserver(placeActions).observe(document.body, {attributes:true, attributeFilter:['class']});
+  setMenu(false);
+  placeActions();
+})();
 </script>
-<script src="/rubrics.js?v=platform-metakorobka-rates-20261118"></script>
+<script src="/rubrics.js?v=platform-mobile-20261119"></script>
 <script>
 (function(){
  const key='platform-pattern-preview';
