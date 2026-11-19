@@ -2178,4 +2178,367 @@ const mobileStyles=document.createElement('style');mobileStyles.textContent=`
 document.head.appendChild(mobileStyles);
 render();
 
+/* 19.11.2026 — new workspace, derived data, unified navigation, local JSON comparison. */
+const META_WORKFLOW=[
+  {group:TECH_ENVELOPE, label:'Фасад + остекление'},
+  {group:ADDON_BAL,label:'Балконы и лоджии'},
+  {group:TECH_HYDRO,label:'Гидроизоляция'},
+  {group:'Швы и проходки',label:'Швы и проходки'},
+  {group:ADDON_FND,label:'Усиление + свайное основание'},
+  {group:'Инженерия',label:'Инженерия'},
+  {group:'Кровля',label:'Кровля'},
+  {group:'Двери',label:'Двери'},
+  {group:'Металлоконструкции',label:'Металлоконструкции'},
+  {group:'Отделка',label:'Отделка'}
+];
+const META_WORKFLOW_NAMES=META_WORKFLOW.map(x=>x.group);
+expand=true;
+if(!META_WORKFLOW_NAMES.includes(moduleGroup))moduleGroup=META_WORKFLOW_NAMES[0];
+const META_DERIVED_BY_GROUP={
+ 'Монолит':[24,25,26,27,28,29],
+ 'Кровля':[202,203,204,205,206],
+ 'Фундамент':[14,15,16,17],
+ 'Котлован':[4,5,6,7,8,9,10,11,12],
+ 'Подземная часть':[18,19,20,21,22,23,93,96],
+ 'Опалубка':[17,20,23,26,29],
+ 'Лифты':[247,248],
+ 'Остекление':[112,113],
+ 'Кладка':[36,37,38,39,40,41,42,43,44,45,46,47,48,49,50],
+ 'Фасад':[56,59,62,63,64,65,66,67],
+ 'Земляные работы':[8,9],
+ 'ТЭП':[],
+ 'Этажность':[],
+ 'Геометрия':[]
+};
+const META_DERIVED_EXPLAIN={
+ 4:'Геометрия котлована с учётом припуска и откосов',5:'Площадь котлована × толщина ручной доработки',
+ 6:'Выемка и доработка × доля вывоза',7:'Вывоз × доля платного размещения',
+ 8:'При наличии D66 — объём ПОС/Revit; иначе геометрия котлована минус объём подземной части',
+ 9:'Обратная засыпка Q8',10:'Площадь подготовки × толщина песка D37',
+ 11:'Площадь подготовки × толщина щебня D38',12:'Площадь подготовки при включённом геотекстиле D39',
+ 14:'Площадь под фундаментом × толщина подбетонки D31',
+ 15:'Длина × ширина фундаментной плиты × её расчётная толщина S190',
+ 16:'Объём бетона фундаментной плиты Q15 × кг/м³ D45 / 1000',
+ 17:'Периметр фундаментной плиты × её толщину',
+ 18:'Расчёт по геометрии подземной части, D13 и вертикальному каркасу',
+ 19:'Объём бетона Q18 × удельное армирование D43 / 1000',
+ 20:'Расчётная площадь опалубки подземных вертикальных конструкций',
+ 21:'Площадь перекрытия × толщина плиты D42 × подземные этажи',
+ 22:'Объём бетона подземной плиты Q21 × D44 / 1000',
+ 23:'Объём бетона Q21 / толщина перекрытия D42',
+ 24:'Объём бетона Revit D53',25:'Масса арматуры Revit D54',
+ 26:'Объём плит Q24 / толщина типовой плиты D24',
+ 27:'Объём вертикального бетона Revit D55',28:'Масса арматуры Revit D56',
+ 29:'Опалубка вертикалей по принятой геометрии конструкций',
+ 93:'Площадь фундаментной плиты для защиты',96:'Площадь защиты наружных стен с действующими коэффициентами ядра',
+ 112:'Окна типового этажа Revit D57 × количество этажей H109',
+ 113:'Площадь витражей на этаж × число этажей с витражами',
+ 202:'Площадь комплексной кровли из параметра H201',
+ 247:'Пассажирские лифты на секцию D48 × число секций D5',
+ 248:'Грузопассажирские лифты на секцию D49 × число секций D5'
+};
+function metaAutoFloors(){const a=Number(get(INPUT,'D10')),b=Number(get(INPUT,'D11'));return Number.isFinite(a)&&Number.isFinite(b)?a+b:null}
+function metaSyncFloors(){const count=metaAutoFloors();if(count!==null&&Number(get(INPUT,'D12'))!==count)setOverride(INPUT,'D12',count)}
+function metaDerivedSection(page){
+ if(!page||page.block.includes('ШВЫ'))return '';
+ let items=META_DERIVED_BY_GROUP[page.group]||[];
+ if(page.group==='Монолит'&&page.block.includes('REVIT'))items=[24,25,26,27,28,29];
+ const src=CORE[CALC];
+ const result=[];
+ if(page.group==='Фундамент'){
+  const v=get(CALC,'S190');result.push({name:'Толщина фундаментной плиты · S190',qty:v,unit:'м',explain:'Расчётная толщина по геометрическим и исходным данным ядра',formula:src.S190?.f||''});
+ }
+ if(page.group==='Геометрия'){
+  const a=Number(get(INPUT,'D19')),b=Number(get(INPUT,'D20'));
+  if(Number.isFinite(a)&&Number.isFinite(b)){
+   result.push({name:'Расчётная площадь пятна',qty:a*b,unit:'м²',explain:'Длина D19 × ширина D20'});
+   result.push({name:'Периметр здания',qty:2*(a+b),unit:'м',explain:'2 × (длина D19 + ширина D20)'});
+  }
+ }
+ if(page.group==='Этажность')result.push({name:'Всего надземных этажей · D12',qty:metaAutoFloors(),unit:'эт.',explain:'Количество типовых этажей D10 + первый (нетиповой) этаж D11'});
+ if(page.group==='ТЭП')result.push({name:'Продаваемая площадь объекта',qty:get(CALC,'R252'),unit:'м²',explain:'Свод Sпрод из исходной ведомости объекта (D6)'});
+ for(const r of items){
+  const row=META.rows.find(x=>x.r===r);
+  if(!row||row.id==='ПАРАМЕТР'||row.id==='ГРУППА')continue;
+  const cell=src['Q'+r]||{};
+  result.push({name:row.name,qty:get(CALC,'Q'+r),unit:row.unit||'',explain:META_DERIVED_EXPLAIN[r]||(cell.f?'Формула Q'+r+' из расчётного ядра':'Прямой объём или оценка позиции Q'+r),formula:cell.f||''});
+ }
+ if(!result.length)return '';
+ const rows=result.map(o=>`<tr><td title="${esc(o.name)}">${esc(o.name)}</td><td class="number">${money(o.qty,2)} ${esc(o.unit)}</td><td>${esc(o.explain)}${o.formula?`<details class="derived-formula"><summary>Формула ядра</summary><code>${esc(o.formula)}</code></details>`:''}</td></tr>`).join('');
+ return `<section class="panel derived-section"><div class="derived-head"><div><b>Расчётные данные</b><small>Автоматически по текущим исходным данным и формулам ядра. Не вводятся повторно.</small></div><span class="mini-pill">${result.length} показателей</span></div><div class="derived-scroll"><table><thead><tr><th>Показатель</th><th>Объём / значение</th><th>Как рассчитано</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+}
+function metaHeightInline(){
+ const c=heightCalc(),actual=metaAutoFloors(),h=heightSettings;
+ const typ=Number(get(INPUT,'D21'))||0,first=Number(get(INPUT,'D22'))||0,slab=Number(get(INPUT,'D24'))||0;
+ const fire=Number(h.road)+first+Math.max(0,(actual||0)-2)*typ+Number(h.sill);
+ const clear=typ-slab-Number(h.floorBuildUp);
+ const limit=Number(h.fireLimit),balance=limit-fire;
+ const input=(k,label,unit)=>`<label><span>${esc(label)}</span><input class="field" data-height="${k}" inputmode="decimal" value="${esc(h[k]??'')}"><small>${esc(unit)}</small></label>`;
+ return `<section class="panel derived-section height-inline"><div class="derived-head"><div><b>Высота здания · расчётные данные</b><small>Проверка заданной этажности по формулам вкладки «Этажность». Не создаёт отдельный модуль.</small></div></div>
+ <div class="height-inline-controls">${input('fireLimit','Предельная пожарная высота','м')}${input('road','Перепад проезда / 1-го этажа','м')}${input('sill','Высота подоконника верхнего этажа','м')}${input('floorBuildUp','Конструкция пола','м')}</div>
+ <div class="height-inline-results"><div><small>Задано этажей</small><b>${money(actual,0)}</b></div><div><small>Фактическая пожарная высота</small><b>${money(fire,2)} м</b></div><div><small>Запас по предельной высоте</small><b class="${balance<0?'bad':''}">${money(balance,2)} м</b></div><div><small>Чистая высота квартиры</small><b>${money(clear,2)} м</b></div><div><small>Предельная этажность по N7</small><b>${money(c.floorCount,0)}</b></div></div>
+ <p class="derived-explain">Пожарная высота = перепад + высота первого этажа + высота типового этажа × (заданных этажей − 2) + высота подоконника. Максимальная допустимая этажность отдельно определяется из лимита, но не подменяет заданную этажность объекта.</p></section>`;
+}
+const _metaInputsBefore=inputs;
+inputs=function(){
+ metaSyncFloors();let html=_metaInputsBefore();const page=inputPages()[inputPage];
+ // Disable editing of the derived D12 source field and remove the old calculator launcher.
+ html=html.replace(/<button\b[^>]*data-act="heightOpen"[^>]*>[\s\S]*?<\/button>/g,'');
+ html=html.replace(/<input\b[^>]*data-inputrow="12"[^>]*\/>/g,`<output class="field readonly auto-floors" title="D10 + D11">${money(metaAutoFloors(),0)} · автоматически</output>`);
+ const block=metaDerivedSection(page)+(page?.group==='Геометрия'?metaHeightInline():'');
+ const idx=html.indexOf('<div class="pagefooter">');
+ if(block&&idx>=0)html=html.slice(0,idx)+block+html.slice(idx);
+ if(page?.group==='Котлован'&&page?.part===1){html=html.replace('Расчётные данные</b>','Расчётные данные: котлован и обратная засыпка</b>')}
+ return html;
+};
+
+// Operator-group methodology: show only actual available choices; don't invent formulas.
+const META_METHOD_INFO={
+ 'Инженерия':{row:142,note:'Укрупнённый: площадь Sпрод × комплексная ставка ядра. Детальный: Q145–Q199 из заданных объёмов H. В итог входит только выбранный метод.'},
+ 'Металлоконструкции':{row:216,note:'Укрупнённый и детальный режимы предусмотрены ядром; доступные позиции Q218–Q223 и пропуски объёмов видны ниже.'},
+ 'Отделка':{row:225,note:'Укрупнённый или детальный метод по позиции H225; объемы детальных работ задаются в H227–H245.'},
+ 'Кровля':{row:null,note:'В текущем ядре предусмотрена комплексная кровля: Q202 по площади H201. Детальные слои Q203–Q208 заданы нулевыми объёмами; отдельного переключателя метода пока нет.'},
+ 'Двери':{row:null,note:'Часть дверей вычисляется из параметров объекта, остальные требуют задания объёмов Q210/Q212/Q214. Отдельного укрупнённого режима в ядре нет.'}
+};
+function metaGenericModule(group){
+ const info=META_METHOD_INFO[group],groupRow=sections.find(x=>x.group===group),value=groupRow?get(CALC,'T'+groupRow.r):0;
+ return `<div class="module-detail tech-detail"><div class="module-subhead"><div><h2>${esc(group)} · определение объёмов</h2><p>${esc(info?.note||'Исходные данные и объёмы по расчетному ядру')}</p></div><span class="mini-pill">${info?.row?'H'+info.row+' · выбор метода':'Метод ядра'}</span></div>
+ <div class="module-stages"><button data-module-stage="parameters" class="${moduleStage==='parameters'?'active':''}">Исходные данные / метод</button><button data-module-stage="volumes" class="${moduleStage==='volumes'?'active':''}">Расчётные и приведённые объёмы</button></div>
+ ${moduleStage==='parameters'?paramsStage(group):volumesStage(group)}
+ <div class="module-actions"><b>Стоимость группы: ${money(value,2)} ₽</b><span>${money(getTotals().area>0?Number(value)/getTotals().area:null,2)} ₽/м² Sпрод</span></div></div>`;
+}
+moduleMove=function(d){let i=META_WORKFLOW_NAMES.indexOf(moduleGroup);if(i<0)i=0;const n=i+d;
+ if(n<0){go('inputs');inputPage=inputPages().length-1;render();return}
+ if(n>=META_WORKFLOW_NAMES.length){go('rates');return}
+ moduleGroup=META_WORKFLOW_NAMES[n];store('moduleGroup',moduleGroup);moduleStage='parameters';modulePage=0;render();
+};
+moduleScreen=function(){
+ if(!META_WORKFLOW_NAMES.includes(moduleGroup))moduleGroup=META_WORKFLOW_NAMES[0];
+ const group=moduleGroup;
+ let content;
+ if(group===ADDON_BAL)content=balconyScreen();
+ else if(group===ADDON_FND)content=foundationScreen();
+ else {
+  let detail=group===TECH_ENVELOPE?envelopeModule():group===TECH_HYDRO?hydroModule():group==='Швы и проходки'?jointScreen():metaGenericModule(group);
+  content=`<div class="paged-frame modules-frame"><div class="module-head"><div><div class="eyebrow">МЕТАСЕБЕС / РАСЧЁТНЫЙ МОДУЛЬ</div><h1>${esc(group)}</h1><p>Исходные параметры, способ получения объёмов и стоимость по утверждённому ядру.</p></div></div>${detail}<div class="module-footer"><button class="btn" data-act="modulePrev">← Предыдущий модуль</button><button class="btn primary" data-act="moduleNext">Следующий модуль →</button></div></div>`;
+ }
+ // Normalize the header and remove old duplicated module tabs in the two original addon frames.
+ content=content.replace(/<div class="module-nav"[^>]*>[\s\S]*?<\/div>/,'');
+ content=content.replace(/<label class="module-picker">[\s\S]*?<\/label>/,'');
+ content=content.replace(/<div class="module-head">[\s\S]*?<\/div>(?=<div class="module-detail)/,m=>m);
+ content=content.replace(/Технологический калькулятор/g,'Расчётный модуль').replace(/технологическом калькуляторе/g,'расчётном модуле').replace(/Единый калькулятор наружной оболочки/g,'Единый расчётный модуль наружной оболочки');
+ return content;
+};
+navItems=function(){
+ const isCalc=view==='create'||view==='inputs'||view==='modules'||view==='results'||view==='rates';
+ const icon=(n)=>`<span class="navicon">${svgIcon(n)}</span>`;
+ const btn=(id,label,symbol)=>`<button data-go="${id}" class="${view===id?'active':''}">${icon(symbol)}<span>${esc(label)}</span></button>`;
+ const sub=expand?`<div class="subnav unified-modules">
+  <button data-go="inputs" class="${view==='inputs'?'active':''}">Исходные данные</button>
+  <div class="nav-group-heading">Расчётные модули</div>
+  ${META_WORKFLOW.map((x,i)=>`<button data-module-quick="${esc(x.group)}" class="${view==='modules'&&moduleGroup===x.group?'active':''}"><span class="nav-number">${i+1}</span><span>${esc(x.label)}</span></button>`).join('')}
+  <div class="nav-group-heading">Себестоимость</div>
+  <button data-go="rates" class="${view==='rates'?'active':''}">Расценки</button>
+  <button data-go="results" class="${view==='results'?'active':''}">Расчёт</button>
+ </div>`:'';
+ return btn('home','Главная','home')+
+ `<button data-go="create" class="${isCalc?'active':''}">${icon('calculator')}<span>Сделать расчёт</span><span class="nav-chevron">${svgIcon(expand?'chevron-down':'chevron-right')}</span></button>`+
+ sub+`<button data-go="todo" class="todo-nav-link ${view==='todo'?'active':''}">${icon('clipboard-list')}<span>Доделать</span><b style="margin-left:auto">${Object.values(todoData).reduce((n,a)=>n+a.filter(x=>!x.done).length,0)}</b></button>`+
+ btn('open','Открыть расчёт','folder-open')+btn('admin','Администрирование','settings')+btn('engine','Расчётное ядро','database');
+};
+// Never mutate a source calculation in order to compare it. Temporary engine context is fully restored.
+function metaEvaluateSnapshot(snapshot,overrideMode=null){
+ const oldOverrides=overrides,oldMemo=memo,oldErrors=errors,oldStack=stack;
+ try{
+  overrides=Object.assign(Object.create(null),rateMaster,snapshot?.overrides||{});
+  if(Array.isArray(snapshot?.rateSnapshot))for(const r of snapshot.rateSnapshot){if(r&&Number.isInteger(r.row)&&r.row>0){overrides[key(CALC,'N'+r.row)]=r.work??'';overrides[key(CALC,'O'+r.row)]=r.material??''}}
+  memo=new Map();errors=new Map();stack=new Set();
+  const fc=metaAutoFloors();if(fc!==null)overrides[key(INPUT,'D12')]=fc;
+  memo.clear();
+  const area=Number(get(CALC,'R252'))||0,mode=overrideMode||snapshot?.costMode||'operator',c=snapshot?.costClass||costClass;
+  const groups=sections.map(g=>{
+   const raw=Number(get(CALC,'T'+g.r))||0,rate=mode==='average'&&AVERAGE_RATES[g.group];
+   const total=rate&&area>0?rate[c]*area:raw;
+   return {name:g.group,total,perM2:area>0?total/area:0,operator:raw};
+  });
+  const total=groups.reduce((v,x)=>v+x.total,0);
+  return {name:snapshot?.name||String(get(INPUT,'D3')||'Расчёт'),date:snapshot?.date||'',mode,cls:c,area,total,perM2:area>0?total/area:0,groups};
+ }finally{overrides=oldOverrides;memo=oldMemo;errors=oldErrors;stack=oldStack}
+}
+function metaCurrentSnapshot(){return {name:String(get(INPUT,'D3')||'Текущий расчёт'),overrides:copy(overrides),costMode,costClass,date:new Date().toISOString()}}
+let jsonComparisonFiles=[];
+let resultCompare=false, compareA='current-operator',compareB='current-average';
+function metaCompareFromSelector(value){
+ if(value==='current-operator')return metaEvaluateSnapshot(metaCurrentSnapshot(),'operator');
+ if(value==='current-average')return metaEvaluateSnapshot(metaCurrentSnapshot(),'average');
+ if(value.startsWith('saved-')){const i=+value.slice(6);return history[i]?metaEvaluateSnapshot(history[i]):null}
+ return null;
+}
+function metaComparisonTable(values){
+ const cols=values.length;
+ const head=values.map((v,i)=>`<th>Расчёт ${i+1}<small>${esc(v.name)}</small></th>`).join('');
+ const metric=(name,key,format='currency')=>`<tr><td>${esc(name)}</td>${values.map(v=>`<td class="number">${format==='area'?money(v[key],2)+' м²':format==='rate'?money(v[key],2)+' ₽/м²':money(v[key],2)+' ₽'}</td>`).join('')}</tr>`;
+ const groups=sections.map(g=>`<tr><td>${esc(g.group)}</td>${values.map(v=>{const x=v.groups.find(x=>x.name===g.group);return `<td class="number">${money(x?.perM2,2)} ₽/м²<small>${money(x?.total,0)} ₽</small></td>`}).join('')}</tr>`).join('');
+ return `<div class="compare-scroll"><table class="compare-table"><thead><tr><th>Показатель</th>${head}</tr></thead><tbody>
+ ${metric('Sпрод объекта','area','area')}${metric('Полная себестоимость','total')}${metric('Себестоимость 1 м²','perM2','rate')}
+ ${cols>=2?`<tr class="compare-delta"><td>Отклонение к расчёту 1, ₽/м²</td>${values.map((v,i)=>`<td class="number">${i?(v.perM2-values[0].perM2>=0?'+':'')+money(v.perM2-values[0].perM2,2):'—'}</td>`).join('')}</tr>`:''}
+ <tr class="compare-group-title"><th colspan="${cols+1}">Структура себестоимости — стоимость групп на 1 м² и объект</th></tr>${groups}
+ </tbody></table></div>`;
+}
+function metaFileComparisonPage(){
+ const list=jsonComparisonFiles.map((item,i)=>`<div class="file-comparison-card"><span class="mini-pill">${i+1} / 3</span><div><b>${esc(item.result.name)}</b><small>${money(item.result.perM2,2)} ₽/м² · ${money(item.result.area,0)} м² Sпрод</small></div><button class="btn small" data-remove-json="${i}">Удалить</button></div>`).join('');
+ return `<div class="compare-workspace">${heading('Сравнение расчётов','Загрузите от одного до трёх JSON-файлов ранее сохранённых расчётов. Данные остаются в браузере; отправки на сервер нет.')}
+ <div class="panel"><div class="compare-actions"><label class="btn primary compare-file-upload">${svgIcon('folder-open')} Загрузить JSON <input id="compare-json-files" type="file" accept=".json,application/json" multiple hidden></label><button class="btn" data-go="home">К сохранённым объектам</button><span>${jsonComparisonFiles.length} из 3</span></div>
+ <div class="file-comparison-grid">${list||'<p class="note">Список пуст. Выберите до трёх файлов расчётов.</p>'}</div></div>
+ ${jsonComparisonFiles.length?`<section class="panel compare-result-panel"><div class="sheet-section-heading"><h2>Сопоставление ${jsonComparisonFiles.length} расчётов</h2><span>Разница определяется относительно первого загруженного расчёта</span></div>${metaComparisonTable(jsonComparisonFiles.map(x=>x.result))}</section>`:''}</div>`;
+}
+const _homeWorkspacePrevious=home;
+home=function(){
+ const list=history.map((h,i)=>`<article class="saved-project-card"><div><span class="mini-pill">${esc(h.costMode==='average'?'Средние':'Оператор')}</span><h3>${esc(h.name||'Расчёт')}</h3><small>${esc(h.date?new Date(h.date).toLocaleString('ru-RU'):'')}</small></div><div class="saved-project-metrics"><span>${money(h.totals?.total,0)} ₽</span><b>${money(h.totals?.perM2,2)} ₽/м²</b><small>Sпрод: ${money(h.totals?.area,2)} м²</small></div><button class="btn primary" data-load="${i}">Открыть расчёт</button></article>`).join('');
+ return `<div class="home-workspace">${heading('МЕТАКОРОБКА','Работа с расчётами · создание, открытие и сравнение сохранённых объектов')}
+ <div class="quickgrid workspace-actions"><button data-act="fresh"><strong>Новый расчёт</strong><span>Исходные данные и параметры объекта</span></button><button data-go="open"><strong>Открыть сохранённый</strong><span>История расчётов и импорт JSON</span></button><button data-go="compareFiles"><strong>Сравнить расчёты</strong><span>До трёх JSON-файлов одновременно</span></button></div>
+ <div class="sheet-section-heading saved-heading"><h2>Сохранённые объекты</h2><span>${history.length} расчётов</span></div>
+ <div class="saved-project-grid">${list||'<div class="panel empty-projects">В этом браузере пока нет сохранённых объектов. Создайте расчёт или импортируйте JSON.</div>'}</div>
+ </div>`;
+};
+function metaResultsCompare(){
+ const candidates=[['current-operator','Текущий расчёт · Оператор'],['current-average','Текущий расчёт · Средние ('+(costClass==='business'?'Бизнес':'Стандарт / Комфорт')+')'],...history.map((h,i)=>['saved-'+i,(h.name||'Расчёт')+' · '+(h.date?new Date(h.date).toLocaleDateString('ru-RU'):'Сохранён')])];
+ const option=v=>candidates.map(([id,name])=>`<option value="${esc(id)}" ${v===id?'selected':''}>${esc(name)}</option>`).join('');
+ const a=metaCompareFromSelector(compareA),b=metaCompareFromSelector(compareB);const vals=[a,b].filter(Boolean);
+ const delta=a&&b?b.perM2-a.perM2:null;
+ return `<div class="paged-frame results-frame comparison-results">${heading('Расчёт себестоимости','Сравнение двух расчётов на одной странице')}${costSelector().replace('</div>\n    <label class="cost-class-picker">','<button class="btn compare-mode-trigger chosen" data-results-compare="1">Сравнение</button></div>\n    <label class="cost-class-picker">')}
+ <div class="panel"><div class="compare-pickers"><label><span>Расчёт А</span><select class="field" data-compare-choice="a">${option(compareA)}</select></label><label><span>Расчёт Б</span><select class="field" data-compare-choice="b">${option(compareB)}</select></label></div>
+ ${a&&b?`<div class="compare-summary"><div><small>Разница Б − А, ₽/м²</small><b>${delta>=0?'+':''}${money(delta,2)}</b></div><div><small>Разница Б − А, ₽ на объект</small><b>${b.total-a.total>=0?'+':''}${money(b.total-a.total,2)}</b></div></div>`:''}
+ ${metaComparisonTable(vals)}</div><p class="tiny">Для сравнения других объектов сохраните расчёт или импортируйте его JSON в разделе «Открыть расчёт». В сравнении используются исходные параметры каждого расчёта.</p></div>`;
+}
+const _resultsWorkflowPrevious=results;
+results=function(){
+ if(resultCompare)return metaResultsCompare();
+ let s=_resultsWorkflowPrevious();
+ const cls='class="cost-mode-buttons"';
+ // Insert third mode next to Operator / Average as a direct comparison selector.
+ if(s.includes(cls))s=s.replace(/(<button[^>]*data-cost-mode="average"[^>]*>Средние<\/button>)/,'$1<button type="button" class="compare-mode-trigger" data-results-compare="1">Сравнение</button>');
+ return s;
+};
+const _renderWorkflowPrevious=render;
+render=function(){
+ metaSyncFloors();
+ if(view==='compareFiles'){
+  document.body.classList.remove('inputs-mode');document.body.classList.remove('paged-mode');
+  $('nav').innerHTML=navItems();$('topname').textContent='Сравнение расчётов';
+  $('content').innerHTML='<div class="wrap app">'+metaFileComparisonPage()+'</div>';
+  $('back').disabled=false;$('next').disabled=true;return;
+ }
+ // old render continues to own pagination, group tables, export and admin protections.
+ _renderWorkflowPrevious();
+ if(view==='modules'){
+  $('topname').textContent='Расчётный модуль · '+moduleGroup;
+  document.body.classList.add('modules-mode');
+ }
+};
+// Keep one sequence for sidebar and top/bottom arrows, without the old artificial modules.
+const _priorWorkflowPrevious=prior,_nextWorkflowPrevious=next;
+prior=function(){
+ if(view==='compareFiles'){go('home');return}
+ if(view==='rates'&&ratePage===0){moduleGroup=META_WORKFLOW_NAMES[META_WORKFLOW_NAMES.length-1];modulePage=0;go('modules');return}
+ return _priorWorkflowPrevious();
+};
+next=function(){
+ if(view==='compareFiles')return;
+ if(view==='inputs'&&inputPage===inputPages().length-1){moduleGroup=META_WORKFLOW_NAMES[0];modulePage=0;go('modules');return}
+ return _nextWorkflowPrevious();
+};
+// Avoid mistakenly relabeling missing design inputs as validated zero quantities.
+document.addEventListener('click',event=>{
+ const button=event.target.closest('[data-results-compare]');if(!button)return;
+ event.preventDefault();event.stopImmediatePropagation();resultCompare=true;render();
+},true);
+document.addEventListener('click',event=>{
+ if(event.target.closest('[data-cost-mode]')&&resultCompare){resultCompare=false;render()}
+},true);
+document.addEventListener('change',event=>{
+ const select=event.target.closest('[data-compare-choice]');if(select){if(select.dataset.compareChoice==='a')compareA=select.value;else compareB=select.value;render();return}
+ const picker=event.target.closest('#compare-json-files');if(!picker)return;
+ const files=Array.from(picker.files||[]);
+ (async()=>{
+  let added=0;
+  for(const f of files){if(jsonComparisonFiles.length>=3){toast('Можно сравнить не более трёх расчётов',true);break}
+   try{const data=JSON.parse(await f.text());const snap=data.calculation||data;
+    if(!snap||typeof snap!=='object'||!snap.overrides||typeof snap.overrides!=='object'||Array.isArray(snap.overrides))throw new Error('Это не сохранённый расчёт МЕТАКОРОБКА');
+    if(snap.format&&snap.format!=='metasebes-korobka-1.0')throw new Error('Неизвестная версия JSON');
+    const res=metaEvaluateSnapshot(snap);jsonComparisonFiles.push({file:f.name,result:res});added++;
+   }catch(error){toast('Ошибка '+f.name+': '+error.message,true)}
+  }
+  if(added)toast('Загружено расчётов: '+jsonComparisonFiles.length);
+  if(view==='compareFiles')render();
+ })();
+},true);
+document.addEventListener('click',event=>{
+ const btn=event.target.closest('[data-remove-json]');if(!btn)return;
+ jsonComparisonFiles.splice(+btn.dataset.removeJson,1);render();
+},true);
+// Saved calculations open from home cards using existing load handler.
+const _inputChangeFloors=event=>{
+ const el=event.target.closest('[data-inputrow="10"],[data-inputrow="11"]');if(!el)return;
+ // Existing input change handler updates D10/D11; run this after it, ensuring calculated D12.
+ queueMicrotask(()=>{metaSyncFloors();if(view==='inputs')render()});
+};document.addEventListener('change',_inputChangeFloors);
+const workflowStyle=document.createElement('style');workflowStyle.textContent=`
+/* Main workspace and cards */
+.home-workspace,.compare-workspace{max-width:100%}.home-workspace .quickgrid.workspace-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:14px 0 26px}
+.saved-heading{margin:15px 0}.saved-project-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:13px}
+.saved-project-card{display:flex;flex-direction:column;justify-content:space-between;gap:15px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:17px;min-height:235px;overflow-wrap:anywhere}
+.saved-project-card h3{margin:9px 0 4px;font-size:18px;color:var(--ink-strong)}.saved-project-card small{color:var(--muted);font-size:11px}.saved-project-metrics{display:flex;flex-direction:column;gap:4px}.saved-project-metrics b{font-size:19px;color:var(--ink-strong)}
+/* Derived values shown immediately under input data */
+.inputscreen{height:auto;max-height:calc(100vh - var(--top) - 35px);overflow:auto;scrollbar-width:thin}
+.derived-section{margin:11px 0;padding:13px!important;min-width:0}.derived-head{display:flex;justify-content:space-between;gap:12px;align-items:start;margin-bottom:10px}.derived-head b{font-size:14px;color:var(--ink-strong)}.derived-head small{display:block;color:var(--muted);font-size:11px;line-height:1.4;margin-top:4px}
+.derived-scroll{overflow:auto;max-height:250px;border:1px solid var(--line);border-radius:9px}.derived-scroll table{border-collapse:collapse;width:100%;min-width:650px;font-size:11px;line-height:1.35}.derived-scroll th,.derived-scroll td{padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}.derived-scroll th{position:sticky;top:0;background:var(--surface2);color:var(--ink-strong);text-align:left}.derived-scroll td:first-child{width:35%}.derived-scroll td.number{width:150px;white-space:nowrap}.derived-scroll code{font-size:10px;overflow-wrap:anywhere}.derived-formula{max-width:450px;white-space:normal}.derived-formula summary{cursor:pointer;color:var(--accent);margin-top:5px}
+.height-inline-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.height-inline-controls label{display:flex;flex-direction:column;gap:3px;min-width:0}.height-inline-controls label span{font-size:11px}.height-inline-controls input{width:100%}.height-inline-controls label small{color:var(--muted);font-size:10px}
+.height-inline-results{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:12px}.height-inline-results>div{padding:9px;border-radius:8px;border:1px solid var(--line);min-width:0}.height-inline-results small{color:var(--muted);display:block;font-size:10px}.height-inline-results b{color:var(--ink-strong);font-size:14px;overflow-wrap:anywhere}.height-inline-results b.bad{color:#ef5c60}.derived-explain{font-size:11px;color:var(--muted);margin:12px 0 0;line-height:1.45}
+.auto-floors{display:flex;align-items:center;font-size:12px;color:var(--ink-strong)}
+/* Uniform navigation and module headers */
+.sidebar .unified-modules{display:flex;flex-direction:column;gap:2px;max-height:none}.sidebar .nav-group-heading{padding:8px 12px 4px;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em}.sidebar .unified-modules button{display:flex;gap:7px;align-items:center;white-space:normal;text-align:left;min-height:30px;line-height:1.35}.sidebar .unified-modules .nav-number{display:grid;place-items:center;min-width:15px;height:17px;font-size:10px;color:var(--muted);background:var(--surface2);border-radius:5px}
+.sidebar .nav-chevron{margin-left:auto}.sidebar{overflow-y:auto}.module-head{align-items:center}.module-head h1{overflow-wrap:anywhere}.module-detail{min-width:0}.module-detail .module-subhead h2{font-size:clamp(15px,2vw,19px)}
+/* Compare tables */
+.compare-workspace>.panel{margin:14px 0;padding:18px}.compare-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px}.file-comparison-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:14px 0}.file-comparison-card{display:flex;flex-direction:column;gap:8px;background:var(--surface2);padding:12px;border-radius:12px;min-width:0}.file-comparison-card small{display:block;color:var(--muted);margin:5px 0;font-size:11px}.compare-scroll{overflow:auto;max-height:52vh;border:1px solid var(--line);border-radius:10px}.compare-table{width:100%;min-width:650px;border-collapse:collapse;font-size:12px;table-layout:fixed}.compare-table th,.compare-table td{padding:9px 11px;border:1px solid var(--line);vertical-align:middle;overflow-wrap:anywhere}.compare-table th:first-child{width:220px}.compare-table thead th{background:var(--surface2);position:sticky;top:0;z-index:3}.compare-table thead th small{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:3px}.compare-table .number{text-align:right;font-variant-numeric:tabular-nums}.compare-table .number small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.compare-group-title th{text-align:left;background:var(--surface2)}.compare-delta{background:var(--accent-soft)}
+.compare-pickers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:6px 0 15px}.compare-pickers label{display:flex;flex-direction:column;gap:6px;font-size:12px}.compare-pickers .field{width:100%;min-width:0}.compare-summary{display:flex;gap:20px;padding:12px;background:var(--surface2);border-radius:11px;margin-bottom:10px}.compare-summary>div{flex:1;min-width:0}.compare-summary small{display:block;color:var(--muted);font-size:11px}.compare-summary b{display:block;font-size:18px;color:var(--ink-strong);overflow-wrap:anywhere}.compare-mode-trigger{border:0;background:var(--surface2);font:inherit;cursor:pointer;color:var(--ink);padding:9px 13px;font-weight:700}.compare-mode-trigger.chosen{background:var(--accent);color:white}.compare-workspace .compare-result-panel{max-width:100%}
+@media(max-width:780px){.home-workspace .quickgrid.workspace-actions{grid-template-columns:1fr}.height-inline-controls{grid-template-columns:repeat(2,minmax(0,1fr))}.height-inline-results{grid-template-columns:repeat(2,minmax(0,1fr))}.compare-pickers{grid-template-columns:1fr}.compare-summary{flex-direction:column;gap:8px}.sidebar.mobile-expanded .unified-modules{display:flex!important}.sidebar.mobile-expanded .nav-group-heading{display:block!important}}
+@media(max-width:450px){.derived-section{padding:10px!important}.home-workspace{padding-bottom:30px}}
+`;
+document.head.appendChild(workflowStyle);
+render();
+
+
+/* Final presentation safeguard: no notes inside calculation modules, no background text collisions. */
+const __metaModuleBeforePresentation=moduleScreen;
+moduleScreen=function(){return __metaModuleBeforePresentation().replace(/<button\b[^>]*data-todo-open="[^"]*"[^>]*>[\s\S]*?<\/button>/g,'')};
+const __metaPolish=document.createElement('style');
+__metaPolish.textContent=`
+body::before,body::after{display:none!important}
+body.inputs-mode .inputscreen{overflow-y:auto!important;overflow-x:hidden!important;max-height:calc(100vh - var(--top) - 18px)!important}
+body.inputs-mode .inputscreen>.panel.sheet-panel{flex:0 0 auto!important;height:auto!important;min-height:0!important;max-height:none!important}
+body.inputs-mode .inputscreen .derived-section{flex-shrink:0}
+body.inputs-mode .inputscreen .derived-scroll{max-height:220px}
+.compare-workspace .file-comparison-card{align-items:stretch}
+.sidebar .unified-modules button{overflow-wrap:anywhere}
+`;
+document.head.appendChild(__metaPolish);
+render();
+
+// Calculation modes are mutually exclusive visually; the comparison selector
+// intentionally permits editing the class for its Average-side calculation.
+const __metaCompareBase=metaResultsCompare;
+metaResultsCompare=function(){
+ let markup=__metaCompareBase();
+ markup=markup.replace(/(<select\b[^>]*data-cost-class)[^>]*>/,(_,a)=>a+'>');
+ return markup;
+};
+const __metaLastStyle=document.createElement('style');__metaLastStyle.textContent=`
+.comparison-results .cost-mode-buttons button.chosen:not(.compare-mode-trigger){background:var(--surface2)!important;color:var(--ink)!important}
+.comparison-results .compare-mode-trigger.chosen{background:var(--accent)!important;color:#fff!important}
+.home-workspace .workspace-actions button strong{color:var(--ink-strong)!important;opacity:1!important}
+.home-workspace .workspace-actions button span{color:var(--ink)!important;opacity:.9!important}
+`;
+document.head.appendChild(__metaLastStyle);
+render();
 </script></body></html>
