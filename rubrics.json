@@ -56,7 +56,7 @@
         {
           "id": "above-ground-parking",
           "name": "04 · Надземный паркинг",
-          "url": "/meta/#massing",
+          "url": "/tools/meta-parking/",
           "primary": false,
           "status": "verified",
           "archived": false
