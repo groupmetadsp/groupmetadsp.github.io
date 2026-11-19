@@ -84,6 +84,14 @@
           "primary": false,
           "status": "verified",
           "archived": false
+        },
+        {
+          "id": "masonry-sp15",
+          "name": "09 · Калькулятор гибкости кладки по СП 15",
+          "url": "/tools/masonry-sp15/",
+          "primary": false,
+          "status": "",
+          "archived": false
         }
       ]
     },
