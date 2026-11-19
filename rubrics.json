@@ -111,7 +111,22 @@
     }
   ],
   "projects": [],
-  "analytics": [],
+  "analytics": [
+    {
+      "id": "annual-report",
+      "name": "Годовой отчёт",
+      "materials": [
+        {
+          "id": "annual-report-2026",
+          "name": "Годовой отчёт",
+          "url": "/analytics/annual-report-2026.html",
+          "primary": true,
+          "status": "verified",
+          "archived": false
+        }
+      ]
+    }
+  ],
   "knowledge": [
     {
       "id": "sub-mwlm8sy5-f74093",
