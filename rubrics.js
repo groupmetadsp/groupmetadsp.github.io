@@ -239,8 +239,19 @@ function materialBadges(t){
   return html+'</div>';
 }
 const originalNav=navMarkup;
+function materialCount(rubric){
+  return mergedSections(rubric).reduce((sum,s)=>sum+(Array.isArray(s.materials)?s.materials.length:0),0);
+}
+const navCountStyle=document.createElement('style');
+navCountStyle.textContent='.sidebar .nav .rubric-count{margin-left:auto;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;min-width:25px;height:22px;padding:0 6px;border:1px solid var(--line);border-radius:7px;background:var(--surface2);font-size:11px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}.sidebar .nav button.active .rubric-count{color:var(--accent);border-color:var(--accent)}.sidebar .nav .rubric-nav-item .rubric-count{margin-left:auto;font-size:10px;min-width:22px;height:20px}.sidebar .nav .rubric-nav-item .rubric-name{flex:1;min-width:0;overflow-wrap:anywhere}@media(max-width:850px){.sidebar .nav .rubric-count{min-width:22px;padding:0 4px}}';
+document.head.appendChild(navCountStyle);
 navMarkup=function(){
-  if(!isRubric(current))return originalNav();
+  if(!isRubric(current)){
+    return sections.map(s=>
+      '<button data-go="'+s.id+'" class="'+(current===s.id?'active':'')+'" '+(current===s.id?'aria-current="page"':'')+'>'
+      +icon(s.icon)+'<span>'+s.name+'</span><small class="rubric-count" aria-label="Материалов: '+materialCount(s.id)+'">'+materialCount(s.id)+'</small></button>'
+    ).join('');
+  }
   const rubric=current;
   const active=pick(rubric);
   const rows=mergedSections(rubric).map(s=>{
@@ -249,7 +260,7 @@ navMarkup=function(){
     return '<div class="rubric-nav-row rubric-sortable" data-sort-id="'+s.id+'" data-sort-kind="subsections">'
       +'<button type="button" class="rubric-drag-handle" data-drag-handle="subsections" title="Перетащить подраздел для изменения порядка" aria-label="Перетащить подраздел «'+name+'». Стрелки вверх и вниз меняют порядок">'+gripIcon()+'</button>'
       +'<button type="button" data-subsection="'+s.id+'" class="rubric-nav-item '+activeClass+'" '+(activeClass?'aria-current="page"':'')+' title="'+name+'">'
-        +icon('archive')+'<span>'+name+'</span>'
+        +icon('archive')+'<span class="rubric-name">'+name+'</span><small class="rubric-count" aria-label="Материалов: '+s.materials.length+'">'+s.materials.length+'</small>'
       +'</button>'
       +'<button type="button" class="rubric-nav-edit" data-edit-subsection="'+s.id+'" title="Редактировать подраздел" aria-label="Редактировать '+name+'">'
         +icon('pencil')+'</button>'
