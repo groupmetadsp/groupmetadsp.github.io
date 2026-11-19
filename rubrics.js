@@ -275,6 +275,69 @@ const toolDescriptions={
   'massing-platforms':'Переход к версиям LITE и FULL для массинга.',
   'masonry-sp15':'Проверка гибкости кирпичных стен и перегородок по СП 15.13330.2020.'
 };
+// Date shown on cards is the last GitHub commit touching the linked SITE FILE.
+// External resources (Google Docs etc.) do not have a reliable GitHub file date.
+const GITHUB_DATE_OVERRIDES={
+  'apartment-catalog':'meta/catalog/index.html',
+  'floor-configurator':'meta/configurator.html',
+  'meta-massing':'meta/massing.html',
+  'above-ground-parking':'meta/massing.html',
+  'mat-mwkgx76m-m08whg':'metakorobka.html'
+};
+const githubDateRequests=new Map();
+function githubMaterialPath(t){
+  if(!t||!t.url)return '';
+  if(GITHUB_DATE_OVERRIDES[t.id])return GITHUB_DATE_OVERRIDES[t.id];
+  try{
+    const url=new URL(t.url,location.origin);
+    if(url.origin!==location.origin)return '';
+    let pathname=decodeURIComponent(url.pathname).replace(/^\/+/, '');
+    if(pathname.startsWith('meta/') && (url.hash==='#configurator'||url.hash==='#catalog'||url.hash==='#massing')){
+      return {'#configurator':'meta/configurator.html','#catalog':'meta/catalog/index.html','#massing':'meta/massing.html'}[url.hash];
+    }
+    if(pathname.endsWith('/'))pathname+='index.html';
+    if(!/^[\w\-./]+$/.test(pathname)||pathname.includes('..'))return '';
+    return pathname;
+  }catch(e){return '';}
+}
+function githubDateText(raw){
+  const d=new Date(raw);
+  return Number.isFinite(d.getTime())?new Intl.DateTimeFormat('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'Europe/Moscow'}).format(d):null;
+}
+async function latestGithubFileDate(path){
+  if(githubDateRequests.has(path))return githubDateRequests.get(path);
+  const promise=(async()=>{
+    const key='platform-file-updated-v1:'+path;
+    try{
+      const cached=JSON.parse(sessionStorage.getItem(key)||'null');
+      if(cached&&Date.now()-cached.ts<3600000)return cached.date;
+    }catch(e){}
+    try{
+      const response=await fetch('https://api.github.com/repos/groupmetadsp/groupmetadsp.github.io/commits?path='+encodeURIComponent(path)+'&per_page=1',{headers:{Accept:'application/vnd.github+json'}});
+      if(!response.ok)return null;
+      const commits=await response.json(),raw=commits?.[0]?.commit?.committer?.date||commits?.[0]?.commit?.author?.date;
+      const date=githubDateText(raw);
+      if(date){try{sessionStorage.setItem(key,JSON.stringify({date,ts:Date.now()}));}catch(e){}}
+      return date;
+    }catch(e){return null;}
+  })();
+  githubDateRequests.set(path,promise);
+  return promise;
+}
+function refreshMaterialDates(){
+  document.querySelectorAll('.rubric-updated[data-github-file]').forEach(node=>{
+    const path=node.dataset.githubFile;
+    if(!path)return;
+    latestGithubFileDate(path).then(date=>{
+      if(!node.isConnected)return;
+      if(date){node.textContent='Обновлено: '+date;node.title='Дата последнего изменения файла в GitHub';}
+      else{node.textContent='Обновлено: нет данных';node.title='Не удалось получить дату последнего изменения из GitHub';}
+    });
+  });
+}
+const dateStyle=document.createElement('style');
+dateStyle.textContent='.rubric-material-card .rubric-updated{font-size:11px;line-height:1.4;color:var(--muted);margin:7px 0 9px;font-variant-numeric:tabular-nums}';
+document.head.appendChild(dateStyle);
 function renderRubric(rubric){
   const section=sectionInfo(rubric);
   const selected=pick(rubric);
@@ -289,6 +352,7 @@ function renderRubric(rubric){
       const name=esc(t.name);
       const hasLink=!!validUrl(t.url);
       const main=t.primary===true;
+      const githubFile=githubMaterialPath(t);
       return '<article class="tool-card rubric-material-card rubric-sortable'+(main?' is-primary':'')+(hasLink?' is-linked':'')+'" data-sort-id="'+t.id+'" data-sort-kind="materials"'+(hasLink?' data-open-material="'+t.id+'" role="link" tabindex="0"':'')+'>'
         +'<div class="tool-card-top"><h2>'+name+'</h2>'
           +'<div class="material-card-head-actions">'+materialBadges(t)
@@ -298,6 +362,7 @@ function renderRubric(rubric){
         +'<div class="tool-state"><span class="dot"></span>'
            +(hasLink?'Ссылка подключена':'Ссылка пока не назначена')
         +'</div>'
+        +(githubFile?'<div class="rubric-updated" data-github-file="'+esc(githubFile)+'">Обновлено: …</div>':'')
         +'<div class="tool-card-actions">'
         +'<button type="button" class="tool-open" data-open-material="'+t.id+'">'+(hasLink?'Открыть':'Назначить ссылку')+'</button>'
         +'<button type="button" class="tool-edit" data-edit-material="'+t.id+'" title="Редактировать материал" aria-label="Редактировать '+name+'">'+icon('pencil')+'</button>'
@@ -334,6 +399,7 @@ renderSection=function(section){
 const originalRender=render;
 render=function(){
   originalRender();
+  if(isRubric(current))refreshMaterialDates();
   const label=document.querySelector('.side-label');
   if(label)label.textContent=isRubric(current)?'Подразделы · '+sectionInfo(current).name:'Разделы';
 };
