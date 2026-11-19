@@ -125,6 +125,20 @@
           "archived": false
         }
       ]
+    },
+    {
+      "id": "analytics-2025",
+      "name": "Аналитика 2025",
+      "materials": [
+        {
+          "id": "analytics-2025-findings",
+          "name": "Аналитика 2025",
+          "url": "/analytics/analytics-2025.html",
+          "primary": true,
+          "status": "",
+          "archived": false
+        }
+      ]
     }
   ],
   "knowledge": [
