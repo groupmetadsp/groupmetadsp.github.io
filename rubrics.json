@@ -177,6 +177,20 @@
           "archived": false
         }
       ]
+    },
+    {
+      "id": "sub-design-principles",
+      "name": "Принципы проектирования",
+      "materials": [
+        {
+          "id": "apartment-engineering-principles",
+          "name": "Принципы проектирования инженерных конструкций квартир",
+          "url": "/standards/apartment-engineering-principles/",
+          "primary": true,
+          "status": "verified",
+          "archived": false
+        }
+      ]
     }
   ],
   "development": []
