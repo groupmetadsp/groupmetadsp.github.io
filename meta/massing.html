@@ -4257,7 +4257,7 @@ const form=(prefix,o)=>{
   geometryFields+
  '<label><input id="'+prefix+'commercial" type="checkbox" '+(o?.groundFloorUse==='commercial'?'checked':'')+'> Первый этаж — коммерция</label>'+
  '<p class="note">Т: 1Л 1–10, 2Л 11–19, 3Л 20–26. Н: 3Л 11–19, 4Л 20–26. О: 3Л 20–26. Г: 3Л 20–26, две длины и две ширины.</p>'+
- '<div id="'+prefix+'error" style="color:#b22"></div><button class="btn primary" id="'+prefix+'apply">'+(o?'Применить к секции':'Добавить секцию')+'</button>'+
+ '<div id="'+prefix+'error" style="color:#b22"></div><div id="'+prefix+'areaNotice" class="note" style="margin:8px 0 12px;line-height:1.5"></div><button class="btn primary" id="'+prefix+'apply">'+(o?'Применить к секции':'Добавить секцию')+'</button>'+
  (q?'<p class="note">Площадь определяется геометрией квартала. Ширина и границы меняются ручками квартала. Наклонные углы допускаются только у угловых секций.</p>':'<p class="note">Применение задаёт прямоугольный габарит по площади. После растягивания на плане ТЭП пересчитываются от геометрии.</p>');
 };
 function wire(pre,o){
@@ -4270,6 +4270,28 @@ function wire(pre,o){
   byField('lift').textContent=(l?l+'Л':'Нет подходящих лифтов')+(x.surrounding?' · Окружающая застройка':' · КЭП '+fmt((x.kep||p.kep)*100,1)+'%');
   byField('error').style.color=Math.abs(n-Math.round(n))>.100000001?'#b22':'#567';
   byField('error').textContent=x.surrounding?'Не учитывается в ТЭП':Math.abs(n-Math.round(n))>.100000001?'Квартир на этаже: '+fmt(n,1)+' — вне допуска 0,1. Ближайшая средняя: '+fmt(sale/Math.max(1,Math.round(n)),1)+' м² ('+Math.max(1,Math.round(n))+' квартир).':'Квартир на этаже: '+fmt(n,1)+' ≈ '+Math.round(n)+'. Погрешность до 0,1 допустима.';
+  const areaNotice=byField('areaNotice');
+  if(areaNotice){
+   // Display the real computed apartment area without altering the TEP calculations.
+   const activeKep=Number.isFinite(x.kep)&&x.kep>0&&x.kep<=1?x.kep:(Number(o?.manualKep)>0?Number(o.manualKep):p.kep);
+   let structural=NaN;
+   if(x.type==='Г'&&[x.leg1,x.leg2,x.width1,x.width2].every(Number.isFinite))
+    structural=insetArea(lShapePoints(x.width1,x.leg1,x.leg2,x.width2));
+   else if(o&&o.qParent&&Array.isArray(o.points)&&o.points.length>=3)
+    structural=insetArea(o.points);
+   else if(o&&Number.isFinite(x.length)&&x.length>0&&Number.isFinite(x.width)&&x.width>0)
+    structural=x.length*x.width;
+   else if(o&&Number.isFinite(o.w)&&Number.isFinite(o.h))
+    structural=Math.max(0,o.w-.4)*Math.max(0,o.h-.4);
+   const actual=structural*activeKep,desired=x.sale;
+   if(!x.surrounding&&Number.isFinite(actual)&&actual>0&&Number.isFinite(activeKep)&&x.avg>0){
+    const diff=actual-desired;
+    const mismatch=x.type!=='Г'&&Number.isFinite(diff)&&Math.abs(diff)>=.1;
+    areaNotice.style.color=mismatch?'#b22':'#567';
+    areaNotice.textContent='При заданных габаритах, КЭП '+fmt(activeKep*100,2)+'% и средней площади квартиры '+fmt(x.avg,1)+' м² расчётная площадь квартир на этаже — '+fmt(actual,1)+' м² (≈ '+fmt(actual/x.avg,1)+' квартиры).'+(mismatch?' Это отличается от введённой площади '+fmt(desired,1)+' м² на '+fmt(Math.abs(diff),1)+' м².':'');
+    areaNotice.style.display='';
+   }else{areaNotice.textContent='';areaNotice.style.display='none';}
+  }
  };
  ['type','floors','avg','sale','width','length','kep','commercial','stage','surrounding','leg1','leg2','width1','width2'].forEach(k=>byField(k)?.addEventListener('input',update));
  if(o&&byField('surrounding'))byField('surrounding').addEventListener('change',()=>{checkpoint();o.surrounding=byField('surrounding').checked;renderAll();});
