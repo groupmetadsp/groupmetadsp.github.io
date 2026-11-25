@@ -1,0 +1,1141 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ОФС · Конструктор структуры — версия 10</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#10171b;color:#eef1eb;font:14px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--lime:#caed92;--blue:#9acbf7;--border:#384348;--dim:#afbab9;color-scheme:dark}header,main,footer{max-width:1550px;margin:auto}header{padding:22px 3vw;display:flex;align-items:center;gap:13px;border-bottom:1px solid var(--border)}.brand{background:var(--lime);color:#192516;border-radius:8px;padding:6px 9px;font-weight:850;letter-spacing:-1px}h1,h2,h3,p{margin:0}h1{font-size:clamp(19px,2.4vw,30px);letter-spacing:-.04em}.actions{margin-left:auto;display:flex;gap:7px}button,input,textarea,select{font:inherit}button{cursor:pointer;border:1px solid var(--border);border-radius:7px;background:#202a2e;color:inherit;padding:7px 11px}button:hover{border-color:#96ac99}button:focus-visible,summary:focus-visible{outline:2px solid var(--lime)}.accent{background:var(--lime);color:#162315;border-color:transparent;font-weight:650}main{padding:22px 3vw}.layout{display:grid;grid-template-columns:265px minmax(0,1fr);border:1px solid var(--border);border-radius:13px;overflow:hidden;background:#192125}aside{padding:19px;border-right:1px solid var(--border)}h2{font-size:18px;letter-spacing:-.03em}.muted,small{color:var(--dim)}aside p{font-size:13px;margin:6px 0 15px}.buttons{display:flex;gap:6px;flex-wrap:wrap}.group{margin-top:22px}h3{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}.entry{display:flex;align-items:center;gap:4px;margin-bottom:6px;border:1px solid var(--border);border-radius:6px;background:#222d31;padding:3px}.entry button{border:0;background:transparent}.entry .pick{flex:1;text-align:left;cursor:grab;overflow-wrap:anywhere}.entry.active{outline:2px solid var(--lime)}.typeDot{display:inline-block;width:9px;height:9px;margin-right:8px;background:var(--blue);border-radius:2px}.roleDot{background:var(--lime);transform:rotate(45deg);border-radius:1px}.bar,.status{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 15px}.bar{border-bottom:1px solid var(--border)}.bar small{margin-left:auto}.status{border-top:1px solid var(--border);font-size:12px;color:var(--dim);min-height:49px}.status button{margin-left:auto;font-size:12px}.viewport{height:485px;overflow:hidden;background-color:#141c20;background-image:radial-gradient(#354246 1px, transparent 1px);background-size:18px 18px;overscroll-behavior:contain}.world{position:relative;isolation:isolate}.world svg{position:absolute;inset:0;overflow:visible;pointer-events:none}.wire{pointer-events:stroke;cursor:pointer}.wire:hover,.wire:focus-visible{stroke:#ffffff33;stroke-width:13;outline:none}.card{position:absolute;width:196px;height:103px;background:#202d33;border:1px solid #4f6671;border-left:3px solid var(--blue);border-radius:8px;text-align:left;padding:8px 12px;box-shadow:0 4px 10px #0002;touch-action:none;cursor:grab;user-select:none}.card.role{border-color:#536345;border-left-color:var(--lime);background:#262e27}.card.sel{outline:2px solid var(--lime);outline-offset:3px}.card small{font-size:10px;display:block;color:var(--blue)}.card.role small{color:var(--lime)}.card strong,.card span,.card em{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.card strong{font-size:15px;line-height:1.7}.card em{font-style:normal;color:#c6cfcb;font-size:12px}.card span{color:var(--dim);font-size:11px;margin-top:4px}.editcard{position:absolute;top:2px;right:3px;border:0;background:transparent;padding:4px 7px;font-size:14px}/* Назначенные роли — текст непосредственно на карточке должности */
+.role-notes{margin-top:5px;padding-top:4px;border-top:1px dotted rgba(202,237,146,.38)}
+.role-note{display:block;width:100%;margin:1px 0;padding:1px 0;border:0;background:transparent;text-align:left;white-space:normal;overflow-wrap:anywhere;color:#d5e9b6;font-size:10.5px;line-height:1.35;cursor:pointer}
+.role-note::before{content:'◆';display:inline-block;margin-right:5px;color:#caed92;font-size:8px}
+.role-note:hover,.role-note:focus-visible{color:#f2ffd8;text-decoration:underline;outline:none}
+.card.with-roles{overflow:visible}
+.guide{margin-top:20px;border:1px solid var(--border);border-radius:10px;padding:14px 18px}.guide summary{font-weight:650;cursor:pointer}.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:16px}.legend p{font-size:13px;color:var(--dim);margin-top:4px}.line{display:inline-block;width:23px;vertical-align:middle;margin-right:6px;border-top:3px solid}.guide>p{margin-top:12px}footer{padding:0 3vw 18px;color:var(--dim);font-size:12px}dialog{border:1px solid #49575a;border-radius:12px;background:#1c262b;color:#f4f6f0;width:min(450px,94vw);padding:23px}dialog::backdrop{background:#05090caa}label{display:block;margin-top:13px;font-size:13px;color:#d4dfd7}input,textarea,select{width:100%;background:#11191d;border:1px solid #53616a;color:white;border-radius:6px;padding:8px;margin-top:4px}textarea{resize:vertical}.end{display:flex;gap:7px;justify-content:flex-end;margin-top:19px}.danger{margin-right:auto;color:#f8b7ae}.note{font-size:12px;color:var(--dim);margin-top:7px}
+@media(max-width:760px){header{flex-wrap:wrap;padding:13px}.actions{margin-left:0}main{padding:12px}.layout{display:block}aside{padding:12px;border-right:0;border-bottom:1px solid var(--border)}aside p{margin-bottom:8px}.group{margin-top:9px}.group h3{display:none}.items{display:flex;gap:5px;overflow:auto}.entry{flex:none;max-width:230px}.viewport{height:440px}.bar small{margin-left:0}.status{display:block}.status button{margin-left:7px}.guide{margin-top:12px}}
+.unitDot{background:#f5bd85}.card.unit{border-color:#816448;border-left-color:#f5bd85;background:#302b25}.card.unit small{color:#f5bd85}.tablewrap{overflow-x:auto;margin-top:12px}.tablewrap table{width:100%;min-width:620px;border-collapse:collapse;text-align:left}.tablewrap td,.tablewrap th{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}.tablewrap thead{background:#243037}.tablewrap th{font-weight:600}.tablewrap td{color:#c8d3d0}.tablewrap .line{width:14px}#edgeCount{color:var(--dim)}
+html:not(.interactive) .actions,html:not(.interactive) aside .buttons,html:not(.interactive) .bar button,html:not(.interactive) .status,html:not(.interactive) aside>p,html:not(.interactive) .entry button:last-child,html:not(.interactive) .editcard,html:not(.interactive) footer,html:not(.interactive) dialog{display:none}
+html:not(.interactive) .card,html:not(.interactive) .entry button{cursor:default}
+.preview-message{padding:10px 3vw;background:#243239;color:#d9e6e0}.interactive .preview-message{display:none}
+.actions{flex-wrap:wrap}
+input[type=checkbox]{width:18px;height:18px;margin:0;accent-color:var(--lime)}[hidden]{display:none!important}.checkrow{display:flex;align-items:center;gap:8px}.picknote{margin:4px 0 7px 26px;color:var(--dim);font-size:12px}.editerr{color:#ffd39e;margin-top:8px}.tablewrap td button{margin:2px}.readonly-action{display:none}.interactive .readonly-action{display:inline-block}dialog{max-height:88vh;overflow:auto}
+#extent{position:relative;width:100%;height:100%;overflow:visible}.world{position:absolute;left:0;top:0;transform-origin:0 0}.zoomtools{display:flex;align-items:center;gap:3px}.zoomtools button{min-height:36px}.zoomtools #actual{min-width:60px;font-variant-numeric:tabular-nums}.zoomtools button:disabled{opacity:.4}.zoomtools #fitAll{margin-left:5px}html:not(.interactive) .zoomtools{display:none}
+.edge-tag{pointer-events:all;cursor:pointer}.edge-tag:hover rect,.edge-tag:focus rect{stroke-width:2;fill:#303b40}html.interactive .viewport{cursor:grab;touch-action:none;user-select:none}.viewport.panning{cursor:grabbing}html:not(.interactive) #world{position:relative!important;left:0!important;top:0!important;transform:none!important}html:not(.interactive) #extent{width:auto!important;height:auto!important;overflow:visible}html:not(.interactive) .viewport{overflow:auto}.teamDot{background:#84daca}.card.team{border-color:#507e78;border-left-color:#84daca;background:#213330}.card.team small{color:#84daca}.team-area{position:absolute;min-width:280px;min-height:140px;border:2px dashed rgba(132,218,202,.72);border-radius:14px;background:repeating-linear-gradient(135deg,rgba(132,218,202,.045) 0 8px,rgba(132,218,202,.012) 8px 16px);box-shadow:inset 0 0 0 1px rgba(132,218,202,.12),0 2px 8px #0001;touch-action:none;user-select:none;cursor:grab;padding:16px 18px 18px;overflow:visible}.team-area.sel{outline:2px solid var(--lime);outline-offset:4px}.team-area:active{cursor:grabbing}.team-area small{display:block;color:#84daca;font-size:11px;letter-spacing:.02em;text-transform:uppercase}.team-area strong{display:block;margin-top:4px;font-size:18px;line-height:1.3;color:#eef6f2}.team-area span{display:block;margin-top:6px;color:#d4e1dc;font-size:12px;max-width:min(100%,520px)}.team-area .editcard{position:absolute;top:6px;right:7px;border:0;background:transparent;padding:4px 7px;font-size:14px}.team-area .resize-handle{position:absolute;width:16px;height:16px;border-radius:50%;background:#d8f1eb;border:2px solid #1a2b2a;box-shadow:0 0 0 1px #4c6765;pointer-events:auto}.team-area .resize-handle.nw{left:-9px;top:-9px;cursor:nwse-resize}.team-area .resize-handle.ne{right:-9px;top:-9px;cursor:nesw-resize}.team-area .resize-handle.sw{left:-9px;bottom:-9px;cursor:nesw-resize}.team-area .resize-handle.se{right:-9px;bottom:-9px;cursor:nwse-resize}.externalDot{background:#efa7b4}.card.external{border-color:#985d70;border-left-color:#efa7b4;background:#32262c}.card.external small{color:#efa7b4}#schemePanel.expanded{position:fixed;inset:0;z-index:1000;width:100%;height:100%;height:100dvh;display:flex;flex-direction:column;background:#192125;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+#schemePanel.expanded .viewport{flex:1 1 0;min-height:0;height:auto}#schemePanel.expanded .bar,#schemePanel.expanded .zoomtools{flex-wrap:wrap}
+html.scheme-expanded,html.scheme-expanded body{overflow:hidden}
+/* Пять независимых направляющих — части организации по Минцбергу. */
+#mintzbergGuides{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:visible}
+#lines{z-index:1}
+#lines.connection-focused .connection-visual{opacity:.14;transition:opacity .12s ease}
+#lines.connection-focused .connection-current{opacity:1;stroke-width:3.8;filter:drop-shadow(0 0 2px rgba(255,255,255,.3))}
+#nodes .card.job.connections-hovered{outline:2px solid rgba(202,237,146,.95);outline-offset:3px;box-shadow:0 0 0 1px #0d1b16,0 0 16px rgba(202,237,146,.15)}
+#nodes .team-area{z-index:0}#nodes .card{z-index:3}
+.mintz-line{position:absolute;height:22px;cursor:grab;pointer-events:auto;touch-action:none;user-select:none;overflow:visible}
+.mintz-line:active{cursor:grabbing}
+.mintz-line:before{content:"";position:absolute;left:0;right:0;top:10px;border-top:2px dashed rgba(207,219,219,.65)}
+.mintz-line.secondary:before{border-color:rgba(131,199,202,.75);border-top-style:dotted}
+.mintz-line:hover:before,.mintz-line:focus-visible:before{border-top-color:var(--lime)}
+.mintz-label{position:absolute;bottom:19px;left:12px;color:#d9e6e4;background:#1c282c;border:1px solid #4a5b5d;border-radius:5px;padding:3px 8px;white-space:nowrap;font-size:12px;font-weight:600;box-shadow:0 2px 5px #0004;cursor:grab}
+.mintz-line.secondary .mintz-label{color:#a8dedc;border-color:#426769}
+.mintz-line:hover .mintz-label,.mintz-line:focus-visible .mintz-label{border-color:var(--lime)}
+.mintz-handle{position:absolute;top:3px;width:15px;height:15px;border-radius:50%;background:#bacaca;border:2px solid #182327;cursor:ew-resize;box-shadow:0 0 0 1px #4c6567}
+.mintz-handle.start{left:-8px}.mintz-handle.end{right:-8px}
+.mintz-line:focus-visible{outline:2px solid var(--lime);outline-offset:4px}
+/* Боковые части организации: две вертикальные направляющие с вертикальными подписями. */
+.mintz-line.vertical{width:22px;height:auto}
+.mintz-line.vertical:before{left:10px;right:auto;top:0;bottom:0;border:0;border-left:2px dotted rgba(131,199,202,.75)}
+.mintz-line.vertical:hover:before,.mintz-line.vertical:focus-visible:before{border-left-color:var(--lime)}
+.mintz-line.vertical .mintz-label{left:26px;top:12px;bottom:auto;writing-mode:vertical-rl;text-orientation:mixed;line-height:1.1;padding:8px 5px}
+.mintz-line.vertical .mintz-handle{left:3px;right:auto;top:-8px;cursor:ns-resize}
+.mintz-line.vertical .mintz-handle.end{top:auto;bottom:-8px;right:auto}
+html:not(.interactive) .mintz-line{cursor:default;pointer-events:none}
+html:not(.interactive) .mintz-handle{display:none}
+.mintz-shortcuts{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 7px}
+.mintz-shortcuts button{font-size:12px;padding:5px 8px}
+
+/* Аннотация ОФС: автономный документ, сохраняемый вместе со схемой и JSON */
+#annotationDlg{width:min(1040px,96vw);max-width:1040px;height:min(90dvh,920px);max-height:90dvh;padding:0;overflow:hidden;border:1px solid #526265;border-radius:12px;background:#182126;color:#ecf1ed}
+#annotationDlg[open]{display:flex;flex-direction:column}
+#annotationDlg::backdrop{background:rgba(3,8,11,.80)}
+.annotation-head{padding:17px 24px;display:flex;gap:14px;align-items:center;justify-content:space-between;border-bottom:1px solid #405055;background:#222e33}
+.annotation-head h2{font-size:21px;letter-spacing:-.02em}
+.annotation-head p{font-size:12px;color:#b6c4c3;margin-top:4px}
+.annotation-head-controls{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.annotation-body{flex:1;min-height:0;overflow-y:auto;padding:28px 36px;scrollbar-color:#5e7171 transparent}
+.annotation-doc{max-width:860px;margin:0 auto;color:#dce6e3;font-size:14px;line-height:1.7;user-select:text}
+.annotation-doc h1{font-size:26px;color:#f5f7f0;margin:0 0 22px;line-height:1.3}
+.annotation-doc h2{font-size:20px;color:#e8f4da;margin:34px 0 12px;padding-bottom:7px;border-bottom:1px solid #485952}
+.annotation-doc h3{font-size:16px;color:#d1e3ee;margin:25px 0 9px}
+.annotation-doc p{margin:0 0 14px;line-height:1.72}
+.annotation-doc strong{color:#f4f9ee}
+.annotation-doc ul{margin:4px 0 17px 24px;padding:0}
+.annotation-doc li{margin:4px 0;padding-left:2px}
+.annotation-tablewrap{overflow-x:auto;margin:13px 0 22px;border:1px solid #394c51;border-radius:9px}
+.annotation-doc table{border-collapse:collapse;width:100%;font-size:12.5px;text-align:left;min-width:550px}
+.annotation-doc th{background:#2a393d;color:#f1f4f0;font-weight:650}
+.annotation-doc td,.annotation-doc th{padding:10px 12px;border-bottom:1px solid #37474a;border-right:1px solid #354447;vertical-align:top;line-height:1.5}
+.annotation-doc tbody tr:last-child td{border-bottom:0}
+.annotation-doc td:last-child,.annotation-doc th:last-child{border-right:0}
+#annotationEditor{display:block;width:100%;height:100%;min-height:55vh;padding:20px;background:#101a20;color:#edf2ed;border:1px solid #44585e;border-radius:7px;resize:vertical;font:13px/1.5 Consolas,monospace;white-space:pre-wrap}
+.annotation-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 24px;border-top:1px solid #405055;background:#222e33}
+.annotation-foot .annotation-hint{font-size:11px;color:#aabcbd}
+.annotation-edit-actions{display:flex;gap:7px}
+@media(max-width:720px){.annotation-head{padding:12px;flex-direction:column;align-items:stretch}.annotation-body{padding:16px}.annotation-foot{padding:10px 12px}.annotation-doc h1{font-size:21px}.annotation-doc h2{font-size:17px}}
+
+/* Темы конструктора ОФС · переключение без потери структуры/связей */
+html{--theme-bg:#10171b;--theme-text:#eef1eb;--theme-panel:#192125;--theme-panel-secondary:#202a2e;--theme-panel-tertiary:#222d31;--theme-button:#202a2e;--theme-field:#11191d;--theme-canvas:#141c20;--theme-grid:#354246;--theme-card:#202d33;--theme-unit:#302b25;--theme-role:#262e27;--theme-external:#32262c;--theme-subtext:#c6cfcb;--theme-muted:#afbab9;--theme-outline:#4f6671;--theme-accent:#caed92;--theme-blue:#9acbf7;--theme-border:#384348;--theme-dialog:#1c262b;--theme-annotation:#182126;--theme-doc:#dce6e3;--theme-heading:#e8f4da;--theme-tablehead:#2a393d;--theme-team-hatch:rgba(132,218,202,.045);--theme-team-border:rgba(132,218,202,.72);--theme-team-ink:#84daca;--theme-role-ink:#d5e9b6;--theme-role-rule:rgba(202,237,146,.38);--theme-highlight:#caed92;--theme-mintz:rgba(207,219,219,.65);--theme-mintz-side:rgba(131,199,202,.75);--theme-text-on-accent:#162315;color-scheme:dark}
+html[data-theme="light"]{--theme-bg:#f4f7fa;--theme-text:#1e2e39;--theme-panel:#fff;--theme-panel-secondary:#eaf1f6;--theme-panel-tertiary:#f1f5f8;--theme-button:#eaf1f6;--theme-field:#fff;--theme-canvas:#eff5f9;--theme-grid:#ccd8e1;--theme-card:#fff;--theme-unit:#fdf6ea;--theme-role:#f0f6ea;--theme-external:#fbf0f3;--theme-subtext:#4a5f69;--theme-muted:#536a79;--theme-outline:#7295ac;--theme-accent:#267953;--theme-blue:#236b9b;--theme-border:#bdced8;--theme-dialog:#fff;--theme-annotation:#fff;--theme-doc:#293d49;--theme-heading:#285a51;--theme-tablehead:#e5eef3;--theme-team-hatch:rgba(49,133,131,.048);--theme-team-border:rgba(37,135,143,.7);--theme-team-ink:#217b80;--theme-role-ink:#34603c;--theme-role-rule:rgba(47,116,58,.4);--theme-highlight:#287452;--theme-mintz:rgba(79,116,138,.68);--theme-mintz-side:rgba(38,132,136,.72);--theme-text-on-accent:#fff;color-scheme:light}
+html[data-theme="sea"]{--theme-bg:#0b1d28;--theme-text:#e9f7fa;--theme-panel:#102b36;--theme-panel-secondary:#183a45;--theme-panel-tertiary:#183540;--theme-button:#183b49;--theme-field:#0b202b;--theme-canvas:#0b2834;--theme-grid:#275062;--theme-card:#1b3946;--theme-unit:#303935;--theme-role:#253d3a;--theme-external:#3a303e;--theme-subtext:#bfd5df;--theme-muted:#a1c0c8;--theme-outline:#4e8397;--theme-accent:#81dfcd;--theme-blue:#a6d9f5;--theme-border:#355968;--theme-dialog:#142e3c;--theme-annotation:#122d39;--theme-doc:#d4edf0;--theme-heading:#b6e7db;--theme-tablehead:#1d4450;--theme-team-hatch:rgba(123,222,217,.05);--theme-team-border:rgba(117,215,212,.72);--theme-team-ink:#8cdbd8;--theme-role-ink:#c8eab7;--theme-role-rule:rgba(163,231,165,.4);--theme-highlight:#81dfcd;--theme-mintz:rgba(176,215,224,.58);--theme-mintz-side:rgba(133,211,219,.76);--theme-text-on-accent:#11352e}
+html[data-theme="forest"]{--theme-bg:#101e19;--theme-text:#eaf4eb;--theme-panel:#192b22;--theme-panel-secondary:#20362a;--theme-panel-tertiary:#20342b;--theme-button:#263d2f;--theme-field:#10251c;--theme-canvas:#12261e;--theme-grid:#315348;--theme-card:#233b31;--theme-unit:#383629;--theme-role:#2b3e2c;--theme-external:#3e3032;--theme-subtext:#c2d7c7;--theme-muted:#a9c2b1;--theme-outline:#568671;--theme-accent:#b7e68c;--theme-blue:#a2d7bf;--theme-border:#3c5c4b;--theme-dialog:#1c3026;--theme-annotation:#1a2e24;--theme-doc:#d5e9d9;--theme-heading:#d8f0c8;--theme-tablehead:#2a4637;--theme-team-hatch:rgba(142,219,174,.05);--theme-team-border:rgba(146,210,170,.72);--theme-team-ink:#a1dbc2;--theme-role-ink:#d0e6aa;--theme-role-rule:rgba(180,226,139,.4);--theme-highlight:#b7e68c;--theme-mintz:rgba(179,209,186,.65);--theme-mintz-side:rgba(153,211,169,.7);--theme-text-on-accent:#203419}
+html[data-theme="mountain"]{--theme-bg:#18212d;--theme-text:#eef3fa;--theme-panel:#202e41;--theme-panel-secondary:#283a50;--theme-panel-tertiary:#293a4d;--theme-button:#2c3f55;--theme-field:#162431;--theme-canvas:#1b2b3e;--theme-grid:#415774;--theme-card:#283d50;--theme-unit:#383843;--theme-role:#303d3b;--theme-external:#433444;--theme-subtext:#c6d5e6;--theme-muted:#a9bcce;--theme-outline:#6686a6;--theme-accent:#d7e8a4;--theme-blue:#b7d7fa;--theme-border:#425a74;--theme-dialog:#243447;--theme-annotation:#1f3043;--theme-doc:#dce5f1;--theme-heading:#cce3d9;--theme-tablehead:#30475b;--theme-team-hatch:rgba(153,193,219,.05);--theme-team-border:rgba(156,192,218,.73);--theme-team-ink:#add4e7;--theme-role-ink:#d9e9b7;--theme-role-rule:rgba(210,231,155,.4);--theme-highlight:#d7e8a4;--theme-mintz:rgba(200,213,230,.65);--theme-mintz-side:rgba(142,199,219,.78);--theme-text-on-accent:#253025}
+html[data-theme="sheregesh"]{--theme-bg:#14222b;--theme-text:#edf5f7;--theme-panel:#1c303a;--theme-panel-secondary:#29414e;--theme-panel-tertiary:#263d49;--theme-button:#2b4551;--theme-field:#172933;--theme-canvas:#152c38;--theme-grid:#3b5968;--theme-card:#29434d;--theme-unit:#403b37;--theme-role:#314237;--theme-external:#443845;--theme-subtext:#d0e0e3;--theme-muted:#afc6ca;--theme-outline:#658b9b;--theme-accent:#ead9b2;--theme-blue:#b1daea;--theme-border:#486574;--theme-dialog:#213844;--theme-annotation:#213742;--theme-doc:#e0ebef;--theme-heading:#e6e7ce;--theme-tablehead:#304c57;--theme-team-hatch:rgba(179,217,229,.05);--theme-team-border:rgba(176,211,221,.72);--theme-team-ink:#b6dce6;--theme-role-ink:#e6dec0;--theme-role-rule:rgba(232,211,163,.4);--theme-highlight:#ead9b2;--theme-mintz:rgba(200,222,229,.65);--theme-mintz-side:rgba(150,201,214,.72);--theme-text-on-accent:#31332c}
+html[data-theme] body{background:var(--theme-bg);color:var(--theme-text);--lime:var(--theme-accent);--blue:var(--theme-blue);--border:var(--theme-border);--dim:var(--theme-muted)}
+html[data-theme] .brand,html[data-theme] button.accent{background:var(--theme-accent);color:var(--theme-text-on-accent)}
+html[data-theme] .layout,html[data-theme] #schemePanel.expanded{background:var(--theme-panel)}
+html[data-theme] .viewport{background-color:var(--theme-canvas);background-image:radial-gradient(var(--theme-grid) 1px,transparent 1px)}
+html[data-theme] button:not(.accent):not(.role-note):not(.role-badge):not(.editcard),html[data-theme] .entry,html[data-theme] .entry .pick{background:var(--theme-button);color:var(--theme-text)}
+html[data-theme] .entry button{background:transparent!important}
+html[data-theme] .card:not(.unit):not(.role):not(.external){background:var(--theme-card);border-color:var(--theme-outline);border-left-color:var(--theme-blue);color:var(--theme-text)}
+html[data-theme] .card.unit{background:var(--theme-unit);color:var(--theme-text)}
+html[data-theme] .card.role{background:var(--theme-role);color:var(--theme-text)}
+html[data-theme] .card.external{background:var(--theme-external);color:var(--theme-text)}
+html[data-theme] .card em,html[data-theme] .card span{color:var(--theme-subtext)}
+html[data-theme] .card strong,html[data-theme] .team-area strong{color:var(--theme-text)}
+html[data-theme] .card small{color:var(--theme-blue)}
+html[data-theme] .card.unit small{color:#e3ac6b}html[data-theme="light"] .card.unit small{color:#985c23}
+html[data-theme] .card.external small{color:#efa7b4}html[data-theme="light"] .card.external small{color:#a74365}
+html[data-theme] .role-note{color:var(--theme-role-ink);background:transparent}html[data-theme] .role-note::before{color:var(--theme-accent)}html[data-theme] .role-notes{border-top-color:var(--theme-role-rule)}
+html[data-theme] .team-area{border-color:var(--theme-team-border);background:repeating-linear-gradient(135deg,var(--theme-team-hatch) 0 8px,transparent 8px 16px)}
+html[data-theme] .team-area small,html[data-theme] .team-area span{color:var(--theme-team-ink)}
+html[data-theme] .mintz-line:before{border-top-color:var(--theme-mintz)}html[data-theme] .mintz-line.secondary:before{border-color:var(--theme-mintz-side)}html[data-theme] .mintz-line.vertical:before{border-left-color:var(--theme-mintz-side)}
+html[data-theme] .mintz-label{background:var(--theme-panel-secondary);color:var(--theme-text);border-color:var(--theme-border)}html[data-theme] .mintz-line.secondary .mintz-label{color:var(--theme-team-ink)}
+html[data-theme] input:not([type=checkbox]),html[data-theme] textarea,html[data-theme] select{background:var(--theme-field);color:var(--theme-text);border-color:var(--theme-border)}
+html[data-theme] dialog:not(#annotationDlg){background:var(--theme-dialog);color:var(--theme-text);border-color:var(--theme-border)}
+html[data-theme] .tablewrap thead{background:var(--theme-tablehead)}html[data-theme] .tablewrap td{color:var(--theme-subtext)}
+html[data-theme] .preview-message{background:var(--theme-panel-secondary);color:var(--theme-text)}
+html[data-theme] #annotationDlg{background:var(--theme-annotation);color:var(--theme-text);border-color:var(--theme-border)}
+html[data-theme] .annotation-head,html[data-theme] .annotation-foot{background:var(--theme-panel-secondary);border-color:var(--theme-border)}
+html[data-theme] .annotation-head p,html[data-theme] .annotation-foot .annotation-hint{color:var(--theme-muted)}
+html[data-theme] .annotation-doc{color:var(--theme-doc)}html[data-theme] .annotation-doc h1,html[data-theme] .annotation-doc strong{color:var(--theme-text)}
+html[data-theme] .annotation-doc h2{color:var(--theme-heading);border-color:var(--theme-border)}html[data-theme] .annotation-doc h3{color:var(--theme-blue)}
+html[data-theme] .annotation-doc th{background:var(--theme-tablehead);color:var(--theme-text)}
+html[data-theme] .annotation-doc td,html[data-theme] .annotation-doc th{border-color:var(--theme-border)}html[data-theme] .annotation-tablewrap{border-color:var(--theme-border)}
+html[data-theme] #annotationEditor{background:var(--theme-field);color:var(--theme-text);border-color:var(--theme-border)}
+html[data-theme="light"] .role-note:hover{color:#1e4628}html[data-theme="light"] .edge-tag:hover rect{fill:#d6e9ec}
+html[data-theme] label:not(.theme-picker){color:var(--theme-text)}html[data-theme="light"] body{color-scheme:light}
+.theme-picker{display:flex;align-items:center;gap:8px;margin:0;border:1px solid var(--theme-border);background:var(--theme-panel-secondary);border-radius:7px;padding:4px 8px;color:var(--theme-muted);font-size:12px;white-space:nowrap}
+.theme-picker select{width:auto;min-width:116px;margin:0;padding:4px 28px 4px 7px;border:0;background:var(--theme-field);color:var(--theme-text);font-size:12px;cursor:pointer}
+.theme-picker span{font-weight:600}html:not(.interactive) .theme-picker{display:none}
+@media(max-width:760px){.theme-picker{min-height:36px}.theme-picker select{min-width:100px}}
+</style></head>
+<body><header><span class="brand">ОФС</span><h1>Конструктор структуры</h1><div class="actions"><button class="accent" id="downloadHtml">Сохранить HTML</button><button id="annotationBtn" type="button" title="Открыть методологию и пояснения к ОФС">Аннотация</button><label class="theme-picker" for="themeSelect"><span>Тема</span><select id="themeSelect" aria-label="Тема оформления ОФС">
+<option value="dark">Тёмная</option><option value="light">Светлая</option><option value="sea">Море</option><option value="forest">Лес</option><option value="mountain">Горы</option><option value="sheregesh">Шерегеш</option>
+</select></label><button id="exportBtn">Скачать JSON</button><button id="importBtn">Открыть JSON</button><input type="file" id="file" accept=".json,application/json" hidden></div></header>
+<p class="preview-message">Режим просмотра. Для редактирования откройте HTML в браузере с поддержкой JavaScript.</p><main><div class="layout"><aside><h2>Библиотека карточек</h2><p class="muted">Перетащите карточку на поле или выберите её и нажмите на свободное место. Чтобы сдвинуть всю схему, потяните за фон.</p><div class="buttons"><button class="accent" id="newJob">+ Должность</button><button id="newRole">+ Роль</button><button id="newUnit">+ Подразделение</button><button id="newTeam">+ Проектная команда</button><button id="newExternal">+ Внешний контур</button></div><div id="library"><div class="group"><h3>Должности</h3><div class="items"><div class="entry"><button class="pick"><i class="typeDot jobDot"></i>Директор Платформы</button><button>✎</button></div></div></div><div class="group"><h3>Роли</h3><div class="items"><div class="entry"><button class="pick"><i class="typeDot roleDot"></i>Держатель процесса</button><button>✎</button></div></div></div><div class="group"><h3>Подразделения</h3><div class="items"></div></div><div class="group"><h3>Проектные команды</h3><div class="items"></div></div><div class="group"><h3>Внешний контур</h3><div class="items"></div></div></div></aside>
+<section id="schemePanel" style="min-width:0"><div class="bar"><h2>Поле сборки</h2><div class="zoomtools" role="group" aria-label="Масштаб поля"><button id="out" aria-label="Уменьшить масштаб">−</button><button id="actual" title="Вернуть масштаб 100%" aria-label="Вернуть масштаб 100%">100%</button><button id="inside" aria-label="Увеличить масштаб">+</button><button id="methodFrame" title="Выбрать карточки внутри штрихового контура">Контур методологии</button><button id="mintzbergBtn" title="Пять частей организации по Минцбергу">Линии Минцберга</button><button id="fitAll">Вся схема</button><button id="fullView" aria-pressed="false">На весь экран</button></div><small id="counts">Карточек: 13 · Связей: 14</small><button id="clear">Очистить поле</button></div><div class="viewport" id="viewport"><div id="extent"><div class="world" id="world" style="width:1732.3456790123457px;height:963.6172839506172px;min-height:360px"><svg width="800" height="460" id="lines" aria-label="Управленческие связи"><defs><marker id="arrowline"  viewBox="0 0 10 10"  refX="9"  refY="5"  markerWidth="6"  markerHeight="6"  orient="auto"><path d="M0 0 L10 5 L0 10 Z"  fill="#a7ccf5"></path></marker><marker id="arrowfunc"  viewBox="0 0 10 10"  refX="9"  refY="5"  markerWidth="6"  markerHeight="6"  orient="auto"><path d="M0 0 L10 5 L0 10 Z"  fill="#dbb7ee"></path></marker><marker id="arrowmethod"  viewBox="0 0 10 10"  refX="9"  refY="5"  markerWidth="6"  markerHeight="6"  orient="auto"><path d="M0 0 L10 5 L0 10 Z"  fill="#caed92"></path></marker><marker id="arrowproject"  viewBox="0 0 10 10"  refX="9"  refY="5"  markerWidth="6"  markerHeight="6"  orient="auto"><path d="M0 0 L10 5 L0 10 Z"  fill="#f5bd85"></path></marker><marker id="arrowmatrix"  viewBox="0 0 10 10"  refX="9"  refY="5"  markerWidth="6"  markerHeight="6"  orient="auto"><path d="M0 0 L10 5 L0 10 Z"  fill="#84daca"></path></marker><marker id="arrowassignment"  viewBox="0 0 10 10"  refX="9"  refY="5"  markerWidth="6"  markerHeight="6"  orient="auto"><path d="M0 0 L10 5 L0 10 Z"  fill="#f4d568"></path></marker></defs><path d="M 717 390.5 L 869 390.5 Q 872 390.5 872 387.5 L 872 387.5 Q 872 384.5 875 384.5 L 886 384.5"  fill="none"  stroke="#a7ccf5"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="none"  marker-end="url(#arrowline)"></path><path d="M 717 390.5 L 869 390.5 Q 872 390.5 872 387.5 L 872 387.5 Q 872 384.5 875 384.5 L 886 384.5"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Линейная · ДПД → Главный Архитектор Платформы"><title>Линейная · ДПД → Главный Архитектор Платформы · Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения.</title></path><path d="M 717 401.5 L 869 401.5 Q 872 401.5 872 398.5 L 872 398.5 Q 872 395.5 875 395.5 L 886 395.5"  fill="none"  stroke="#dbb7ee"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="12 6"  marker-end="url(#arrowfunc)"></path><path d="M 717 401.5 L 869 401.5 Q 872 401.5 872 398.5 L 872 398.5 Q 872 395.5 875 395.5 L 886 395.5"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Функциональная · ДПД → Главный Архитектор Платформы"><title>Функциональная · ДПД → Главный Архитектор Платформы · Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</title></path><path d="M 717 412.5 L 869 412.5 Q 872 412.5 872 409.5 L 872 409.5 Q 872 406.5 875 406.5 L 886 406.5"  fill="none"  stroke="#caed92"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="1 6"  marker-end="url(#arrowmethod)"></path><path d="M 717 412.5 L 869 412.5 Q 872 412.5 872 409.5 L 872 409.5 Q 872 406.5 875 406.5 L 886 406.5"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Методологическая · ДПД → Главный Архитектор Платформы"><title>Методологическая · ДПД → Главный Архитектор Платформы · Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</title></path><path d="M 1082 395.5 L 1230 395.5 Q 1231 395.5 1231 396.5 L 1231 396.5 Q 1231 397.5 1232 397.5 L 1245 397.5"  fill="none"  stroke="#dbb7ee"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="12 6"  marker-end="url(#arrowfunc)"></path><path d="M 1082 395.5 L 1230 395.5 Q 1231 395.5 1231 396.5 L 1231 396.5 Q 1231 397.5 1232 397.5 L 1245 397.5"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Функциональная · Главный Архитектор Платформы → Продукт"><title>Функциональная · Главный Архитектор Платформы → Продукт · Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</title></path><path d="M 608 453 L 608 466.5 Q 608 467 607.5 467 L 607.5 467 Q 607 467 607 467.5 L 607 564"  fill="none"  stroke="#a7ccf5"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="none"  marker-end="url(#arrowline)"></path><path d="M 608 453 L 608 466.5 Q 608 467 607.5 467 L 607.5 467 Q 607 467 607 467.5 L 607 564"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Линейная · ДПД → Технический директор"><title>Линейная · ДПД → Технический директор · Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения.</title></path><path d="M 619 453 L 619 466.5 Q 619 467 618.5 467 L 618.5 467 Q 618 467 618 467.5 L 618 564"  fill="none"  stroke="#dbb7ee"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="12 6"  marker-end="url(#arrowfunc)"></path><path d="M 619 453 L 619 466.5 Q 619 467 618.5 467 L 618.5 467 Q 618 467 618 467.5 L 618 564"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Функциональная · ДПД → Технический директор"><title>Функциональная · ДПД → Технический директор · Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</title></path><path d="M 630 453 L 630 466.5 Q 630 467 629.5 467 L 629.5 467 Q 629 467 629 467.5 L 629 564"  fill="none"  stroke="#caed92"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="1 6"  marker-end="url(#arrowmethod)"></path><path d="M 630 453 L 630 466.5 Q 630 467 629.5 467 L 629.5 467 Q 629 467 629 467.5 L 629 564"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Методологическая · ДПД → Технический директор"><title>Методологическая · ДПД → Технический директор · Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</title></path><path d="M 521 390.5 L 513 390.5 Q 507 390.5 507 396.5 L 507 668 Q 507 674 513 674 L 880 674 Q 886 674 886 668 L 886 589.5 Q 886 583.5 892 583.5 L 900 583.5"  fill="none"  stroke="#a7ccf5"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="none"  marker-end="url(#arrowline)"></path><path d="M 521 390.5 L 513 390.5 Q 507 390.5 507 396.5 L 507 668 Q 507 674 513 674 L 880 674 Q 886 674 886 668 L 886 589.5 Q 886 583.5 892 583.5 L 900 583.5"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Линейная · ДПД → ГИП"><title>Линейная · ДПД → ГИП · Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения.</title></path><path d="M 619 350 L 619 342 Q 619 336 625 336 L 1104 336 Q 1110 336 1110 342 L 1110 588.5 Q 1110 594.5 1104 594.5 L 1096 594.5"  fill="none"  stroke="#dbb7ee"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="12 6"  marker-end="url(#arrowfunc)"></path><path d="M 619 350 L 619 342 Q 619 336 625 336 L 1104 336 Q 1110 336 1110 342 L 1110 588.5 Q 1110 594.5 1104 594.5 L 1096 594.5"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Функциональная · ДПД → ГИП"><title>Функциональная · ДПД → ГИП · Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</title></path><path d="M 717 412.5 L 725 412.5 Q 731 412.5 731 418.5 L 731 523 Q 731 529 737 529 L 1003 529 Q 1009 529 1009 535 L 1009 543"  fill="none"  stroke="#caed92"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="1 6"  marker-end="url(#arrowmethod)"></path><path d="M 717 412.5 L 725 412.5 Q 731 412.5 731 418.5 L 731 523 Q 731 529 737 529 L 1003 529 Q 1009 529 1009 535 L 1009 543"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Методологическая · ДПД → ГИП"><title>Методологическая · ДПД → ГИП · Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</title></path><path d="M 608 350 L 608 327 Q 608 321 614 321 L 863 321 Q 869 321 869 315 L 869 197.5 Q 869 191.5 875 191.5 L 883 191.5"  fill="none"  stroke="#a7ccf5"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="none"  marker-end="url(#arrowline)"></path><path d="M 608 350 L 608 327 Q 608 321 614 321 L 863 321 Q 869 321 869 315 L 869 197.5 Q 869 191.5 875 191.5 L 883 191.5"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Линейная · ДПД → ГАП"><title>Линейная · ДПД → ГАП · Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения.</title></path><path d="M 619 350 L 619 334 Q 619 328 625 328 L 975 328 Q 981 328 981 322 L 981 254"  fill="none"  stroke="#dbb7ee"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="12 6"  marker-end="url(#arrowfunc)"></path><path d="M 619 350 L 619 334 Q 619 328 625 328 L 975 328 Q 981 328 981 322 L 981 254"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Функциональная · ДПД → ГАП"><title>Функциональная · ДПД → ГАП · Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</title></path><path d="M 630 350 L 630 274 Q 630 268 636 268 L 986 268 Q 992 268 992 262 L 992 254"  fill="none"  stroke="#caed92"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="1 6"  marker-end="url(#arrowmethod)"></path><path d="M 630 350 L 630 274 Q 630 268 636 268 L 986 268 Q 992 268 992 262 L 992 254"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Методологическая · ДПД → ГАП"><title>Методологическая · ДПД → ГАП · Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</title></path><path d="M 1082 390 L 1090 390 Q 1096 390 1096 384 L 1096 203 Q 1096 197 1090 197 L 1079 197"  fill="none"  stroke="#a7ccf5"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="none"  marker-end="url(#arrowline)"></path><path d="M 1082 390 L 1090 390 Q 1096 390 1096 384 L 1096 203 Q 1096 197 1090 197 L 1079 197"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Линейная · Главный Архитектор Платформы → ГАП"><title>Линейная · Главный Архитектор Платформы → ГАП · Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения.</title></path><path d="M 989.5 344 L 989.5 283.5 Q 989.5 277.5 995.5 277.5 L 1087 277.5 Q 1093 277.5 1093 271.5 L 1093 214 Q 1093 208 1087 208 L 1079 208"  fill="none"  stroke="#caed92"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="1 6"  marker-end="url(#arrowmethod)"></path><path d="M 989.5 344 L 989.5 283.5 Q 989.5 277.5 995.5 277.5 L 1087 277.5 Q 1093 277.5 1093 271.5 L 1093 214 Q 1093 208 1087 208 L 1079 208"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Методологическая · Главный Архитектор Платформы → ГАП"><title>Методологическая · Главный Архитектор Платформы → ГАП · Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</title></path><path d="M 984 447 L 984 455 Q 984 461 990 461 L 1218 461 Q 1224 461 1224 455 L 1224 217.5 Q 1224 211.5 1230 211.5 L 1238 211.5"  fill="none"  stroke="#dbb7ee"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="12 6"  marker-end="url(#arrowfunc)"></path><path d="M 984 447 L 984 455 Q 984 461 990 461 L 1218 461 Q 1224 461 1224 455 L 1224 217.5 Q 1224 211.5 1230 211.5 L 1238 211.5"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Функциональная · Главный Архитектор Платформы → Проектная команда"><title>Функциональная · Главный Архитектор Платформы → Проектная команда · Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</title></path><path d="M 975.5 151 L 975.5 143 Q 975.5 137 981.5 137 L 1324.5 137 Q 1330.5 137 1330.5 143 L 1330.5 160"  fill="none"  stroke="#dbb7ee"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="12 6"  marker-end="url(#arrowfunc)"></path><path d="M 975.5 151 L 975.5 143 Q 975.5 137 981.5 137 L 1324.5 137 Q 1330.5 137 1330.5 143 L 1330.5 160"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Функциональная · ГАП → Проектная команда"><title>Функциональная · ГАП → Проектная команда · Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</title></path><path d="M 986.5 151 L 986.5 132.5 Q 986.5 126.5 992.5 126.5 L 1335.5 126.5 Q 1341.5 126.5 1341.5 132.5 L 1341.5 160"  fill="none"  stroke="#f5bd85"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="10 4 2 4"  marker-end="url(#arrowproject)"></path><path d="M 986.5 151 L 986.5 132.5 Q 986.5 126.5 992.5 126.5 L 1335.5 126.5 Q 1341.5 126.5 1341.5 132.5 L 1341.5 160"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Проектная · ГАП → Проектная команда"><title>Проектная · ГАП → Проектная команда · Руководитель проекта ставит задачи, согласует сроки и принимает результат в рамках проекта.</title></path><path d="M 992.5 646 L 992.5 654 Q 992.5 660 998.5 660 L 1449 660 Q 1455 660 1455 654 L 1455 398 Q 1455 392 1449 392 L 1441 392"  fill="none"  stroke="#dbb7ee"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="12 6"  marker-end="url(#arrowfunc)"></path><path d="M 992.5 646 L 992.5 654 Q 992.5 660 998.5 660 L 1449 660 Q 1455 660 1455 654 L 1455 398 Q 1455 392 1449 392 L 1441 392"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Функциональная · ГИП → Продукт"><title>Функциональная · ГИП → Продукт · Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</title></path><path d="M 1096 600 L 1226.5 600 Q 1232.5 600 1232.5 594 L 1232.5 469 Q 1232.5 463 1238.5 463 L 1342.5 463 Q 1348.5 463 1348.5 457 L 1348.5 449"  fill="none"  stroke="#f5bd85"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="10 4 2 4"  marker-end="url(#arrowproject)"></path><path d="M 1096 600 L 1226.5 600 Q 1232.5 600 1232.5 594 L 1232.5 469 Q 1232.5 463 1238.5 463 L 1342.5 463 Q 1348.5 463 1348.5 457 L 1348.5 449"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Проектная · ГИП → Продукт"><title>Проектная · ГИП → Продукт · Руководитель проекта ставит задачи, согласует сроки и принимает результат в рамках проекта.</title></path><path d="M 520 610 L 453.5 610 Q 447.5 610 447.5 616 L 447.5 771"  fill="none"  stroke="#dbb7ee"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="12 6"  marker-end="url(#arrowfunc)"></path><path d="M 520 610 L 453.5 610 Q 447.5 610 447.5 616 L 447.5 771"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Функциональная · Технический директор → Ар"><title>Функциональная · Технический директор → Ар · Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</title></path><path d="M 520 621 L 464.5 621 Q 458.5 621 458.5 627 L 458.5 771"  fill="none"  stroke="#caed92"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="1 6"  marker-end="url(#arrowmethod)"></path><path d="M 520 621 L 464.5 621 Q 458.5 621 458.5 627 L 458.5 771"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Методологическая · Технический директор → Ар"><title>Методологическая · Технический директор → Ар · Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</title></path><path d="M 612.5 667 L 612.5 675 Q 612.5 681 606.5 681 L 603 681 Q 597 681 597 687 L 597 814 Q 597 820 603 820 L 611 820"  fill="none"  stroke="#dbb7ee"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="12 6"  marker-end="url(#arrowfunc)"></path><path d="M 612.5 667 L 612.5 675 Q 612.5 681 606.5 681 L 603 681 Q 597 681 597 687 L 597 814 Q 597 820 603 820 L 611 820"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Функциональная · Технический директор → КР"><title>Функциональная · Технический директор → КР · Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</title></path><path d="M 716 621 L 724 621 Q 730 621 730 627 L 730 754 Q 730 760 724 760 L 720.5 760 Q 714.5 760 714.5 766 L 714.5 774"  fill="none"  stroke="#caed92"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="1 6"  marker-end="url(#arrowmethod)"></path><path d="M 716 621 L 724 621 Q 730 621 730 627 L 730 754 Q 730 760 724 760 L 720.5 760 Q 714.5 760 714.5 766 L 714.5 774"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Методологическая · Технический директор → КР"><title>Методологическая · Технический директор → КР · Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</title></path><path d="M 716 610 L 847 610 Q 853 610 853 616 L 853 814 Q 853 820 859 820 L 867 820"  fill="none"  stroke="#dbb7ee"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="12 6"  marker-end="url(#arrowfunc)"></path><path d="M 716 610 L 847 610 Q 853 610 853 616 L 853 814 Q 853 820 859 820 L 867 820"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Функциональная · Технический директор → ИОС"><title>Функциональная · Технический директор → ИОС · Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</title></path><path d="M 623.5 667 L 623.5 675 Q 623.5 681 629.5 681 L 824.5 681 Q 830.5 681 830.5 687 L 830.5 825 Q 830.5 831 836.5 831 L 867 831"  fill="none"  stroke="#caed92"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="1 6"  marker-end="url(#arrowmethod)"></path><path d="M 623.5 667 L 623.5 675 Q 623.5 681 629.5 681 L 824.5 681 Q 830.5 681 830.5 687 L 830.5 825 Q 830.5 831 836.5 831 L 867 831"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Методологическая · Технический директор → ИОС"><title>Методологическая · Технический директор → ИОС · Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</title></path><path d="M 998 646 L 998 679 Q 998 685 1004 685 L 1334 685 Q 1340 685 1340 679 L 1340 647"  fill="none"  stroke="#f5bd85"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="10 4 2 4"  marker-end="url(#arrowproject)"></path><path d="M 998 646 L 998 679 Q 998 685 1004 685 L 1334 685 Q 1340 685 1340 679 L 1340 647"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Проектная · ГИП → Держатель потока П,Р"><title>Проектная · ГИП → Держатель потока П,Р · Руководитель проекта ставит задачи, согласует сроки и принимает результат в рамках проекта.</title></path><path d="M 883 202.5 L 762 202.5 Q 756 202.5 756 196.5 L 756 173.5 Q 756 167.5 750 167.5 L 742 167.5"  fill="none"  stroke="#a7ccf5"  stroke-width="2.5"  stroke-linecap="round"  stroke-dasharray="none"  marker-end="url(#arrowline)"></path><path d="M 883 202.5 L 762 202.5 Q 756 202.5 756 196.5 L 756 173.5 Q 756 167.5 750 167.5 L 742 167.5"  fill="none"  stroke="transparent"  stroke-width="10"  class="wire"  tabindex="0"  role="button"  aria-label="Линейная · ГАП → Держатель потока ЭП"><title>Линейная · ГАП → Держатель потока ЭП · Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения.</title></path></svg><div id="mintzbergGuides" aria-label="Линии уровней организации"></div><div id="nodes"><div role="group"  class="card job"  style="left:521px;top:350px"><small>Должность</small><strong>ДПД</strong><em>Баталов А.В.</em><span>Производственные  стратегии 
+Методология производства</span><button class="editcard">✎</button></div><div role="group"  class="card job"  style="left:886px;top:344px"><small>Должность</small><strong>Главный Архитектор Платформы</strong><em>Понкратова Е.Ф.</em><span>Параметрическая эффективность</span><button class="editcard">✎</button></div><div role="group"  class="card unit"  style="left:1245px;top:346px"><small>Отдел</small><strong>Продукт</strong><em>Руководитель не указан</em><span>Функция не указана</span><button class="editcard">✎</button></div><div role="group"  class="card job"  style="left:520px;top:564px"><small>Должность</small><strong>Технический директор</strong><em>Постников М.И.</em><span>Качество (стандартизация + контроль)</span><button class="editcard">✎</button></div><div role="group"  class="card job"  style="left:900px;top:543px"><small>Должность</small><strong>ГИП</strong><em>ФИО не указано</em><span>Сроки 
+Себестоимость</span><button class="editcard">✎</button></div><div role="group"  class="card job"  style="left:883px;top:151px"><small>Должность</small><strong>ГАП</strong><em>ФИО не указано</em><span>Архитектура 
+Сроки</span><button class="editcard">✎</button></div><div role="group"  class="card team"  style="left:1238px;top:160px"><small>Проектная команда</small><strong>Проектная команда</strong><em>ФИО не указано</em><span>Функция не указана</span><button class="editcard">✎</button></div><div role="group"  class="card unit"  style="left:355px;top:771px"><small>Отдел</small><strong>Ар</strong><em>Галинбекова Е.В.</em><span>Функция не указана</span><button class="editcard">✎</button></div><div role="group"  class="card unit"  style="left:611px;top:774px"><small>Отдел</small><strong>КР</strong><em>Кузнецов Н.А.</em><span>Функция не указана</span><button class="editcard">✎</button></div><div role="group"  class="card unit"  style="left:867px;top:774px"><small>Отдел</small><strong>ИОС</strong><em>Глазунова А.Г.</em><span>Функция не указана</span><button class="editcard">✎</button></div><div role="group"  class="card role"  style="left:1242px;top:544px"><small>Роль</small><strong>Держатель потока П,Р</strong><em>ФИО не указано</em><span>Стадия П</span><button class="editcard">✎</button></div><div role="group"  class="card role"  style="left:879px;top:0px"><small>Роль</small><strong>Держатель потока К</strong><em>ФИО не указано</em><span>Стадия К</span><button class="editcard">✎</button></div><div role="group"  class="card role"  style="left:546px;top:116px"><small>Роль</small><strong>Держатель потока ЭП</strong><em>ФИО не указано</em><span>Функция не указана</span><button class="editcard">✎</button></div></div></div></div></div><div class="status"><span id="hint" aria-live="polite"></span><button id="cancel" hidden>Отменить выбор</button></div></section></div>
+<details class="guide"><summary>Обозначения линий</summary><div style="display:flex;flex-wrap:wrap;gap:12px 24px;padding:12px"><span style="display:inline-flex;align-items:center;gap:8px"><svg width="56" height="12" aria-hidden="true"><path d="M2 6H54" stroke="#a7ccf5" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="none"/></svg>Линейная</span><span style="display:inline-flex;align-items:center;gap:8px"><svg width="56" height="12" aria-hidden="true"><path d="M2 6H54" stroke="#dbb7ee" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="12 6"/></svg>Функциональная</span><span style="display:inline-flex;align-items:center;gap:8px"><svg width="56" height="12" aria-hidden="true"><path d="M2 6H54" stroke="#caed92" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="1 6"/></svg>Методологическая</span><span style="display:inline-flex;align-items:center;gap:8px"><svg width="56" height="12" aria-hidden="true"><path d="M2 6H54" stroke="#f5bd85" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="10 4 2 4"/></svg>Проектная</span><span style="display:inline-flex;align-items:center;gap:8px"><svg width="56" height="12" aria-hidden="true"><path d="M2 6H54" stroke="#84daca" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="12 5 1 5 1 5"/></svg>Матричная</span><span style="display:inline-flex;align-items:center;gap:8px"><svg width="56" height="12" aria-hidden="true"><path d="M2 6H54" stroke="#f4d568" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4 5"/></svg>Исполняет роль</span></div></details><details class="guide"><summary>Сравнение видов управленческих связей</summary><div class="tablewrap"><table><thead><tr><th>Вид связи</th><th>На какой вопрос отвечает</th><th>Какие полномочия даёт</th><th>Где проходит граница</th></tr></thead><tbody id="legend"><tr><th scope="row">Линейная</th><td>Кому подчиняется сотрудник?</td><td>Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения.</td><td>Действует в пределах подразделения и переданных руководителю полномочий.</td></tr><tr><th scope="row">Функциональная</th><td>Кто вправе давать обязательные указания по функции?</td><td>Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</td><td>Ограничена предметом функции. Право требовать исправления расчёта само по себе не даёт права менять загрузку исполнителя.</td></tr><tr><th scope="row">Матричная</th><td>Как сочетаются полномочия нескольких руководителей?</td><td>Начальник отдела распоряжается ресурсом, а руководитель проекта определяет задачи выделенного специалиста.</td><td>Матрица описывает сочетание линий управления. Следует определить, кто разрешает конфликт приоритетов.</td></tr><tr><th scope="row">Методологическая</th><td>Кто определяет и развивает способ работы?</td><td>Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</td><td>Право утверждать методику или выдавать обязательные требования закрепляется отдельно.</td></tr><tr><th scope="row">Проектная</th><td>Кто определяет, что и когда команда должна выдать по проекту?</td><td>Руководитель проекта ставит задачи, согласует сроки и принимает результат в рамках проекта.</td><td>Действует в пределах выделенного ресурса. Для переноса сотрудника с другого проекта нужны соответствующие полномочия.</td></tr></tbody></table></div><p class="note">Стрелка направлена от того, кто задаёт требования или координирует работу, к тому, на кого распространяется связь.</p></details>
+<details class="guide"><summary>Связи на схеме <span id="edgeCount">(14)</span></summary><div class="tablewrap"><table><thead><tr><th>От кого</th><th>К кому</th><th>Вид связи</th><th>Какие решения вправе принимать</th><th>Действия</th></tr></thead><tbody id="edgeRows"><tr><td>ДПД</td><td>Главный Архитектор Платформы</td><td><button>Линейная</button></td><td>Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения.</td><td><button class="readonly-action danger">Удалить связь</button><button class="readonly-action">Убрать тип</button></td></tr><tr><td>ДПД</td><td>Главный Архитектор Платформы</td><td><button>Функциональная</button></td><td>Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</td><td><button class="readonly-action">Убрать тип</button></td></tr><tr><td>ДПД</td><td>Главный Архитектор Платформы</td><td><button>Методологическая</button></td><td>Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</td><td><button class="readonly-action">Убрать тип</button></td></tr><tr><td>Главный Архитектор Платформы</td><td>Продукт</td><td><button>Функциональная</button></td><td>Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</td><td><button class="readonly-action danger">Удалить связь</button></td></tr><tr><td>ДПД</td><td>Технический директор</td><td><button>Линейная</button></td><td>Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения.</td><td><button class="readonly-action danger">Удалить связь</button><button class="readonly-action">Убрать тип</button></td></tr><tr><td>ДПД</td><td>Технический директор</td><td><button>Функциональная</button></td><td>Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</td><td><button class="readonly-action">Убрать тип</button></td></tr><tr><td>ДПД</td><td>Технический директор</td><td><button>Методологическая</button></td><td>Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</td><td><button class="readonly-action">Убрать тип</button></td></tr><tr><td>ДПД</td><td>ГИП</td><td><button>Линейная</button></td><td>Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения.</td><td><button class="readonly-action danger">Удалить связь</button><button class="readonly-action">Убрать тип</button></td></tr><tr><td>ДПД</td><td>ГИП</td><td><button>Функциональная</button></td><td>Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</td><td><button class="readonly-action">Убрать тип</button></td></tr><tr><td>ДПД</td><td>ГИП</td><td><button>Методологическая</button></td><td>Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</td><td><button class="readonly-action">Убрать тип</button></td></tr><tr><td>ДПД</td><td>ГАП</td><td><button>Линейная</button></td><td>Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения.</td><td><button class="readonly-action danger">Удалить связь</button><button class="readonly-action">Убрать тип</button></td></tr><tr><td>ДПД</td><td>ГАП</td><td><button>Функциональная</button></td><td>Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</td><td><button class="readonly-action">Убрать тип</button></td></tr><tr><td>ДПД</td><td>ГАП</td><td><button>Методологическая</button></td><td>Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</td><td><button class="readonly-action">Убрать тип</button></td></tr><tr><td>Главный Архитектор Платформы</td><td>ГАП</td><td><button>Линейная</button></td><td>Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения.</td><td><button class="readonly-action danger">Удалить связь</button><button class="readonly-action">Убрать тип</button></td></tr><tr><td>Главный Архитектор Платформы</td><td>ГАП</td><td><button>Методологическая</button></td><td>Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</td><td><button class="readonly-action">Убрать тип</button></td></tr><tr><td>Главный Архитектор Платформы</td><td>Проектная команда</td><td><button>Функциональная</button></td><td>Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</td><td><button class="readonly-action danger">Удалить связь</button></td></tr><tr><td>ГАП</td><td>Проектная команда</td><td><button>Функциональная</button></td><td>Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</td><td><button class="readonly-action danger">Удалить связь</button><button class="readonly-action">Убрать тип</button></td></tr><tr><td>ГАП</td><td>Проектная команда</td><td><button>Проектная</button></td><td>Руководитель проекта ставит задачи, согласует сроки и принимает результат в рамках проекта.</td><td><button class="readonly-action">Убрать тип</button></td></tr><tr><td>ГИП</td><td>Продукт</td><td><button>Функциональная</button></td><td>Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</td><td><button class="readonly-action danger">Удалить связь</button><button class="readonly-action">Убрать тип</button></td></tr><tr><td>ГИП</td><td>Продукт</td><td><button>Проектная</button></td><td>Руководитель проекта ставит задачи, согласует сроки и принимает результат в рамках проекта.</td><td><button class="readonly-action">Убрать тип</button></td></tr><tr><td>Технический директор</td><td>Ар</td><td><button>Функциональная</button></td><td>Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</td><td><button class="readonly-action danger">Удалить связь</button><button class="readonly-action">Убрать тип</button></td></tr><tr><td>Технический директор</td><td>Ар</td><td><button>Методологическая</button></td><td>Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</td><td><button class="readonly-action">Убрать тип</button></td></tr><tr><td>Технический директор</td><td>КР</td><td><button>Функциональная</button></td><td>Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</td><td><button class="readonly-action danger">Удалить связь</button><button class="readonly-action">Убрать тип</button></td></tr><tr><td>Технический директор</td><td>КР</td><td><button>Методологическая</button></td><td>Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</td><td><button class="readonly-action">Убрать тип</button></td></tr><tr><td>Технический директор</td><td>ИОС</td><td><button>Функциональная</button></td><td>Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.</td><td><button class="readonly-action danger">Удалить связь</button><button class="readonly-action">Убрать тип</button></td></tr><tr><td>Технический директор</td><td>ИОС</td><td><button>Методологическая</button></td><td>Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.</td><td><button class="readonly-action">Убрать тип</button></td></tr><tr><td>ГИП</td><td>Держатель потока П,Р</td><td><button>Проектная</button></td><td>Руководитель проекта ставит задачи, согласует сроки и принимает результат в рамках проекта.</td><td><button class="readonly-action danger">Удалить связь</button></td></tr><tr><td>ГАП</td><td>Держатель потока ЭП</td><td><button>Линейная</button></td><td>Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения.</td><td><button class="readonly-action danger">Удалить связь</button></td></tr></tbody></table></div></details></main><footer id="saved"></footer>
+<dialog id="dlg"><div id="editor"><h2 id="dialogTitle"></h2><div id="fields"></div><div class="end"><button type="button" class="danger" id="remove">Удалить</button><button type="button" id="close">Закрыть</button><button id="saveCard" type="button" class="accent">Сохранить</button></div></div><p id="editerr" class="editerr" role="alert"></p></dialog><dialog id="ask"><p id="question"></p><div class="end"><button id="no">Отмена</button><button id="yes" class="accent">Подтвердить</button></div></dialog>
+<dialog id="annotationDlg" aria-labelledby="annotationHeading">
+ <div class="annotation-head"><div><h2 id="annotationHeading">Аннотация к ОФС</h2><p>Методология организационно-функциональной схемы</p></div>
+ <div class="annotation-head-controls"><button id="annotationEdit" type="button">Редактировать</button><button id="annotationCopy" type="button">Скопировать текст</button><button id="annotationClose" type="button">Закрыть</button></div></div>
+ <div class="annotation-body"><article id="annotationView" class="annotation-doc"></article><textarea id="annotationEditor" aria-label="Текст аннотации в Markdown" spellcheck="false" hidden></textarea></div>
+ <div class="annotation-foot"><span class="annotation-hint">Аннотация включается в сохранённый HTML и экспорт JSON.</span><div class="annotation-edit-actions"><button id="annotationCancel" type="button" hidden>Отмена</button><button id="annotationApply" class="accent" type="button" hidden>Сохранить текст</button></div></div>
+ </dialog>
+<script id="snapshot" type="application/json">{"key":"ofs11-4bd12909ff6b42","data":{"version":2,"items":[{"id":"b","kind":"job","title":"Главный Архитектор Платформы","fn":"Параметрическая эффективность\nРазработка стадии К","fio":"Понкратова Е.Ф."},{"id":"fb15731d-b7a9-4e40-98c1-a6e895a63140","kind":"job","title":"ДПД","fio":"Баталов А.В.","fn":"Производственные  стратегии \nМетодология производства\nСистемные функции ( сроки , качество , параметризация . объемы )"},{"id":"cca79ce2-1156-4035-a102-f7c32a4c678d","kind":"job","title":"Технический директор","fio":"Постников М.И.","fn":"Качество (стандартизация + контроль)"},{"id":"5b3fbe80-0121-47e9-ac91-582d41ddb2e9","kind":"job","title":"ГИП","fio":"","fn":"Организация разработки ст.П,Р,\nСроки \nСебестоимость"},{"id":"65b5fe25-b7b9-4df0-9c00-0ed52fe22109","kind":"job","title":"ГАП","fio":"","fn":"Организация разработки ст. ЭП\nСроки\nСебестоимость"},{"id":"d9e75d24-5cda-4ea2-a0f1-f85d71c1ca09","kind":"team","title":"Проектная команда","fio":"","fn":""},{"id":"1f08ab7f-6653-497d-9eab-c6ced3683728","kind":"unit","title":"КР","fio":"Кузнецов Н.А.","fn":"","unitType":"department"},{"id":"f0968871-7cd5-4edd-8c28-a7c907372c4b","kind":"unit","title":"ИОС","fio":"Глазунова А.Г.","fn":"","unitType":"department"},{"id":"6b014d0e-b5de-4460-9f48-524d4f249711","kind":"role","title":"Держатель потока К","fio":"","fn":"Стадия К","jobIds":["b"]},{"id":"74ec4bd0-5e25-48d7-b5e7-add7ee7346af","kind":"role","title":"Держатель потока ЭП","fio":"","fn":"","jobIds":["65b5fe25-b7b9-4df0-9c00-0ed52fe22109"]},{"id":"9e5de28c-743c-400b-a925-02f832a7071c","kind":"job","title":"ДД","fio":"Гартвих И.В.","fn":""},{"id":"cb0d0a08-7b11-43b0-85de-4c3f44d58898","kind":"job","title":"И.О. Директор по производству","fio":"Мельникова Н.А.","fn":"Менеджмент структуры"},{"id":"564ed6b2-7667-4562-b200-698b933e58c5","kind":"job","title":"Рук. Ар","fio":"Галинбекова Е.В.","fn":""},{"id":"89926516-b325-458b-8fed-a51f0c364843","kind":"job","title":"Рук. ИОС","fio":"Глазунова А.Г.","fn":""},{"id":"99797579-7bf3-44d1-b0d0-ba0368428e34","kind":"job","title":"Рук. КР","fio":"Кузнецов Н.А.","fn":""},{"id":"882836e6-0705-49b5-a10b-a5ec1be332d7","kind":"unit","title":"АР","fio":"","fn":"","unitType":"department"},{"id":"78f23f46-0eea-4f9a-a8f7-cb221ddf0712","kind":"unit","title":"Градостроительство","fio":"","fn":"","unitType":"department"},{"id":"4312f5d0-8efa-4f71-b6f6-7364842d73cc","kind":"job","title":"Рук. отдел Градостроительства","fio":"","fn":""},{"id":"caed556d-e354-411d-a1dd-ee28811ba5e1","kind":"job","title":"Рук. отдела Дизайна","fio":"","fn":""},{"id":"cfd5770c-6299-4971-8d74-d87c7cba8286","kind":"unit","title":"Дизайна","fio":"","fn":"","unitType":"department"},{"id":"2a8aa227-005a-4031-b0b4-78c8272da0f7","kind":"external","title":"Внешний контур","fio":"","fn":""},{"id":"a6f2f678-81e2-483e-88c4-e1c972000209","kind":"unit","title":"Продукт","fio":"","fn":"","unitType":"department"}],"nodes":[{"id":"fb15731d-b7a9-4e40-98c1-a6e895a63140","x":852,"y":-61},{"id":"9e5de28c-743c-400b-a925-02f832a7071c","x":854,"y":-291},{"id":"b","x":-128,"y":175},{"id":"cca79ce2-1156-4035-a102-f7c32a4c678d","x":301,"y":173},{"id":"cb0d0a08-7b11-43b0-85de-4c3f44d58898","x":1636,"y":135},{"id":"564ed6b2-7667-4562-b200-698b933e58c5","x":571,"y":403},{"id":"89926516-b325-458b-8fed-a51f0c364843","x":1202,"y":411},{"id":"99797579-7bf3-44d1-b0d0-ba0368428e34","x":858,"y":399},{"id":"882836e6-0705-49b5-a10b-a5ec1be332d7","x":615,"y":672},{"id":"1f08ab7f-6653-497d-9eab-c6ced3683728","x":856,"y":671},{"id":"f0968871-7cd5-4edd-8c28-a7c907372c4b","x":1203,"y":675},{"id":"5b3fbe80-0121-47e9-ac91-582d41ddb2e9","x":1144,"y":996},{"id":"65b5fe25-b7b9-4df0-9c00-0ed52fe22109","x":1562,"y":1002},{"id":"78f23f46-0eea-4f9a-a8f7-cb221ddf0712","x":-419,"y":450},{"id":"caed556d-e354-411d-a1dd-ee28811ba5e1","x":-695,"y":172},{"id":"4312f5d0-8efa-4f71-b6f6-7364842d73cc","x":-438,"y":170},{"id":"cfd5770c-6299-4971-8d74-d87c7cba8286","x":-704,"y":449},{"id":"d9e75d24-5cda-4ea2-a0f1-f85d71c1ca09","w":1256,"h":573,"x":574,"y":601},{"id":"2a8aa227-005a-4031-b0b4-78c8272da0f7","x":-741,"y":863},{"id":"a6f2f678-81e2-483e-88c4-e1c972000209","x":-1098,"y":442}],"edges":[{"id":"ec0889ab-f17f-487e-bab8-ba1c96822090","a":"9e5de28c-743c-400b-a925-02f832a7071c","b":"fb15731d-b7a9-4e40-98c1-a6e895a63140","parts":[{"type":"line","note":"Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения."}]},{"id":"5e7fd898-8076-4998-9f82-dddf07b4046c","a":"fb15731d-b7a9-4e40-98c1-a6e895a63140","b":"b","parts":[{"type":"line","note":"Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения."},{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"533b8830-684b-4728-b4e5-d918c087f12c","a":"fb15731d-b7a9-4e40-98c1-a6e895a63140","b":"cca79ce2-1156-4035-a102-f7c32a4c678d","parts":[{"type":"line","note":"Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения."},{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"b163c461-213a-4814-a80a-52a11787ac3c","a":"fb15731d-b7a9-4e40-98c1-a6e895a63140","b":"cb0d0a08-7b11-43b0-85de-4c3f44d58898","parts":[{"type":"line","note":"Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения."},{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"4c74df61-1ce3-4120-89aa-c8dadcb8ffbb","a":"564ed6b2-7667-4562-b200-698b933e58c5","b":"882836e6-0705-49b5-a10b-a5ec1be332d7","parts":[{"type":"line","note":"Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения."}]},{"id":"e69aae24-bdc7-4ad9-b7ff-cbc4a1d08740","a":"99797579-7bf3-44d1-b0d0-ba0368428e34","b":"1f08ab7f-6653-497d-9eab-c6ced3683728","parts":[{"type":"line","note":"Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения."}]},{"id":"a6d943d7-956a-473b-a274-89dae541b13b","a":"89926516-b325-458b-8fed-a51f0c364843","b":"f0968871-7cd5-4edd-8c28-a7c907372c4b","parts":[{"type":"line","note":"Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения."}]},{"id":"742bd91b-4409-4791-a8f7-2ec30b300401","a":"cca79ce2-1156-4035-a102-f7c32a4c678d","b":"564ed6b2-7667-4562-b200-698b933e58c5","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"3a5fe14f-7d22-4a1f-af27-eac5b1059028","a":"cca79ce2-1156-4035-a102-f7c32a4c678d","b":"99797579-7bf3-44d1-b0d0-ba0368428e34","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"004caa0e-f6f3-43d2-99eb-9e243f638a3b","a":"cca79ce2-1156-4035-a102-f7c32a4c678d","b":"89926516-b325-458b-8fed-a51f0c364843","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"926c5f8e-e9c7-4dde-9158-3f3a27d72ce5","a":"cb0d0a08-7b11-43b0-85de-4c3f44d58898","b":"65b5fe25-b7b9-4df0-9c00-0ed52fe22109","parts":[{"type":"line","note":"Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения."},{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"dbefb42f-b4da-4a16-8e21-bf2d1c4e4db5","a":"cb0d0a08-7b11-43b0-85de-4c3f44d58898","b":"5b3fbe80-0121-47e9-ac91-582d41ddb2e9","parts":[{"type":"line","note":"Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения."},{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"9733aa8e-4dc8-4591-9d2b-18268efe1355","a":"b","b":"564ed6b2-7667-4562-b200-698b933e58c5","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"6bd49a18-811d-4038-9ef8-3729ba70a6fe","a":"b","b":"99797579-7bf3-44d1-b0d0-ba0368428e34","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"d2aa0769-2410-4273-803a-d68369256ac0","a":"b","b":"89926516-b325-458b-8fed-a51f0c364843","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"2fd4a8a7-2249-4db0-9e0d-c1a74080c7c4","a":"b","b":"65b5fe25-b7b9-4df0-9c00-0ed52fe22109","parts":[{"type":"method","note":"Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения."}]},{"id":"3d64f866-328f-4e75-8faf-92e9041f892e","a":"b","b":"5b3fbe80-0121-47e9-ac91-582d41ddb2e9","parts":[{"type":"method","note":"Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения."}]},{"id":"bd9b1495-ec63-4837-9274-a491eb4747dc","a":"9e5de28c-743c-400b-a925-02f832a7071c","b":"4312f5d0-8efa-4f71-b6f6-7364842d73cc","parts":[{"type":"line","note":"Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения."}]},{"id":"2b7657e7-8f73-4336-98a7-0f9244643332","a":"9e5de28c-743c-400b-a925-02f832a7071c","b":"caed556d-e354-411d-a1dd-ee28811ba5e1","parts":[{"type":"line","note":"Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения."}]},{"id":"c669bf68-bde6-4681-bced-a618591d4f8e","a":"4312f5d0-8efa-4f71-b6f6-7364842d73cc","b":"78f23f46-0eea-4f9a-a8f7-cb221ddf0712","parts":[{"type":"line","note":"Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения."}]},{"id":"5fb06193-b3e1-40ba-8516-3f221d67e694","a":"caed556d-e354-411d-a1dd-ee28811ba5e1","b":"cfd5770c-6299-4971-8d74-d87c7cba8286","parts":[{"type":"line","note":"Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения."}]},{"id":"ca0c0232-23cf-4f84-8774-d1e9eb2d94c2","a":"cb0d0a08-7b11-43b0-85de-4c3f44d58898","b":"89926516-b325-458b-8fed-a51f0c364843","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"f84e6432-6e8e-4713-b9e8-282968770811","a":"cb0d0a08-7b11-43b0-85de-4c3f44d58898","b":"99797579-7bf3-44d1-b0d0-ba0368428e34","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"9d2a82c7-93a6-450a-b4b3-dde5975a0f31","a":"cb0d0a08-7b11-43b0-85de-4c3f44d58898","b":"564ed6b2-7667-4562-b200-698b933e58c5","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"48775a61-e44d-405e-952f-eebfba1e2417","a":"b","b":"d9e75d24-5cda-4ea2-a0f1-f85d71c1ca09","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"66a3e05e-b52e-4812-a8dd-f59b8e792191","a":"cca79ce2-1156-4035-a102-f7c32a4c678d","b":"d9e75d24-5cda-4ea2-a0f1-f85d71c1ca09","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"aef12bea-88dc-4bff-bc65-7893bd1f3e0d","a":"b","b":"4312f5d0-8efa-4f71-b6f6-7364842d73cc","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"a4749e62-fdfa-47cd-b66e-5ab72d9711d9","a":"b","b":"2a8aa227-005a-4031-b0b4-78c8272da0f7","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"00e7faab-d3d2-440b-b823-72037bad4314","a":"cca79ce2-1156-4035-a102-f7c32a4c678d","b":"2a8aa227-005a-4031-b0b4-78c8272da0f7","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"58fa1f77-cc35-4789-8599-83da5f59b119","a":"cca79ce2-1156-4035-a102-f7c32a4c678d","b":"a6f2f678-81e2-483e-88c4-e1c972000209","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"0d984e62-6d98-4432-b67a-8f2509eced74","a":"b","b":"a6f2f678-81e2-483e-88c4-e1c972000209","parts":[{"type":"func","note":"Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью."}]},{"id":"ddf66c38-d79a-486a-8fb6-19592a96c226","a":"9e5de28c-743c-400b-a925-02f832a7071c","b":"a6f2f678-81e2-483e-88c4-e1c972000209","parts":[{"type":"line","note":"Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения."}]}],"guides":[{"key":"apex","x1":-912,"x2":2308,"y":82},{"key":"middle","x1":-901,"x2":2318,"y":323},{"key":"operators","x1":-905,"x2":2356,"y":622}],"annotationMarkdown":"# Организационно-функциональная схема (ОФС)\n\n## 1. Назначение ОФС\n\nОФС описывает распределение ответственности, полномочий и управленческих связей между должностями, подразделениями, ролями и проектными командами.\n\nОсновная задача — определить, кто и за что отвечает, какими полномочиями обладает и каким образом взаимодействует с другими участниками производственной системы.\n\nОФС не является детальной штатной структурой, должностной инструкцией или схемой всех производственных коммуникаций.\n\n**ОФС описывает систему управления, а не каждое операционное взаимодействие.**\n\n## 2. Принцип организационной модели\n\nВ основе ОФС лежит разделение управленческих контуров:\n\n- **Управление исполнителями и ресурсами** — обеспечение производственной способности организации.\n- **Управление функциями и результатами** — достижение установленных производственных параметров.\n- **Методологическое управление** — разработка, утверждение, распространение и развитие способов выполнения работ.\n\nКонтуры действуют одновременно и могут пересекаться в отношении одних и тех же должностей.\n\nРаспределение полномочий реализуется через должности, роли и управленческие связи.\n\n## 3. Типы управленческих связей\n\n| Тип связи        | Содержание                                                                                                                       |\n| ---------------- | -------------------------------------------------------------------------------------------------------------------------------- |\n| Линейная         | Управление исполнителями, развитие компетенций, распределение ресурсов, качество работы сотрудников и результат подразделения    |\n| Функциональная   | Управление выполнением конкретной функции, предъявление требований, постановка задач и контроль результата в пределах полномочий |\n| Методологическая | Разработка, передача, внедрение и развитие методов проектирования и организации производства                                     |\n\n**Линейная связь.** Определяет непосредственное организационное подчинение. Линейный руководитель отвечает за состояние и производственные возможности подразделения, компетенции сотрудников, распределение загрузки и качество их работы.\n\n**Функциональная связь.** Определяет полномочия по конкретной функции независимо от линейного подчинения. Функциональный руководитель вправе предъявлять требования и управлять выполнением функции в пределах закреплённой ответственности.\n\n**Методологическая связь.** Обеспечивает разработку, передачу, внедрение и развитие методов работы. Сама по себе не создаёт линейного подчинения и не предоставляет неограниченных полномочий распоряжаться ресурсами.\n\nМежду двумя должностями допускается одновременное наличие линейной и функциональной связей.\n\n## 4. Должности и роли\n\nДолжность определяет положение участника в организационной структуре.\n\nРоль закрепляет дополнительный предмет ответственности и соответствующие полномочия.\n\nПолномочия возникают из содержания назначенной роли. Назначение роли не требует создания отдельной должности или отдельной управленческой связи.\n\nОдна должность может исполнять несколько ролей.\n\nВ текущей ОФС закреплены:\n\n| Должность                    | Назначенная роль      | Ответственность |\n| ---------------------------- | --------------------- | --------------- |\n| Главный архитектор Платформы | Держатель потока К    | Стадия К        |\n| ГАП                          | Держатель потока ЭП   | Стадия ЭП       |\n| ГИП                          | Держатель потока П, Р | Стадии П и Р    |\n\nРоли отображаются непосредственно на карточках должностей и не образуют самостоятельных элементов организационной структуры.\n\n## 5. Формирование проектной команды и постановка задач\n\nФормирование проектной команды осуществляется **директором по производству совместно с линейными руководителями**.\n\nНа данном этапе определяются исполнители, состав команды и выделяемые производственные ресурсы.\n\nПосле формирования команды постановка задач осуществляется функциональными руководителями в пределах закреплённых функций.\n\nГИП и ГАП вправе ставить задачи участникам сформированной команды.\n\nПри этом необходимо различать:\n\n- Постановку задачи в пределах утверждённого производственного задания.\n- Изменение задания, влияющее на сроки, объём работ или потребность в ресурсах.\n\nСпектр типовых задач и допустимых отклонений определяется действующими производственными процессами.\n\nФункциональное управление не означает автоматического права перераспределять ресурсы между подразделениями и проектами.\n\n## 6. Распределение ответственности\n\n| Субъект                           | Основная ответственность                                                                                               |\n| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |\n| Директор Проектной дирекции (ДПД) | Производственные стратегии, общая методология производства, системные функции и разрешение управленческих противоречий |\n| Директор по производству          | Формирование проектных команд, распределение загрузки и обеспечение производственных ресурсов                          |\n| Линейные руководители             | Компетенции сотрудников, качество их работы, распределение ресурсов и результат подразделений                          |\n| Технический директор              | Качество проектной документации, стандартизация, контроль выпуска                                                      |\n| Главный архитектор Платформы      | Параметрическая эффективность, архитектурная методология, разработка стадии К                                          |\n| ГИП                               | Организация разработки стадий П и Р, сроки, себестоимость                                                              |\n| ГАП                               | Организация разработки стадии ЭП, сроки, себестоимость                                                                 |\n\n### 6.1. Ответственность за сроки\n\nОтветственность за сроки разработки проектной документации распределяется между ГИП, ГАП, директором по производству и по восходящей линии ДПД.\n\nГИП и ГАП отвечают за сроки в рамках закреплённых производственных функций.\n\nДиректор по производству обеспечивает необходимые производственные ресурсы, формирование и загрузку команд для выполнения установленных сроков.\n\nДПД несёт ответственность верхнего уровня за функционирование производственной системы и достижение установленных параметров.\n\n### 6.2. Ответственность за качество\n\n**Основная ответственность за контроль качества выпуска проектной документации закреплена за Техническим директором.**\n\nТехнический директор определяет требования к качеству, организует стандартизацию и контроль выпуска.\n\nРуководители подразделений участвуют в проверке и контроле выпуска через установленные производственные процессы.\n\nПри этом линейные руководители продолжают отвечать за профессиональные компетенции сотрудников и качество выполняемой ими работы.\n\nТаким образом, разграничиваются:\n\n- Качество работы исполнителей — ответственность линейных руководителей.\n- Контроль качества выпуска проектной документации — ответственность Технического директора.\n- Участие руководителей подразделений в проверке — реализация соответствующих производственных процессов.\n\n### 6.3. Разрешение противоречий\n\nПри противоречии между требованиями функционального и линейного управления применяется механизм эскалации до директора Проектной дирекции.\n\nДПД принимает решение в пределах своих полномочий.\n\n## 7. Методология и стандартизация навыков\n\n### 7.1. Общая методология\n\n**ДПД является владельцем общей методологии производства и производственных стратегий.**\n\nДПД утверждает методологические решения и обеспечивает их согласованность с общей системой управления производством.\n\nРазработка отдельных методик может осуществляться специализированными функциями и должностями.\n\n### 7.2. Архитектурная методология\n\nГлавный архитектор Платформы разрабатывает и развивает архитектурную методологию, платформенные решения и методы повышения параметрической эффективности.\n\n**Главный архитектор Платформы → руководители подразделений**\n\nМетодологическая связь. Передача и внедрение методов проектирования, платформенных решений и требований к параметрической эффективности в пределах компетенции Главного архитектора.\n\nСвязь Главного архитектора с Градостроительством функциональная.&#x20;\n\n### 7.3. Взаимодействие с ГИП и ГАП\n\n**Главный архитектор Платформы → ГИП / ГАП**\n\nМетодологическая связь. Развитие архитектурных методов, передача платформенных решений, сопровождение методологии проектирования.\n\n**Главный архитектор Платформы → Проектная команда**\n\nУсловная функциональная связь. Требования к корректировке проектных решений предъявляются через ГИП и ГАП, которые обеспечивают их реализацию внутри проектной команды.\n\nНепосредственное управление всеми исполнителями на основании этой связи не предусматривается.\n\n**Технический директор → Проектная команда**\n\nФункциональная связь в части качества проектной документации, стандартизации и контроля выпуска.\n\n### 7.4. Стандартизация навыков\n\nСтандартизация навыков обеспечивает наличие у исполнителей необходимых профессиональных компетенций для выполнения установленных производственных задач.\n\nМетодологические требования и стандарты разрабатываются ответственными функциями, утверждаются в установленном порядке и внедряются в производство.\n\nЛинейные руководители обеспечивают развитие компетенций сотрудников и применение утверждённых методов в работе подразделений.\n\n## 8. Проектная команда\n\nПроектная команда представляет собой производственное объединение исполнителей, сформированное для достижения результата проекта.\n\nОна не является самостоятельным линейным подразделением.\n\nВ графической модели проектная команда отображается отдельным прямоугольным контуром, внутри которого могут размещаться должности и подразделения, участвующие в реализации проекта.\n\nВедение дополнительного реестра участников команды в рамках ОФС на данном этапе  не предусматривается.\n\nФункциональная связь с проектной командой может отображать полномочия, которые фактически реализуются через конкретных руководителей.\n\nРазмещение должности внутри контура само по себе не создаёт дополнительного подчинения.\n\n## 9. Внешний контур и подрядные организации\n\nВнешний контур отображает участников производства, которые не являются внутренними подразделениями Проектной дирекции.\n\nВ текущей ОФС представлен объект «Внешний подрядчик» - не исполнители отдельных разделов , а организации выполняющие комплексные работы. &#x20;\n\n### 9.1. Договорные отношения\n\nДоговорные отношения с внешними подрядчиками организуются через Проектную дирекцию.\n\n### 9.2. Распределение ответственности по стадиям\n\n| Стадия | Владелец взаимодействия | Контроль                                      |\n| ------ | ----------------------- | --------------------------------------------- |\n| К      | Проектная дирекция      | Проектная дирекция                            |\n| ЭП     | Проектная дирекция      | Проектная дирекция                            |\n| П      | Технический заказчик    | Проектная дирекция сохраняет функцию контроля |\n| Р      | Технический заказчик    | Проектная дирекция сохраняет функцию контроля |\n\nПередача взаимодействия с подрядчиком техническому заказчику на стадиях П и Р не снимает с Проектной дирекции функции контроля.\n\nПри этом сохранение контроля со стороны Проектной дирекции **не исключает обязанности технического заказчика осуществлять приёмку результатов выполненных работ**.\n\nКонтроль Проектной дирекции и приёмка техническим заказчиком рассматриваются как самостоятельные функции.\n\n### 9.3. Управленческие связи\n\nФункциональные связи с внешними подрядчиками отражают полномочия по определённой функции в пределах установленной системы взаимодействия.\n\nОни не означают линейного подчинения внешнего подрядчика внутренним руководителям.\n\n## 10. Использование модели Минцберга\n\nДля анализа организационной структуры используются элементы модели Генри Минцберга:\n\n- Стратегический апекс.\n- Средняя линия.\n- Операторы.\n- Техноструктура.\n- Вспомогательные функции.\n\nМодель применяется для анализа расположения управленческих функций, механизмов координации и характера организации.\n\n**Окончательное решение по отображению этих связей пока не принято.**\n\n##\n","annotationTitle":"Аннотация к ОФС","uiTheme":"dark"}}</script>
+<script>
+'use strict';
+const $=id=>document.getElementById(id), W=196,H=103, TEAM_W=520,TEAM_H=240,TEAM_MIN_W=280,TEAM_MIN_H=140, baseKey='ofs-builder-1';
+const embedded=JSON.parse($('snapshot').textContent);
+const KEY=embedded?baseKey+'-'+embedded.key:baseKey;
+
+const types={
+ line:['Линейная','#a7ccf5','Руководитель распределяет загрузку сотрудника и отвечает за работу подразделения.',''],
+ func:['Функциональная','#dbb7ee','Обязательные решения по конкретной функции в пределах переданных полномочий.','12 6'],
+ method:['Методологическая','#caed92','Разработка и внедрение методов, обучение и разбор практики. Право требовать исполнения задаётся отдельно.','1 6'],
+ project:['Проектная','#f5bd85','Руководитель определяет задачи, сроки и результат в пределах проекта и выделенного ресурса.','10 4 2 4'],
+ matrix:['Матричная','#84daca','Сочетание линий управления. Можно показать отдельные линии от каждого руководителя или обозначить матрицу обобщённо.','12 5 1 5 1 5']};
+const kinds={job:['Должности','должность','Должность'],role:['Роли','роль','Роль'],unit:['Подразделения','подразделение','Подразделение'],team:['Проектные команды','проектную команду','Проектная команда'],external:['Внешний контур','внешний контур','Внешний контур']};
+const unitTypes={group:'Группа',department:'Отдел'};
+const cardLabel=a=>a.kind==='unit'?unitTypes[a.unitType]:kinds[a.kind][2];
+const mintzKinds=[
+ {key:'apex',title:'Стратегический апекс',secondary:false},
+ {key:'middle',title:'Средняя линия',secondary:false},
+ {key:'operators',title:'Операторы',secondary:false},
+ {key:'technostructure',title:'Техноструктура',secondary:true},
+ {key:'support',title:'Вспомогательные',secondary:true}
+];
+const fresh=()=>({version:2,items:[],nodes:[],edges:[],guides:[]});
+let state=fresh(),selected=null,placing=null,edit=null,drag=null,suppressClick=false,storageOK=true;
+const uid=()=>globalThis.crypto?.randomUUID?.()||Date.now().toString(36)+Math.random().toString(36).slice(2);
+function el(tag,txt,cls){const e=document.createElement(tag);if(txt!=null)e.textContent=txt;if(cls)e.className=cls;return e}
+function validate(s){
+ if(![1,2].includes(s?.version)||!['items','nodes','edges'].every(k=>Array.isArray(s[k])&&s[k].length<=3500))throw Error();
+ if(s.guides==null)s.guides=[];
+ if(!Array.isArray(s.guides)||s.guides.length>mintzKinds.length)throw Error();
+ const roleIds=new Set((s.items||[]).filter(i=>i?.kind==='role').map(i=>i.id));
+ for(const a of s.items){if(a?.kind==='external'){a.fio=''}}
+ s.nodes=(s.nodes||[]).filter(n=>!roleIds.has(n.id));
+ s.edges=(s.edges||[]).filter(e=>!roleIds.has(e.a)&&!roleIds.has(e.b));
+ const usedGuides=new Set();
+ // Совместимость с прежними JSON/HTML, где обе боковые направляющие были горизонтальными.
+ const nodeXs=(s.nodes||[]).filter(n=>Number.isFinite(n.x)).map(n=>n.x);
+ const nodeRights=(s.nodes||[]).filter(n=>Number.isFinite(n.x)).map(n=>n.x+((roleIds.has(n.id))?W:((s.items||[]).find(i=>i.id===n.id)?.kind==='team'?(Number.isFinite(n.w)?n.w:TEAM_W):W)));
+ const nodeTops=(s.nodes||[]).filter(n=>Number.isFinite(n.y)).map(n=>n.y);
+ const nodeBottoms=(s.nodes||[]).filter(n=>Number.isFinite(n.y)).map(n=>n.y+((s.items||[]).find(i=>i.id===n.id)?.kind==='team'?(Number.isFinite(n.h)?n.h:TEAM_H):H));
+ for(const g of s.guides){
+  if(!g||!mintzKinds.some(k=>k.key===g.key)||usedGuides.has(g.key))throw Error();
+  const vertical=mintzKinds.find(k=>k.key===g.key).secondary;
+  if(vertical){
+   if(![g.x,g.y1,g.y2].every(Number.isFinite) && [g.x1,g.x2,g.y].every(Number.isFinite)){
+    const left=nodeXs.length?Math.min(...nodeXs):g.x1;
+    const right=nodeRights.length?Math.max(...nodeRights):g.x2;
+    const top=nodeTops.length?Math.min(...nodeTops):g.y-200;
+    const bottom=nodeBottoms.length?Math.max(...nodeBottoms):g.y+200;
+    const half=Math.max(185,Math.min(500,(bottom-top)*.38));
+    g.x=Math.round((g.key==='technostructure'?left-85:right+85));
+    g.y1=Math.round(g.y-half);g.y2=Math.round(g.y+half);
+    delete g.x1;delete g.x2;delete g.y;
+   }
+   if(![g.x,g.y1,g.y2].every(v=>Number.isFinite(v)&&Math.abs(v)<=1000000)||g.y2-g.y1<140||g.y2-g.y1>1000000)throw Error();
+  }else if(![g.x1,g.x2,g.y].every(v=>Number.isFinite(v)&&Math.abs(v)<=1000000)||g.x2-g.x1<140||g.x2-g.x1>1000000)throw Error();
+  usedGuides.add(g.key);
+ }
+ const ids=new Set(),ns=new Set(),es=new Set();
+ for(const a of s.items){if(!a||typeof a.id!=='string'||ids.has(a.id)||!Object.hasOwn(kinds,a.kind)||(a.kind==='unit'&&!Object.hasOwn(unitTypes,a.unitType))||!['title','fio','fn'].every(k=>typeof a[k]==='string')||!a.title.trim())throw Error();ids.add(a.id)}
+ for(const n of s.nodes){if(!ids.has(n.id)||ns.has(n.id)||![n.x,n.y].every(v=>Number.isFinite(v)&&Math.abs(v)<=1000000))throw Error();ns.add(n.id)}
+ for(const e of s.edges){
+   if(!e||typeof e.id!=='string'||es.has(e.id)||!ns.has(e.a)||!ns.has(e.b)||e.a===e.b)throw Error();
+   if(s.version===1)e.parts=[{type:e.type,note:e.note}];
+   if(!Array.isArray(e.parts)||!e.parts.length||new Set(e.parts.map(p=>p.type)).size!==e.parts.length||!e.parts.every(p=>Object.hasOwn(types,p.type)&&typeof p.note==='string'))throw Error();
+   delete e.type;delete e.note;es.add(e.id);
+ }
+ if(s.uiTheme!=null&&!['dark','light','sea','forest','mountain','sheregesh'].includes(s.uiTheme))s.uiTheme='dark';
+ s.version=2;pruneMatrices(s);return s
+}
+function tidyAssignments(s){
+ const jobs=new Set(s.items.filter(i=>i.kind==='job').map(i=>i.id));
+ for(const role of s.items.filter(i=>i.kind==='role'&&i.jobIds)){
+  if(!Array.isArray(role.jobIds))throw Error();
+  role.jobIds=[...new Set(role.jobIds.filter(id=>jobs.has(id)))];
+ }
+}
+function pruneMatrices(s){
+ if(s.methodology){
+  const ids=new Set(s.nodes.map(n=>n.id));
+  if(!Array.isArray(s.methodology.members)||typeof s.methodology.title!=='string')throw Error();
+  s.methodology.members=[...new Set(s.methodology.members.filter(id=>ids.has(id)))];
+  if(!s.methodology.members.length)delete s.methodology;
+ }
+ tidyAssignments(s);
+ const edges=new Map(s.edges.map(e=>[e.id,e]));
+ for(const a of s.items){
+   if(!a.matrix)continue;
+   const refs=a.matrix.refs;
+   if(!Array.isArray(refs))throw Error();
+   a.matrix.refs=refs.filter(r=>{const e=edges.get(r.edge);return e?.b===a.id&&e.parts.some(p=>p.type===r.type)});
+   if(new Set(a.matrix.refs.map(r=>edges.get(r.edge).a)).size<2)delete a.matrix;
+ }
+}
+function ask(message,apply){
+ $('question').textContent=message;$('yes').onclick=()=>{$('ask').close();apply()};$('no').onclick=()=>$('ask').close();$('ask').showModal()
+}
+function dropEdge(e){ask('Удалить связь '+item(e.a).title+' → '+item(e.b).title+' со всеми её типами?',()=>{
+ state.edges=state.edges.filter(x=>x.id!==e.id);finish()
+})}
+function check(text,checked){
+ const row=el('label',null,'checkrow'),input=el('input');input.type='checkbox';input.checked=checked;row.append(input,document.createTextNode(text));$('fields').append(row);return input
+}
+function matrixEditor(a){
+ const incoming=state.edges.filter(e=>e.b===a.id);
+ const toggle=check('Матричное подчинение',!!a.matrix);
+ const choices=[];
+ const help=el('p','Выберите входящие полномочия как минимум от двух разных руководителей. Типы и полномочия задаются на стрелках.','note');
+ $('fields').append(help);
+ for(const e of incoming)for(const p of e.parts){
+  if(p.type==='matrix')continue;
+  const input=check(item(e.a).title+' · '+types[p.type][0]+(p.note?' — '+p.note:''),!!a.matrix?.refs.some(r=>r.edge===e.id&&r.type===p.type));
+  choices.push({input,edge:e.id,type:p.type,source:e.a})
+ }
+ const conflict=field('conflict','Кто разрешает конфликт приоритетов',a.matrix?.conflict,'textarea');
+ function sync(){help.hidden=!toggle.checked;for(const c of choices)c.input.parentElement.hidden=!toggle.checked;conflict.parentElement.hidden=!toggle.checked}
+ toggle.onchange=sync;sync();edit.matrix={toggle,choices,conflict}
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));storageOK=true}catch{storageOK=false}persistMsg()}
+function persistMsg(){ $('saved').textContent=storageOK?'Автосохранение в этом браузере. Для отдельного файла нажмите «Сохранить HTML».':'Автосохранение недоступно. Нажмите «Сохранить HTML», чтобы записать изменения в файл.' }
+function sample(){const s=fresh();s.items=[['a','job','Директор Платформы','Стратегия и методология'],['b','job','Главный архитектор','Архитектурная эффективность'],['c','role','Держатель процесса','Развитие производственного процесса']].map(([id,kind,title,fn])=>({id,kind,title,fn,fio:''}));return s}
+try{const raw=localStorage.getItem(KEY);state=raw?validate(JSON.parse(raw)):embedded?validate(embedded.data):sample()}catch{state=embedded?validate(embedded.data):sample();storageOK=false}
+function item(id){return state.items.find(a=>a.id===id)}
+function nodeSize(n,items=state.items){
+ const a=items.find(i=>i.id===n.id);
+ if(a?.kind==='team'){
+  const w=Number.isFinite(n.w)?Math.round(n.w):TEAM_W,h=Number.isFinite(n.h)?Math.round(n.h):TEAM_H;
+  return {w:Math.max(TEAM_MIN_W,Math.min(1000000,w)),h:Math.max(TEAM_MIN_H,Math.min(1000000,h))}
+ }
+ if(a?.kind==='job'){
+  const count=items.filter(r=>r.kind==='role'&&Array.isArray(r.jobIds)&&r.jobIds.includes(n.id)).length;
+  return {w:W,h:H+(count?8+count*35:0)};
+ }
+ return {w:W,h:H}
+}
+function nodeBounds(n,items=state.items){const {w,h}=nodeSize(n,items);return {left:n.x,top:n.y,right:n.x+w,bottom:n.y+h,width:w,height:h,cx:n.x+w/2,cy:n.y+h/2}}
+function clampCoord(v){return Math.max(-coordinateLimit,Math.min(coordinateLimit,Math.round(v)))}
+function rolesForJob(jobId){return state.items.filter(i=>i.kind==='role'&&Array.isArray(i.jobIds)&&i.jobIds.includes(jobId))}
+function pick(id){const a=item(id);if(a?.kind==='role'){formItem('role',a);return}selected=null;placing=id;render()}
+function drawLibrary(){const box=$('library');box.replaceChildren();for(const k of Object.keys(kinds)){const g=el('div',null,'group'),h=el('h3',kinds[k][0]),list=el('div',null,'items');g.append(h,list);box.append(g);
+const hiddenOnField=k==='role'?state.items.filter(x=>x.kind===k):state.items.filter(x=>x.kind===k&&!state.nodes.some(n=>n.id===x.id));
+for(const a of hiddenOnField){const row=el('div',null,'entry'+(placing===a.id?' active':'')),btn=el('button',null,'pick'),pen=el('button','✎');btn.append(el('i',null,'typeDot '+(k+'Dot')),document.createTextNode(k==='unit'?cardLabel(a)+' · '+a.title:a.title));
+if(k==='role'){btn.onclick=()=>formItem(a.kind,a);btn.title='Роль отображается значком на карточке должности';}
+else{btn.draggable=true;btn.onclick=()=>pick(a.id);btn.ondragstart=e=>{e.dataTransfer.setData('text/plain',a.id);e.dataTransfer.effectAllowed='move'}}
+pen.title='Изменить '+a.title;pen.onclick=()=>formItem(a.kind,a);row.append(btn,pen);list.append(row)}}}
+// Независимое от полос прокрутки панорамирование — без тупиков у границ полотна.
+let zoom=1,viewX=0,viewY=0;
+const minZoom=0.005,maxZoom=3,coordinateLimit=1000000;
+function updateViewTransform(){
+ $('world').style.transform=`translate(${viewX}px,${viewY}px) scale(${zoom})`;
+}
+function guideBounds(g){
+ return mintzKinds.find(k=>k.key===g.key)?.secondary
+  ?{left:g.x-12,right:g.x+65,top:g.y1-12,bottom:g.y2+12}
+  :{left:g.x1-12,right:g.x2+12,top:g.y-40,bottom:g.y+18};
+}
+function updateSize(){
+ const v=$('viewport');
+ const boxes=state.nodes.map(n=>nodeBounds(n));
+ const width=Math.max(v.clientWidth/zoom,740,...boxes.map(b=>b.right+70),...(state.guides||[]).map(g=>guideBounds(g).right+70));
+ const height=Math.max(v.clientHeight/zoom,445,...boxes.map(b=>b.bottom+70),...(state.guides||[]).map(g=>guideBounds(g).bottom+50));
+ Object.assign($('world').style,{left:'0px',top:'0px',width:width+'px',height:height+'px'});
+ Object.assign($('extent').style,{width:'100%',height:'100%'});
+ updateViewTransform();
+ $('lines').setAttribute('width',width);$('lines').setAttribute('height',height);
+ $('actual').textContent=Number((zoom*100).toFixed(1))+'%';
+ $('inside').disabled=zoom>=maxZoom;$('out').disabled=zoom<=minZoom;
+}
+function setZoom(value,point){
+ const v=$('viewport'),x=point?.x??v.clientWidth/2,y=point?.y??v.clientHeight/2;
+ const worldX=(x-viewX)/zoom,worldY=(y-viewY)/zoom;
+ zoom=Math.max(minZoom,Math.min(maxZoom,value));
+ viewX=x-worldX*zoom;viewY=y-worldY*zoom;
+ updateSize();
+}
+function fitAll(){
+ const v=$('viewport');
+ if(!state.nodes.length&&!(state.guides||[]).length){zoom=1;viewX=v.clientWidth/2-370;viewY=v.clientHeight/2-220;updateSize();return}
+ const frame=frameBounds(),gs=state.guides||[],boxes=state.nodes.map(n=>nodeBounds(n));
+ const left=Math.min(frame?.left??Infinity,...boxes.map(b=>b.left),...gs.map(g=>guideBounds(g).left)),top=Math.min(frame?.top??Infinity,...boxes.map(b=>b.top),...gs.map(g=>guideBounds(g).top));
+ const right=Math.max(frame?.right??-Infinity,...boxes.map(b=>b.right),...gs.map(g=>guideBounds(g).right)),bottom=Math.max(frame?.bottom??-Infinity,...boxes.map(b=>b.bottom),...gs.map(g=>guideBounds(g).bottom));
+ zoom=Math.max(minZoom,Math.min(maxZoom,(v.clientWidth-40)/(right-left),(v.clientHeight-40)/(bottom-top),1.5));
+ viewX=v.clientWidth/2-(left+right)*zoom/2;
+ viewY=v.clientHeight/2-(top+bottom)*zoom/2;
+ updateSize();
+}
+$('out').onclick=()=>setZoom(zoom/1.25);
+$('inside').onclick=()=>setZoom(zoom*1.25);
+$('actual').onclick=()=>setZoom(1);
+const panel=$('schemePanel'),fullButton=$('fullView');
+let savedView=null,nativeView=false;
+function setExpanded(active){
+ if(active===!!savedView)return;
+ const view=$('viewport');
+ if(active)savedView={zoom,x:viewX,y:viewY};
+ panel.classList.toggle('expanded',active);
+ document.documentElement.classList.toggle('scheme-expanded',active);
+ fullButton.textContent=active?'Свернуть':'На весь экран';
+ fullButton.setAttribute('aria-pressed',String(active));
+ if(active)fitAll();
+ else{
+  zoom=savedView.zoom;viewX=savedView.x;viewY=savedView.y;updateSize();
+  savedView=null;fullButton.focus();
+ }
+}
+async function closeExpanded(){
+ if(document.fullscreenElement===panel){
+  try{await document.exitFullscreen()}catch{}
+ }
+ setExpanded(false);
+}
+fullButton.onclick=async()=>{
+ if(savedView){await closeExpanded();return}
+ setExpanded(true);
+ if(panel.requestFullscreen){
+  try{await panel.requestFullscreen()}catch{/* The panel already fills the browser window. */}
+ }
+};
+document.addEventListener('fullscreenchange',()=>{
+ if(document.fullscreenElement===panel){nativeView=true;fitAll()}
+ else if(nativeView){nativeView=false;setExpanded(false)}
+});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'&&savedView&&!$('dlg').open&&!$('ask').open){e.preventDefault();closeExpanded()}
+});
+$('fitAll').onclick=fitAll;
+$('viewport').addEventListener('wheel',e=>{
+ if(!e.ctrlKey&&!e.metaKey)return;
+ e.preventDefault();const r=$('viewport').getBoundingClientRect();
+ setZoom(zoom*(e.deltaY<0?1.1:1/1.1),{x:e.clientX-r.left,y:e.clientY-r.top});
+},{passive:false});
+function pos(e){const r=$('world').getBoundingClientRect();return [(e.clientX-r.left)/zoom,(e.clientY-r.top)/zoom]}
+function place(id,x,y){
+ if(!item(id))return;const a=item(id);if(a.kind==='role'){formItem('role',a);return}let n=state.nodes.find(n=>n.id===id);
+ if(!n){n={id};if(a.kind==='team'){n.w=TEAM_W;n.h=TEAM_H}state.nodes.push(n)}
+ const {w,h}=nodeSize(n);
+ n.x=clampCoord(x-w/2);n.y=clampCoord(y-h/2);
+ if(a.kind==='team'){const s=nodeSize(n);n.w=s.w;n.h=s.h}
+ placing=selected=null;save();render()
+}
+const svg=(tag,attrs)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);return e};
+const assignmentStyle=['Исполняет роль','#f4d568','Должность закреплена за ролью.','4 5'];
+// Theme is part of the exported OFS model, not a browser-only preference.
+const THEME_LINES={
+ dark:{line:'#a7ccf5',func:'#dbb7ee',method:'#caed92',project:'#f5bd85',matrix:'#84daca',assignment:'#f4d568'},
+ light:{line:'#2b689f',func:'#8a4ea4',method:'#3b7d37',project:'#ae6a24',matrix:'#167e81',assignment:'#956c12'},
+ sea:{line:'#99cef0',func:'#d5b8e9',method:'#8de1bb',project:'#f6be87',matrix:'#77dbdf',assignment:'#e3ce82'},
+ forest:{line:'#9ac4e6',func:'#d6b1e0',method:'#b7e68c',project:'#f0bb7e',matrix:'#87d4b3',assignment:'#ecd585'},
+ mountain:{line:'#b2d6f6',func:'#d6b8e8',method:'#d8e8a4',project:'#f7c59e',matrix:'#89d4d8',assignment:'#f4df8c'},
+ sheregesh:{line:'#a8d5e9',func:'#d8b5e9',method:'#e9d9b5',project:'#ffca95',matrix:'#97d5d3',assignment:'#f0cf91'}
+};
+function applyTheme(key){
+ if(!Object.hasOwn(THEME_LINES,key))key='dark';
+ state.uiTheme=key;document.documentElement.dataset.theme=key;
+ const selector=$('themeSelect');if(selector)selector.value=key;
+ const palette=THEME_LINES[key];
+ for(const [type,color] of Object.entries(palette)){
+  if(type==='assignment')assignmentStyle[1]=color;
+  else if(types[type])types[type][1]=color;
+ }
+ const legendMarks=document.querySelectorAll('#legend th i.line');
+ if(legendMarks.length){for(const [i,type] of ['line','func','matrix','method','project'].entries()){
+  if(legendMarks[i])legendMarks[i].style.borderColor=types[type][1];
+ }}
+}
+$('themeSelect').addEventListener('change',e=>{applyTheme(e.target.value);save();render()});
+
+function visibleLinks(){
+ const links=state.edges.map(edge=>({...edge,parts:[...edge.parts]}));
+ const onField=new Set(state.nodes.map(n=>n.id));
+ for(const role of state.items.filter(i=>i.kind==='role'&&onField.has(i.id))){
+  for(const job of role.jobIds||[]){
+   if(!onField.has(job))continue;
+   let link=links.find(e=>e.a===job&&e.b===role.id);
+   if(!link){link={a:job,b:role.id,parts:[]};links.push(link)}
+   link.parts.push({type:'assignment',note:''})
+  }
+ }
+ return links
+}
+function frameBounds(){
+ const members=new Set(state.methodology?.members);
+ const nodes=state.nodes.filter(n=>members.has(n.id));
+ if(!nodes.length)return null;
+ const boxes=nodes.map(n=>nodeBounds(n));
+ return {left:Math.min(...boxes.map(b=>b.left))-20,top:Math.min(...boxes.map(b=>b.top))-42,
+ right:Math.max(...boxes.map(b=>b.right))+20,bottom:Math.max(...boxes.map(b=>b.bottom))+20};
+}
+function drawFrame(layer){
+ const b=frameBounds();
+ if(!b)return;
+ const group=svg('g',{'pointer-events':'none'});
+ group.append(svg('rect',{x:b.left,y:b.top,width:b.right-b.left,height:b.bottom-b.top,rx:12,fill:'none',stroke:'#b6c3b2','stroke-dasharray':'9 6','stroke-width':1.6}));
+ const title=svg('text',{x:b.left+12,y:b.top+22,fill:'#d4e2ce','font-size':14,'font-weight':600});
+ title.textContent=state.methodology.title;group.append(title);layer.append(group);
+}
+function defaultMintzbergGuides(){
+ // Три основных уровня горизонтальны, две боковые части расположены вертикально.
+ const nodes=state.nodes;
+ const v=$('viewport');
+ const boxes=nodes.map(n=>nodeBounds(n));
+ const left=boxes.length?Math.min(...boxes.map(b=>b.left)):(v.clientWidth*.10-viewX)/zoom;
+ const right=boxes.length?Math.max(...boxes.map(b=>b.right)):(v.clientWidth*.90-viewX)/zoom;
+ const top=boxes.length?Math.min(...boxes.map(b=>b.top)):(v.clientHeight*.20-viewY)/zoom;
+ const bottom=boxes.length?Math.max(...boxes.map(b=>b.bottom)):(v.clientHeight*.80-viewY)/zoom;
+ const w=Math.max(500,right-left),h=Math.max(400,bottom-top);
+ const x1=Math.round(left-40),x2=Math.round(left+w+40);
+ const sideY1=Math.round(top-20),sideY2=Math.round(top+h+20);
+ return {
+  apex:{key:'apex',x1,x2,y:Math.round(top-70)},
+  middle:{key:'middle',x1,x2,y:Math.round(top+h*.50)},
+  operators:{key:'operators',x1,x2,y:Math.round(top+h+60)},
+  technostructure:{key:'technostructure',x:Math.round(left-95),y1:sideY1,y2:sideY2},
+  support:{key:'support',x:Math.round(left+w+95),y1:sideY1,y2:sideY2}
+ };
+}
+function drawMintzbergGuides(){
+ const holder=$('mintzbergGuides');holder.replaceChildren();
+ for(const g of state.guides||[]){
+  const meta=mintzKinds.find(k=>k.key===g.key);if(!meta)continue;
+  const vertical=!!meta.secondary;
+  const line=el('div',null,'mintz-line'+(vertical?' secondary vertical':''));
+  line.tabIndex=0;line.setAttribute('role','group');
+  line.setAttribute('aria-label',meta.title+' — перетащите линию; за концы измените длину');
+  line.title=meta.title+' · перетащите за линию или подпись, за концы измените длину';
+  const title=el('span',meta.title,'mintz-label');
+  const start=el('span',null,'mintz-handle start');start.title='Передвинуть начало линии';
+  const end=el('span',null,'mintz-handle end');end.title='Передвинуть конец линии';
+  line.append(start,title,end);holder.append(line);
+  const sync=()=>{
+   if(vertical){
+    line.style.left=(g.x-10)+'px';line.style.top=g.y1+'px';
+    line.style.width='22px';line.style.height=(g.y2-g.y1)+'px';
+   }else{
+    line.style.left=g.x1+'px';line.style.top=(g.y-10)+'px';
+    line.style.width=(g.x2-g.x1)+'px';line.style.height='22px';
+   }
+  };sync();
+  let editGuide=null;
+  line.addEventListener('pointerdown',e=>{
+   if(e.button!==0||!e.isPrimary)return;
+   e.stopPropagation();e.preventDefault();
+   const mode=e.target===start?'start':e.target===end?'end':'move';
+   editGuide={id:e.pointerId,x:e.clientX,y:e.clientY,
+    x1:g.x1,x2:g.x2,yy:g.y,xv:g.x,y1:g.y1,y2:g.y2,mode,moved:false};
+   line.setPointerCapture(e.pointerId);
+  });
+  line.addEventListener('pointermove',e=>{
+   if(!editGuide||editGuide.id!==e.pointerId)return;
+   const dx=(e.clientX-editGuide.x)/zoom,dy=(e.clientY-editGuide.y)/zoom;
+   if(Math.hypot(dx,dy)<1&&!editGuide.moved)return;
+   editGuide.moved=true;
+   const clamp=n=>Math.round(Math.max(-coordinateLimit,Math.min(coordinateLimit,n)));
+   if(vertical){
+    if(editGuide.mode==='move'){
+     g.x=clamp(editGuide.xv+dx);g.y1=clamp(editGuide.y1+dy);g.y2=clamp(editGuide.y2+dy);
+    }else if(editGuide.mode==='start')g.y1=Math.min(g.y2-140,clamp(editGuide.y1+dy));
+    else g.y2=Math.max(g.y1+140,clamp(editGuide.y2+dy));
+   }else if(editGuide.mode==='move'){
+    g.x1=clamp(editGuide.x1+dx);g.x2=clamp(editGuide.x2+dx);g.y=clamp(editGuide.yy+dy);
+   }else if(editGuide.mode==='start')g.x1=Math.min(g.x2-140,clamp(editGuide.x1+dx));
+   else g.x2=Math.max(g.x1+140,clamp(editGuide.x2+dx));
+   sync();
+  });
+  const endMove=e=>{
+   if(!editGuide||editGuide.id!==e.pointerId)return;
+   const moved=editGuide.moved;editGuide=null;
+   if(moved){updateSize();save()}
+  };
+  line.addEventListener('pointerup',endMove);
+  line.addEventListener('pointercancel',endMove);
+  line.addEventListener('lostpointercapture',endMove);
+  line.addEventListener('click',e=>e.stopPropagation());
+  line.addEventListener('keydown',e=>{
+   const step=e.shiftKey?50:10;
+   if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;
+   e.preventDefault();e.stopPropagation();
+   const dx=e.key==='ArrowLeft'?-step:e.key==='ArrowRight'?step:0;
+   const dy=e.key==='ArrowUp'?-step:e.key==='ArrowDown'?step:0;
+   if(vertical){g.x+=dx;g.y1+=dy;g.y2+=dy}
+   else{g.x1+=dx;g.x2+=dx;g.y+=dy}
+   sync();updateSize();save();
+  });
+ }
+}
+function mintzbergEditor(){
+ begin('Линии Минцберга','mintzberg',null);
+ $('fields').append(el('p','Три горизонтальные направляющие: Стратегический апекс, Средняя линия, Операторы. Две вертикальные боковые: Техноструктура и Вспомогательные. Перемещайте линии мышью, меняйте длину за маркеры на концах.','note'));
+ const hasAny=!!state.guides?.length;
+ edit.guideChoices=mintzKinds.map(k=>({key:k.key,input:check(k.title,!hasAny||state.guides.some(g=>g.key===k.key))}));
+ const actions=el('div',null,'mintz-shortcuts');
+ for(const [title,keys] of [['3 основные',['apex','middle','operators']],['2 боковые',['technostructure','support']],['Все 5',mintzKinds.map(k=>k.key)],['Убрать все',[]]]){
+  const b=el('button',title);b.type='button';
+  b.onclick=()=>{for(const c of edit.guideChoices)c.input.checked=keys.includes(c.key)};
+  actions.append(b);
+ }
+ $('fields').append(actions);
+ $('fields').append(el('p','Положение и длина каждой линии сохраняются в HTML и JSON. Направляющие не являются управленческими связями.','note'));
+}
+$('mintzbergBtn').onclick=mintzbergEditor;
+$('methodFrame').onclick=()=>{
+ begin('Контур методологии','frame',null);
+ field('title','Название контура',state.methodology?.title||'Методология производства');
+ $('fields').append(el('h3','Карточки внутри контура'));
+ edit.members=state.nodes.map(n=>({id:n.id,input:check(item(n.id).title,state.methodology?state.methodology.members.includes(n.id):true)}));
+ if(!edit.members.length)$('fields').append(el('p','Сначала разместите карточку на поле.','note'));
+ if(state.methodology){
+  const remove=el('button','Убрать контур');remove.type='button';
+  remove.onclick=()=>{delete state.methodology;finish()};$('fields').append(remove)
+ }
+};
+function planRoutes(nodes){
+ // Ортогональный маршрутизатор: линии проходят по свободным коридорам
+ // между карточками и прямоугольниками проектных команд, учитывают занятые коридоры и разводятся по портам.
+ // Проектная команда — контур-группа, а не физическое препятствие.
+ // Участники и связи могут находиться ВНУТРИ контура; поэтому его нельзя включать в блокирующие зоны.
+ const nodeBoxes=new Map([...nodes.entries()].filter(([id])=>item(id)?.kind!=='team').map(([id,n])=>{
+  const b=nodeBounds(n);return [id,{left:b.left-13,right:b.right+13,top:b.top-13,bottom:b.bottom+13}];
+ }));
+ const boxes=[...nodeBoxes.values()];
+ const occupied=[],portUsage=new Map(),bundleCache=new Map();
+ let fallbackIndex=0;
+ const allX=[],allY=[];
+ for(const n of nodes.values()){
+  const b=nodeBounds(n);
+  allX.push(b.left-20,b.right+20,b.cx);
+  allY.push(b.top-20,b.bottom+20,b.cy);
+ }
+ const unique=(xs)=>[...new Set(xs.map(v=>Math.round(v*2)/2))].sort((a,b)=>a-b);
+ const baseX=unique(allX),baseY=unique(allY);
+ const sides=['R','L','B','T'];
+ const clamp=(x,min,max)=>Math.min(max,Math.max(min,x));
+ function port(n,side,other,shift){
+  const bb=nodeBounds(n),ob=nodeBounds(other);
+  const cx=bb.cx,cy=bb.cy,ox=ob.cx,oy=ob.cy;
+  const along=side==='L'||side==='R';
+  const team=item(n.id)?.kind==='team';
+  // Для команды ставим порт ближе к адресату по всей длине границы контура.
+  const variation=team?(along?clamp(oy-cy,-bb.height/2+32,bb.height/2-32):clamp(ox-cx,-bb.width/2+32,bb.width/2-32))
+   :(along?clamp((oy-cy)*.15,-23,23):clamp((ox-cx)*.15,-38,38));
+  const offset=Math.round((team?variation+shift:clamp(variation+shift,along?-34:-67,along?34:67))*2)/2;
+  if(side==='R')return {side,bound:[bb.right,cy+offset],stub:[bb.right+24,cy+offset]};
+  if(side==='L')return {side,bound:[bb.left,cy+offset],stub:[bb.left-24,cy+offset]};
+  if(side==='B')return {side,bound:[cx+offset,bb.bottom],stub:[cx+offset,bb.bottom+24]};
+  return {side,bound:[cx+offset,bb.top],stub:[cx+offset,bb.top-24]};
+ }
+ const intersects=(a,b,r)=>{
+  if(a[1]===b[1])return a[1]>r.top+.02&&a[1]<r.bottom-.02&&Math.max(a[0],b[0])>r.left+.02&&Math.min(a[0],b[0])<r.right-.02;
+  if(a[0]===b[0])return a[0]>r.left+.02&&a[0]<r.right-.02&&Math.max(a[1],b[1])>r.top+.02&&Math.min(a[1],b[1])<r.bottom-.02;
+  return true;
+ };
+ function clear(a,b){return !boxes.some(r=>intersects(a,b,r))}
+ function segment(a,b){return a[1]===b[1]
+  ? {horizontal:true,axis:a[1],lo:Math.min(a[0],b[0]),hi:Math.max(a[0],b[0])}
+  : {horizontal:false,axis:a[0],lo:Math.min(a[1],b[1]),hi:Math.max(a[1],b[1])}}
+ function congestion(a,b){
+  const s=segment(a,b);let cost=0;
+  for(const u of occupied){
+   if(s.horizontal===u.horizontal){
+    const shared=Math.min(s.hi,u.hi)-Math.max(s.lo,u.lo);
+    if(shared<=.5)continue;
+    const gap=Math.abs(s.axis-u.axis);
+    if(gap<6)cost+=750+Math.min(780,shared*1.7);
+    else if(gap<11)cost+=120+Math.min(240,shared*.6);
+   }else{
+    const cross=s.axis>u.lo+2&&s.axis<u.hi-2&&u.axis>s.lo+2&&u.axis<s.hi-2;
+    if(cross)cost+=1200;
+   }
+  }
+  return cost;
+ }
+ function routeGrid(p,q){
+  const xs=unique([...baseX,p[0],q[0],(p[0]+q[0])/2]);
+  const ys=unique([...baseY,p[1],q[1],(p[1]+q[1])/2]);
+  const nx=xs.length,ny=ys.length,count=nx*ny;
+  const start=ys.indexOf(p[1])*nx+xs.indexOf(p[0]),goal=ys.indexOf(q[1])*nx+xs.indexOf(q[0]);
+  if(start<0||goal<0)return null;
+  const blocked=new Uint8Array(count);
+  for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){
+   const x=xs[i],y=ys[j];
+   if(boxes.some(r=>x>r.left+.02&&x<r.right-.02&&y>r.top+.02&&y<r.bottom-.02))blocked[j*nx+i]=1;
+  }
+  if(blocked[start]||blocked[goal])return null;
+  const horizontal=new Int8Array(ny*(nx-1)),vertical=new Int8Array((ny-1)*nx);
+  const hCost=new Float64Array(horizontal.length),vCost=new Float64Array(vertical.length);
+  const length=count*2,dist=new Float64Array(length).fill(Infinity),prev=new Int32Array(length).fill(-1),queue=[];
+  function push(state,g,priority){const v={state,g,priority};let i=queue.length;queue.push(v);while(i>0){const parent=(i-1)>>1;if(queue[parent].priority<=v.priority)break;queue[i]=queue[parent];i=parent}queue[i]=v}
+  function pop(){const root=queue[0],last=queue.pop();if(queue.length){let i=0;while(true){let child=i*2+1;if(child>=queue.length)break;if(child+1<queue.length&&queue[child+1].priority<queue[child].priority)child++;if(last.priority<=queue[child].priority)break;queue[i]=queue[child];i=child}queue[i]=last}return root}
+  for(let dir=0;dir<2;dir++){dist[start*2+dir]=0;push(start*2+dir,0,Math.abs(p[0]-q[0])+Math.abs(p[1]-q[1]))}
+  let finish=-1,iterations=0;
+  while(queue.length&&iterations++<18000){
+   const curr=pop(),s=curr.state;
+   if(curr.g!==dist[s])continue;
+   const u=s>>1,prevDir=s&1;
+   if(u===goal){finish=s;break}
+   const i=u%nx,j=Math.floor(u/nx);
+   for(const [ni,nj,dir] of [[i-1,j,0],[i+1,j,0],[i,j-1,1],[i,j+1,1]]){
+    if(ni<0||ni>=nx||nj<0||nj>=ny)continue;
+    const v=nj*nx+ni;if(blocked[v])continue;
+    const a=[xs[i],ys[j]],b=[xs[ni],ys[nj]];
+    let cache,cc,edge;
+    if(dir===0){edge=j*(nx-1)+Math.min(i,ni);cache=horizontal;cc=hCost}
+    else{edge=Math.min(j,nj)*nx+i;cache=vertical;cc=vCost}
+    if(cache[edge]===0){cache[edge]=clear(a,b)?1:-1;if(cache[edge]===1)cc[edge]=congestion(a,b)}
+    if(cache[edge]<0)continue;
+    const distance=Math.abs(a[0]-b[0])+Math.abs(a[1]-b[1]);
+    const bend=(u!==start&&prevDir!==dir)?22:0;
+    const g=curr.g+distance+bend+cc[edge];
+    const target=v*2+dir;
+    if(g+1e-7>=dist[target])continue;
+    dist[target]=g;prev[target]=s;
+    push(target,g,g+Math.abs(b[0]-q[0])+Math.abs(b[1]-q[1]));
+   }
+  }
+  if(finish<0)return null;
+  const path=[];let at=finish;
+  while(at>=0){const idx=at>>1;path.push([xs[idx%nx],ys[Math.floor(idx/nx)]]);at=prev[at]}
+  path.reverse();return {points:path,cost:dist[finish]};
+ }
+ function simplify(points){
+  const result=[];
+  for(const p of points){
+   const q=[Math.round(p[0]*2)/2,Math.round(p[1]*2)/2];
+   if(result.length&&q[0]===result.at(-1)[0]&&q[1]===result.at(-1)[1])continue;
+   while(result.length>=2){const a=result.at(-2),b=result.at(-1);
+    if((a[0]===b[0]&&b[0]===q[0]&&(b[1]-a[1])*(q[1]-b[1])>=0)||
+       (a[1]===b[1]&&b[1]===q[1]&&(b[0]-a[0])*(q[0]-b[0])>=0))result.pop();
+    else break;
+   }
+   result.push(q);
+  }
+  return result;
+ }
+ function offsetPolyline(points,offset){
+  if(!offset)return points.map(p=>p.slice());
+  const normal=(a,b)=>a[1]===b[1]?[0,-Math.sign(b[0]-a[0])]:[Math.sign(b[1]-a[1]),0];
+  return simplify(points.map((p,i)=>{
+   const n1=i?normal(points[i-1],p):normal(p,points[i+1]);
+   const n2=i<points.length-1?normal(p,points[i+1]):n1;
+   return [p[0]+(n1[0]+(n1[0]!==n2[0]?n2[0]:0))*offset,
+           p[1]+(n1[1]+(n1[1]!==n2[1]?n2[1]:0))*offset];
+  }));
+ }
+ function remember(points){for(let i=1;i<points.length;i++)if(points[i][0]!==points[i-1][0]||points[i][1]!==points[i-1][1])occupied.push(segment(points[i-1],points[i]));}
+ function svgPath(points){
+  let d='M '+points[0].join(' ');
+  for(let k=1;k<points.length-1;k++){
+   const p=points[k-1],c=points[k],q=points[k+1],r=Math.min(6,Math.hypot(c[0]-p[0],c[1]-p[1])/2,Math.hypot(q[0]-c[0],q[1]-c[1])/2);
+   if(!r){d+=' L '+c.join(' ');continue}
+   d+=' L '+(c[0]+Math.sign(p[0]-c[0])*r)+' '+(c[1]+Math.sign(p[1]-c[1])*r);
+   d+=' Q '+c.join(' ')+' '+(c[0]+Math.sign(q[0]-c[0])*r)+' '+(c[1]+Math.sign(q[1]-c[1])*r);
+  }
+  return d+' L '+points.at(-1).join(' ');
+ }
+ return (a,b,shift=0,index=0,total=1,pairId='')=>{
+  if(!a||!b)return '';
+  const key=pairId||a.id+'>'+b.id;
+  const spacing=total>3?18/(total-1):10;
+  const displacement=(index-(total-1)/2)*spacing;
+  if(bundleCache.has(key)){
+   const lane=offsetPolyline(bundleCache.get(key),displacement);
+   remember(lane);
+   return svgPath(lane);
+  }
+  shift=0;
+  const from=sides.map(side=>port(a,side,b,shift));
+  const to=sides.map(side=>port(b,side,a,shift));
+  const ab=nodeBounds(a),bb=nodeBounds(b),dx=(bb.cx-ab.cx),dy=(bb.cy-ab.cy);
+  const bias={R:dx>=0?0:80,L:dx<=0?0:80,B:dy>=0?0:80,T:dy<=0?0:80};
+  const options=[];
+  for(const p of from)for(const q of to){
+   if(!clear(p.stub,p.bound)||!clear(q.stub,q.bound)){
+    const onlyOwn=(s,t,id)=>!boxes.some(r=>r!==nodeBoxes.get(id)&&intersects(s,t,r));
+    if(!onlyOwn(p.stub,p.bound,a.id)||!onlyOwn(q.stub,q.bound,b.id))continue;
+   }
+   const angle=bias[p.side]+({R:dx<=0?0:0,L:0,B:0,T:0}[q.side]||0);
+   const alignment=(p.side==='R'&&dx<0||p.side==='L'&&dx>0||p.side==='T'&&dy>0||p.side==='B'&&dy<0?100:0)+
+    (q.side==='R'&&dx>0||q.side==='L'&&dx<0||q.side==='T'&&dy<0||q.side==='B'&&dy>0?100:0);
+   const separation=Math.abs(p.stub[0]-q.stub[0])+Math.abs(p.stub[1]-q.stub[1]);
+   options.push({p,q,estimate:separation+alignment+angle});
+  }
+  options.sort((a,b)=>a.estimate-b.estimate);
+  let best=null,bestCost=Infinity;
+  for(const candidate of options.slice(0,12)){
+   const {p,q}=candidate;
+   const found=routeGrid(p.stub,q.stub);
+   if(!found)continue;
+   const pKey=a.id+'|'+p.side,qKey=b.id+'|'+q.side;
+   const penalty=(portUsage.get(pKey)||[]).reduce((total,y)=>total+(Math.hypot(y[0]-p.bound[0],y[1]-p.bound[1])<12?100:0),0)+
+     (portUsage.get(qKey)||[]).reduce((total,y)=>total+(Math.hypot(y[0]-q.bound[0],y[1]-q.bound[1])<12?100:0),0);
+   const cost=found.cost+candidate.estimate*.22+penalty;
+   if(cost<bestCost){best={p,q,route:found.points};bestCost=cost}
+  }
+  let pts;
+  if(best){
+   pts=simplify([best.p.bound,best.p.stub,...best.route,best.q.stub,best.q.bound]);
+   for(const [node,p] of [[a,best.p],[b,best.q]]){
+    const key=node.id+'|'+p.side;
+    if(!portUsage.has(key))portUsage.set(key,[]);
+    portUsage.get(key).push(p.bound);
+   }
+  }else{
+   const p=port(a,dx>=0?'R':'L',b,shift),q=port(b,dx>=0?'L':'R',a,shift);
+   // Последняя резервная трасса с отдельной полосой: не сводим все связи в одну верхнюю линию.
+   const lane=fallbackIndex++;
+   const maxB=Math.max(...[...nodes.values()].map(n=>nodeBounds(n).bottom));
+   const minT=Math.min(...[...nodes.values()].map(n=>nodeBounds(n).top));
+   const minL=Math.min(...[...nodes.values()].map(n=>nodeBounds(n).left));
+   const maxR=Math.max(...[...nodes.values()].map(n=>nodeBounds(n).right));
+   const top=minT-52-(lane%7)*16,bot=maxB+52+(lane%7)*16;
+   const left=minL-52-(lane%7)*16,right=maxR+52+(lane%7)*16;
+   const candidates=[
+    [p.bound,p.stub,[p.stub[0],top],[q.stub[0],top],q.stub,q.bound],
+    [p.bound,p.stub,[p.stub[0],bot],[q.stub[0],bot],q.stub,q.bound],
+    [p.bound,p.stub,[left,p.stub[1]],[left,q.stub[1]],q.stub,q.bound],
+    [p.bound,p.stub,[right,p.stub[1]],[right,q.stub[1]],q.stub,q.bound]
+   ];
+   const cost=pts=>pts.slice(1).reduce((total,c,i)=>total+Math.abs(c[0]-pts[i][0])+Math.abs(c[1]-pts[i][1])+congestion(pts[i],c),0);
+   pts=simplify(candidates.map(p=>({p,c:cost(p)})).sort((a,b)=>a.c-b.c)[0].p);
+  }
+  bundleCache.set(key,pts);
+  const lane=offsetPolyline(pts,displacement);
+  remember(lane);
+  return svgPath(lane);
+ };
+}
+// Focus is presentation-only; it never changes the JSON, arrows, links or route geometry.
+let connectionFocus=null;
+function applyConnectionFocus(){
+ const layer=$('lines');
+ const active=!!connectionFocus;
+ layer.classList.toggle('connection-focused',active);
+ for(const path of layer.querySelectorAll('.connection-visual')){
+  const selected=active&&(connectionFocus.kind==='edge'
+    ?path.dataset.connection===connectionFocus.key
+    :path.dataset.from===connectionFocus.key||path.dataset.to===connectionFocus.key);
+  path.classList.toggle('connection-current',!!selected);
+ }
+}
+function focusConnection(kind,key){
+ if(connectionFocus?.kind===kind&&connectionFocus.key===key)return;
+ connectionFocus={kind,key};applyConnectionFocus();
+}
+function blurConnection(kind,key){
+ if(connectionFocus?.kind!==kind||connectionFocus.key!==key)return;
+ connectionFocus=null;applyConnectionFocus();
+}
+function wires(){const layer=$('lines');layer.replaceChildren();const defs=svg('defs',{});layer.append(defs);for(const [k,t] of Object.entries({...types,assignment:assignmentStyle})){let m=svg('marker',{id:'arrow'+k,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:6,markerHeight:6,orient:'auto'});m.append(svg('path',{d:'M0 0 L10 5 L0 10 Z',fill:t[1]}));defs.append(m)}
+drawFrame(layer);
+ const nodes=new Map(state.nodes.map(n=>[n.id,n]));
+ const route=planRoutes(nodes);
+ const outgoing=new Map(), links=visibleLinks().sort((e1,e2)=>{const a1=nodes.get(e1.a),b1=nodes.get(e1.b),a2=nodes.get(e2.a),b2=nodes.get(e2.b);const d1=a1&&b1?Math.abs(nodeBounds(a1).cx-nodeBounds(b1).cx)+Math.abs(nodeBounds(a1).cy-nodeBounds(b1).cy):0;const d2=a2&&b2?Math.abs(nodeBounds(a2).cx-nodeBounds(b2).cx)+Math.abs(nodeBounds(a2).cy-nodeBounds(b2).cy):0;return d1-d2});
+ for(const e of links){if(!outgoing.has(e.a))outgoing.set(e.a,new Set());outgoing.get(e.a).add(e.b)}
+
+ for(const e of links){
+  const a=nodes.get(e.a),b=nodes.get(e.b);
+  const reverse=outgoing.get(e.b)?.has(e.a);
+  for(const [i,part] of e.parts.entries()){
+   const [name,color,,dash]=part.type==='assignment'?assignmentStyle:types[part.type];
+   const lane=reverse?i+0.65:i-(e.parts.length-1)/2;
+   const d=route(a,b,0,i,e.parts.length,e.id||e.a+'>'+e.b);
+   const line=svg('path',{d,fill:'none',stroke:color,'stroke-width':2.5,'stroke-linecap':'round','stroke-dasharray':dash||'none','marker-end':'url(#arrow'+part.type+')'});
+   const hit=svg('path',{d,fill:'none',stroke:'transparent','stroke-width':10,class:'wire',tabindex:'0',role:'button'});
+   // Every path remembers both ends. Hovering a job highlights all incoming/outgoing links.
+   const linkKey=e.id||e.a+'>'+e.b;
+   line.classList.add('connection-visual');
+   line.dataset.connection=linkKey;line.dataset.from=e.a;line.dataset.to=e.b;
+   hit.dataset.connection=linkKey;
+   hit.onmouseenter=()=>focusConnection('edge',linkKey);
+   hit.onfocus=()=>focusConnection('edge',linkKey);
+   hit.onmouseleave=()=>blurConnection('edge',linkKey);
+   hit.onblur=()=>blurConnection('edge',linkKey);
+   const open=ev=>{ev.stopPropagation();if(part.type==='assignment')formItem('role',item(e.b));else formEdge(state.edges.find(real=>real.id===e.id))};
+   hit.onclick=open;layer.append(line,hit);
+   const desc=name+' · '+item(e.a).title+' → '+item(e.b).title;
+   hit.setAttribute('aria-label',desc);
+   const title=svg('title',{});title.textContent=desc+(part.note?' · '+part.note:'');hit.append(title);
+   hit.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();open(ev)}};
+  }
+ }
+ // Route recalculations must preserve the hover focus while a card is being dragged.
+ applyConnectionFocus();
+
+}
+function border(x,y,toX,toY){
+ const dx=toX-x,dy=toY-y;
+ if(!dx&&!dy)return {x:x+W/2+2,y};
+ const k=Math.min((W/2+2)/Math.abs(dx),(H/2+2)/Math.abs(dy));
+ return {x:x+dx*k,y:y+dy*k};
+}
+function connect(id){if(placing){placing=null}if(!selected||selected===id){selected=selected===id?null:id;render();return}let e=state.edges.find(e=>e.a===selected&&e.b===id);if(!e){e={id:uid(),a:selected,b:id,parts:[{type:'line',note:comparison.line[1]}]}}selected=null;render();formEdge(e)}
+let pendingWires=false;function scheduleWires(){if(pendingWires)return;pendingWires=true;requestAnimationFrame(()=>{pendingWires=false;wires()})}
+function render(){
+ drawEdgeRows();drawLibrary();updateSize();wires();drawMintzbergGuides();$('nodes').replaceChildren();
+ for(const n of state.nodes){
+  const a=item(n.id),isTeam=a.kind==='team',box=nodeBounds(n);
+  if(isTeam){
+   if(!Number.isFinite(n.w))n.w=box.width;
+   if(!Number.isFinite(n.h))n.h=box.height;
+   const c=el('div',null,'team-area'+(selected===a.id?' sel':''));
+   c.tabIndex=0;c.setAttribute('role','group');
+   c.title=[a.title,a.fn].filter(Boolean).join('\n');
+   c.style.left=n.x+'px';c.style.top=n.y+'px';c.style.width=box.width+'px';c.style.height=box.height+'px';
+   c.append(el('small',cardLabel(a)),el('strong',a.title),el('span',a.fn||'Растягиваемая область команды. Разместите внутри участников проектной команды.'));
+   const pen=el('button','✎','editcard');pen.title='Редактировать объект';pen.onclick=e=>{e.stopPropagation();formItem(a.kind,a)};c.append(pen);
+   for(const dir of ['nw','ne','sw','se']){const h=el('span',null,'resize-handle '+dir);h.dataset.dir=dir;h.title='Изменить размер';c.append(h)}
+   $('nodes').append(c);
+   let action=null;
+   const applyTeam=()=>{c.style.left=n.x+'px';c.style.top=n.y+'px';c.style.width=n.w+'px';c.style.height=n.h+'px';updateSize();scheduleWires()};
+   c.onpointerdown=e=>{if(e.button!==0)return;const handle=e.target.closest('.resize-handle');if(e.target.closest('button'))return;suppressClick=false;c.setPointerCapture(e.pointerId);action={id:e.pointerId,mode:handle?'resize':'move',dir:handle?.dataset.dir||'',cx:e.clientX,cy:e.clientY,x:n.x,y:n.y,w:box.width,h:box.height,moved:false};e.stopPropagation()};
+   c.onpointermove=e=>{if(!action||!c.hasPointerCapture(e.pointerId)||action.id!==e.pointerId)return;const dx=(e.clientX-action.cx)/zoom,dy=(e.clientY-action.cy)/zoom;if(Math.hypot(dx,dy)<3&&!action.moved)return;action.moved=true;
+    if(action.mode==='move'){n.x=clampCoord(action.x+dx);n.y=clampCoord(action.y+dy)}
+    else{
+     let x=action.x,y=action.y,w=action.w,h=action.h;
+     if(action.dir.includes('e'))w=Math.max(TEAM_MIN_W,action.w+dx);
+     if(action.dir.includes('s'))h=Math.max(TEAM_MIN_H,action.h+dy);
+     if(action.dir.includes('w')){const nw=Math.max(TEAM_MIN_W,action.w-dx);x=action.x+(action.w-nw);w=nw}
+     if(action.dir.includes('n')){const nh=Math.max(TEAM_MIN_H,action.h-dy);y=action.y+(action.h-nh);h=nh}
+     n.x=clampCoord(x);n.y=clampCoord(y);n.w=Math.round(Math.min(1000000,w));n.h=Math.round(Math.min(1000000,h));
+    }
+    applyTeam();
+   };
+   c.onpointerup=c.onpointercancel=()=>{if(action?.moved){suppressClick=true;scheduleWires();save()}action=null};
+   c.onclick=e=>{e.stopPropagation();if(!suppressClick)connect(n.id);suppressClick=false};
+   c.onkeydown=e=>{if(e.target===c&&['Enter',' '].includes(e.key)){e.preventDefault();connect(n.id)}};
+   continue;
+  }
+  const roles=a.kind==='job'?rolesForJob(a.id):[];
+  const c=el('div',null,'card '+a.kind+(roles.length?' with-roles':'')+(selected===a.id?' sel':''));
+  c.tabIndex=0;c.setAttribute('role','group');c.title=[a.title,a.kind==='external'?'':a.fio,a.fn,...roles.map(r=>'Роль: '+r.title)].filter(Boolean).join('\n');
+  c.style.left=n.x+'px';c.style.top=n.y+'px';c.style.height=box.height+'px';
+  const caption=el('small',cardLabel(a)+(a.matrix?' · Матрица':''));
+  const title=el('strong',a.title),fn=el('span',a.fn||'Функция не указана');
+  c.append(caption,title);
+  if(a.kind!=='external')c.append(el('em',a.fio||(a.kind==='unit'?'Руководитель не указан':'ФИО не указано')));
+  if(a.kind!=='external'||a.fn)c.append(fn);
+  if(roles.length){
+   const wrap=el('div',null,'role-notes');
+   for(const role of roles){
+    const b=el('button',role.title,'role-note');b.type='button';b.title=role.title+(role.fn?' · '+role.fn:'');
+    b.onclick=e=>{e.stopPropagation();formItem('role',role)};wrap.append(b)
+   }
+   c.append(wrap)
+  }
+  const pen=el('button','✎','editcard');pen.title='Редактировать карточку';pen.onclick=e=>{e.stopPropagation();formItem(a.kind,a)};c.append(pen);$('nodes').append(c);
+  // User request: all direct incoming and outgoing links of a job get the same highlight as a hovered wire.
+  if(a.kind==='job'){
+   c.addEventListener('mouseenter',()=>{c.classList.add('connections-hovered');focusConnection('node',a.id)});
+   c.addEventListener('mouseleave',()=>{c.classList.remove('connections-hovered');blurConnection('node',a.id)});
+   c.addEventListener('focusin',()=>{c.classList.add('connections-hovered');focusConnection('node',a.id)});
+   c.addEventListener('focusout',event=>{if(event.relatedTarget&&c.contains(event.relatedTarget))return;c.classList.remove('connections-hovered');blurConnection('node',a.id)});
+  }
+  c.onpointerdown=e=>{if(e.target.closest('button')||e.button!==0)return;suppressClick=false;c.setPointerCapture(e.pointerId);drag={cx:e.clientX,cy:e.clientY,x:n.x,y:n.y,moved:false}};
+  c.onpointermove=e=>{if(!drag||!c.hasPointerCapture(e.pointerId))return;let dx=e.clientX-drag.cx,dy=e.clientY-drag.cy;if(Math.hypot(dx,dy)<5&&!drag.moved)return;drag.moved=true;n.x=clampCoord(drag.x+dx/zoom);n.y=clampCoord(drag.y+dy/zoom);c.style.left=n.x+'px';c.style.top=n.y+'px';updateSize();scheduleWires()};
+  c.onpointerup=c.onpointercancel=()=>{if(drag?.moved){suppressClick=true;scheduleWires();save()}drag=null};c.onclick=e=>{e.stopPropagation();if(!suppressClick)connect(n.id);suppressClick=false};c.onkeydown=e=>{if(e.target===c&&['Enter',' '].includes(e.key)){e.preventDefault();connect(n.id)}}
+ }
+ $('counts').textContent='Объектов на схеме: '+state.nodes.length+' · Связей: '+state.edges.length;$('cancel').hidden=!selected&&!placing;$('hint').textContent=placing?'«'+item(placing).title+'». Нажмите на свободное место поля.':selected?'От «'+item(selected).title+'» → нажмите на вторую карточку.':state.nodes.length?'Нажмите две карточки по очереди, чтобы связать их. Нажмите линию для настройки.':'Добавьте первую карточку из библиотеки. Образцы можно переименовать.'
+}
+function field(name,label,value,tag='input'){const l=el('label',label),v=el(tag);v.name=name;if(tag==='textarea')v.rows=2;v.value=value||'';l.append(v);$('fields').append(l);return v}
+function begin(title,mode,obj){edit={mode,obj};$('editerr').textContent='';$('fields').replaceChildren();$('dialogTitle').textContent=title;$('remove').hidden=!obj;$('remove').textContent='Удалить';$('dlg').showModal()}
+function formItem(kind,a){begin((a?'Изменить':'Создать')+(' '+kinds[kind][1]),'item',a);edit.kind=kind;
+if(kind==='unit'){
+ const select=field('unitType','Вид подразделения','','select');
+ for(const [value,label] of Object.entries(unitTypes)){const option=el('option',label);option.value=value;select.append(option)}
+ select.value=a?.unitType||'group';
+}
+const t=field('title','Название',a?.title);t.required=true;t.maxLength=150;
+if(kind!=='external')field('fio',kind==='unit'?'ФИО руководителя':'ФИО',a?.fio);
+field('fn',kind==='external'?'Функция или описание внешнего участника':'Главная функция и зона ответственности',a?.fn,'textarea');
+if(kind==='role'){
+ $('fields').append(el('p','Назначьте роль одной или нескольким должностям. Название появится непосредственно внутри карточки должности — отдельная карточка на поле не создаётся.','note'));
+ $('fields').append(el('h3','Должности, исполняющие роль'));
+ edit.jobs=state.items.filter(i=>i.kind==='job').map(j=>({id:j.id,input:check(j.title+(j.fio?' · '+j.fio:''),a?.jobIds?.includes(j.id)||false)}));
+ if(!edit.jobs.length)$('fields').append(el('p','Сначала добавьте должность в библиотеку.','note'));
+}if(kind==='job'&&a)matrixEditor(a);if(a&&state.nodes.some(n=>n.id===a.id)){let b=el('button','Убрать с поля');b.type='button';b.style.marginTop='12px';b.onclick=()=>{ask('Убрать карточку с поля вместе с её связями?',()=>{detach(a.id);finish()})};$('fields').append(b)}t.focus()}
+function putOnField(id){
+ if(item(id)?.kind==='role')return;
+ if(state.nodes.some(n=>n.id===id))return;
+ const a=item(id),probe={id};if(a?.kind==='team'){probe.w=TEAM_W;probe.h=TEAM_H}
+ const {w,h}=nodeSize(probe);
+ for(let row=0;row<=125;row++)for(let col=0;col<3;col++){
+  const x=24+col*(w+49),y=24+row*(h+49);
+  const box={left:x,top:y,right:x+w,bottom:y+h};
+  if(state.nodes.every(n=>{const b=nodeBounds(n);return b.right+12<box.left||b.left-12>box.right||b.bottom+12<box.top||b.top-12>box.bottom;})){
+   const node={id,x,y};if(a?.kind==='team'){node.w=TEAM_W;node.h=TEAM_H}state.nodes.push(node);return
+  }
+ }
+}
+function formEdge(e){
+ begin('Управленческая связь','edge',e);$('fields').append(el('p',item(e.a).title+' → '+item(e.b).title,'note'));
+ const role=[item(e.a),item(e.b)].find(i=>i.kind==='role'),job=[item(e.a),item(e.b)].find(i=>i.kind==='job');
+ if(role&&job){
+  const assigned=role.jobIds?.includes(job.id);
+  const btn=el('button',assigned?'Изменить исполнителей роли':'Закрепить должность за ролью');btn.type='button';
+  btn.onclick=()=>{$('dlg').close();formItem('role',role);edit.jobs.find(j=>j.id===job.id).input.checked=true};
+  $('fields').append(btn)
+ }
+ $('remove').hidden=!state.edges.some(x=>x.id===e.id);$('remove').textContent='Удалить связь';edit.choices=[];
+ for(const key of Object.keys(types)){
+  const existing=e.parts.find(p=>p.type===key);
+  if(key==='matrix'&&!existing)continue;
+  const name=key==='matrix'?'Матричная (прежний формат)':types[key][0];
+  const input=check(name,!!existing),note=field('note-'+key,'Полномочия · '+name,(existing?.note || comparison[key][1]),'textarea');
+  const sync=()=>{note.parentElement.hidden=!input.checked};input.onchange=sync;sync();
+  edit.choices.push({key,input,note})
+ }
+}
+function finish(){selected=placing=null;if($('dlg').open)$('dlg').close();pruneMatrices(state);applyTheme(state.uiTheme||'dark');save();render()}
+function detach(id){state.nodes=state.nodes.filter(n=>n.id!==id);state.edges=state.edges.filter(e=>e.a!==id&&e.b!==id)}
+function commitEditor(){
+ const read=name=>$('fields').querySelector('[name="'+name+'"]').value.trim();
+ let message;
+ if(edit.mode==='mintzberg'){
+  const defaults=defaultMintzbergGuides();
+  const previous=new Map((state.guides||[]).map(g=>[g.key,g]));
+  state.guides=edit.guideChoices.filter(c=>c.input.checked).map(c=>previous.get(c.key)||defaults[c.key]);
+  finish();fitAll();return;
+ }
+ if(edit.mode==='frame'){
+  const members=edit.members.filter(m=>m.input.checked).map(m=>m.id);
+  if(!members.length){$('editerr').textContent='Выберите хотя бы одну карточку.';return}
+  state.methodology={title:read('title')||'Методология производства',members};finish();return
+ }
+ if(edit.mode==='edge'){
+   const parts=edit.choices.filter(c=>c.input.checked).map(c=>({type:c.key,note:c.note.value.trim()}));
+   if(!parts.length){$('editerr').textContent='Выберите тип или удалите связь целиком.';return}
+   edit.obj.parts=parts;if(!state.edges.some(e=>e.id===edit.obj.id))state.edges.push(edit.obj);message='Связь сохранена.';
+ }else{
+   const title=read('title');
+   if(!title){const input=$('fields').querySelector('[name="title"]');input.setCustomValidity('Введите название');input.reportValidity();input.oninput=()=>input.setCustomValidity('');return}
+   const a=edit.obj||{id:uid(),kind:edit.kind};
+   if(edit.matrix){
+     const {toggle,choices,conflict}=edit.matrix;
+     const active=choices.filter(c=>c.input.checked);
+     if(toggle.checked&&new Set(active.map(c=>c.source)).size<2){$('editerr').textContent='Для матрицы нужны связи от двух разных руководителей.';return}
+     if(toggle.checked)a.matrix={refs:active.map(c=>({edge:c.edge,type:c.type})),conflict:conflict.value.trim()};
+     else delete a.matrix
+   }
+   Object.assign(a,{title,fio:a.kind==='external'?'':read('fio'),fn:read('fn')});
+   if(a.kind==='role'){
+     // Роль существует только как назначение; на поле не создаём новых карточек.
+     a.jobIds=edit.jobs.filter(j=>j.input.checked).map(j=>j.id);
+   }
+   if(a.kind==='unit')a.unitType=read('unitType');
+   if(!edit.obj)state.items.push(a);
+   message='В библиотеке: «'+title+'».';
+ }
+ finish();
+ $('hint').textContent=message+(storageOK?'':' Чтобы сохранить изменения после закрытия, нажмите «Сохранить HTML».');
+}
+$('saveCard').onclick=commitEditor;
+$('editor').onkeydown=e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'&&e.target.type!=='checkbox'&&!e.isComposing){e.preventDefault();commitEditor()}};
+$('remove').onclick=()=>{
+ const a=edit.obj;if(edit.mode==='edge'){dropEdge(a);return}
+ ask('Удалить карточку «'+a.title+'» из библиотеки и с поля вместе с её связями?',()=>{detach(a.id);state.items=state.items.filter(x=>x.id!==a.id);finish()})
+};
+$('close').onclick=()=>$('dlg').close();$('cancel').onclick=()=>{selected=placing=null;render()};
+const viewport=$('viewport');
+let pan=null, skipClick=false;
+viewport.addEventListener('pointerdown',e=>{
+ if(!e.isPrimary||e.button!==0)return;
+ skipClick=false;
+ if(e.target.closest('.card,.team-area,.wire,.mintz-line,button'))return;
+ pan={id:e.pointerId,x:e.clientX,y:e.clientY,left:viewX,top:viewY,moved:false};
+ viewport.setPointerCapture(e.pointerId);
+});
+viewport.addEventListener('pointermove',e=>{
+ if(!pan||pan.id!==e.pointerId)return;
+ const dx=e.clientX-pan.x,dy=e.clientY-pan.y;
+ if(!pan.moved&&Math.hypot(dx,dy)<4)return;
+ pan.moved=true;viewport.classList.add('panning');
+ viewX=pan.left+dx;viewY=pan.top+dy;updateViewTransform();
+});
+function endPan(e){
+ if(!pan||pan.id!==e.pointerId)return;
+ skipClick=pan.moved;pan=null;viewport.classList.remove('panning');
+}
+for(const name of ['pointerup','pointercancel','lostpointercapture'])viewport.addEventListener(name,endPan);
+viewport.addEventListener('click',e=>{
+ if(skipClick){skipClick=false;e.stopImmediatePropagation()}
+},true);
+viewport.onclick=e=>{if(placing)place(placing,...pos(e));else if(selected){selected=null;render()}};
+viewport.ondragover=e=>e.preventDefault();viewport.ondrop=e=>{e.preventDefault();place(e.dataTransfer.getData('text/plain'),...pos(e))};
+$('newExternal').onclick=()=>formItem('external');$('newTeam').onclick=()=>formItem('team');$('newUnit').onclick=()=>formItem('unit');$('newJob').onclick=()=>formItem('job');$('newRole').onclick=()=>formItem('role');
+$('clear').onclick=()=>{if(state.nodes.length||state.guides.length||state.methodology)ask('Очистить поле, связи, линии Минцберга и контур методологии? Все карточки останутся в библиотеке.',()=>{state.nodes=[];state.edges=[];state.guides=[];delete state.methodology;finish()})};
+function snapshotHtml(){
+ const copy=document.documentElement.cloneNode(true);
+ copy.classList.remove('interactive','scheme-expanded');
+ copy.querySelector('#schemePanel').classList.remove('expanded');
+ const full=copy.querySelector('#fullView');full.textContent='На весь экран';full.setAttribute('aria-pressed','false');
+ copy.querySelector('#dlg').removeAttribute('open');
+ copy.querySelector('#ask').removeAttribute('open');copy.querySelector('#fields').replaceChildren();copy.querySelector('#annotationDlg').removeAttribute('open');copy.querySelector('#annotationView').replaceChildren();copy.querySelector('#annotationEditor').textContent='';
+ copy.querySelectorAll('.sel,.active').forEach(e=>e.classList.remove('sel','active'));
+ copy.querySelectorAll('details').forEach(d=>d.open=true);
+ copy.querySelector('#snapshot').textContent=JSON.stringify({key:uid(),data:state}).replace(/</g,'\\u003c');
+ return '<!doctype html>\n'+copy.outerHTML;
+}
+$('downloadHtml').onclick=()=>{
+ const url=URL.createObjectURL(new Blob([snapshotHtml()],{type:'text/html;charset=utf-8'}));
+ const link=document.createElement('a');link.href=url;link.download='OFS-scheme.html';
+ document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+};
+$('exportBtn').onclick=()=>{const u=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:'application/json'})),a=el('a');a.href=u;a.download='OFS.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),5000)};
+$('importBtn').onclick=()=>$('file').click();$('file').onchange=async e=>{try{const f=e.target.files[0];if(!f)return;const incoming=validate(JSON.parse(await f.text()));if(!incoming.annotationMarkdown)incoming.annotationMarkdown=state.annotationMarkdown;if(!incoming.annotationTitle)incoming.annotationTitle=state.annotationTitle;ask('Заменить текущую схему данными из файла?',()=>{state=incoming;finish()})}catch{alert('Не удалось прочитать схему. Выберите JSON, сохранённый в конструкторе.')}finally{e.target.value=''}};
+const comparison={
+ line:['Кому подчиняется сотрудник?','Руководитель распределяет загрузку, назначает задачи, оценивает работу и отвечает за результат подразделения.','Действует в пределах подразделения и переданных руководителю полномочий.'],
+ func:['Кто вправе давать обязательные указания по функции?','Руководитель функции вправе требовать исполнения установленных требований от участников, охваченных этой связью.','Ограничена предметом функции. Право требовать исправления расчёта само по себе не даёт права менять загрузку исполнителя.'],
+ matrix:['Как сочетаются полномочия нескольких руководителей?','Начальник отдела распоряжается ресурсом, а руководитель проекта определяет задачи выделенного специалиста.','Матрица описывает сочетание линий управления. Следует определить, кто разрешает конфликт приоритетов.'],
+ method:['Кто определяет и развивает способ работы?','Держатель методологии разрабатывает метод, участвует во внедрении, разъясняет спорные случаи и корректирует метод по результатам применения.','Право утверждать методику или выдавать обязательные требования закрепляется отдельно.'],
+ project:['Кто определяет, что и когда команда должна выдать по проекту?','Руководитель проекта ставит задачи, согласует сроки и принимает результат в рамках проекта.','Действует в пределах выделенного ресурса. Для переноса сотрудника с другого проекта нужны соответствующие полномочия.']
+};
+$('legend').replaceChildren();
+for(const [key,cells] of Object.entries(comparison)){
+ const tr=el('tr'),head=el('th'),mark=el('i',null,'line');head.scope='row';mark.style.borderColor=types[key][1];
+ head.append(mark,document.createTextNode(types[key][0]));tr.append(head,...cells.map(t=>el('td',t)));$('legend').append(tr);
+}
+function drawEdgeRows(){
+ const list=$('edgeRows');list.replaceChildren();$('edgeCount').textContent='('+state.edges.length+')';
+ const assignments=state.items.filter(i=>i.kind==='role').flatMap(role=>(role.jobIds||[]).map(id=>({role,job:item(id)})));
+ $('edgeCount').textContent='('+ (state.edges.length+assignments.length)+')';
+ for(const {role,job} of assignments){
+  const tr=el('tr'),actions=el('td'),btn=el('button','Изменить','readonly-action');btn.onclick=()=>formItem('role',role);actions.append(btn);
+  tr.append(el('td',job.title),el('td',role.title),el('td','Исполняет роль'),el('td',role.fn||'—'),actions);list.append(tr)
+ }
+ if(!state.edges.length&&!assignments.length){const tr=el('tr'),td=el('td','Пока нет связей. Выберите на поле две карточки по очереди.');td.colSpan=5;tr.append(td);list.append(tr);return}
+ for(const e of state.edges){
+ const actions=el('td'),remove=el('button','Удалить связь','readonly-action danger');remove.onclick=()=>dropEdge(e);actions.append(remove);
+ for(const [index,p] of e.parts.entries()){
+  const tr=el('tr'),typeCell=el('td'),btn=el('button',types[p.type][0]);btn.onclick=()=>formEdge(e);typeCell.append(btn);
+  const lineActions=index===0?actions:el('td');
+  if(e.parts.length>1){const minus=el('button','Убрать тип','readonly-action');minus.onclick=()=>ask('Убрать тип «'+types[p.type][0]+'» из связи '+item(e.a).title+' → '+item(e.b).title+'?',()=>{e.parts=e.parts.filter(other=>other!==p);finish()});lineActions.append(minus)}
+  tr.append(el('td',item(e.a).title),el('td',item(e.b).title),typeCell,el('td',p.note||'—'),lineActions);list.append(tr)
+ }
+ }
+}
+
+// Встроенная аннотация. Источник хранится как Markdown внутри state.annotationMarkdown.
+function renderAnnotation(){
+ const target=$('annotationView');target.replaceChildren();
+ const source=(state.annotationMarkdown||'').replace(/&#x20;/gi,' ').replace(/&nbsp;/gi,' ');
+ const lines=source.replace(/\r\n?/g,'\n').split('\n');
+ const span=(node,s)=>{for(const part of String(s).split(/(\*\*[^*]+\*\*)/g)){
+   if(part.startsWith('**')&&part.endsWith('**')&&part.length>4)node.append(el('strong',part.slice(2,-2)));
+   else if(part)node.append(document.createTextNode(part));
+ }};
+ const cellparts=line=>line.trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(x=>x.trim());
+ const separator=line=>/^\s*\|(?:\s*:?-{3,}:?\s*\|)+\s*$/.test(line);
+ let paragraph=[],list=null;
+ const flush=()=>{if(paragraph.length){const p=el('p');span(p,paragraph.join(' '));target.append(p);paragraph=[]}};
+ for(let i=0;i<lines.length;i++){
+  const raw=lines[i],line=raw.trim();
+  if(!line){flush();list=null;continue}
+  const heading=/^(#{1,6})\s+(.+)$/.exec(line);
+  if(heading){flush();list=null;const tag='h'+Math.min(3,heading[1].length);const h=el(tag);span(h,heading[2]);target.append(h);continue}
+  if(/^\s*\|/.test(raw)&&i+1<lines.length&&separator(lines[i+1])){
+   flush();list=null;
+   const wrap=el('div',null,'annotation-tablewrap'),table=el('table'),thead=el('thead'),tbody=el('tbody');
+   const head=el('tr');for(const v of cellparts(line)){const th=el('th');span(th,v);head.append(th)}thead.append(head);
+   i+=2;while(i<lines.length&&/^\s*\|/.test(lines[i])&&!separator(lines[i])){
+    const tr=el('tr');for(const v of cellparts(lines[i])){const td=el('td');span(td,v);tr.append(td)}tbody.append(tr);i++
+   }i--;table.append(thead,tbody);wrap.append(table);target.append(wrap);continue;
+  }
+  const bullet=/^[-*]\s+(.+)$/.exec(line);
+  if(bullet){flush();if(!list){list=el('ul');target.append(list)}const li=el('li');span(li,bullet[1]);list.append(li);continue}
+  list=null;paragraph.push(line)
+ }
+ flush();
+}
+let annotationIsEditing=false;
+function annotationEditMode(active){
+ annotationIsEditing=active;
+ $('annotationView').hidden=active;
+ $('annotationEditor').hidden=!active;
+ $('annotationApply').hidden=!active;
+ $('annotationCancel').hidden=!active;
+ $('annotationEdit').hidden=active;
+ if(active){$('annotationEditor').value=state.annotationMarkdown||'';$('annotationEditor').focus()}
+ else renderAnnotation();
+}
+$('annotationBtn').onclick=()=>{annotationEditMode(false);$('annotationDlg').showModal()};
+$('annotationClose').onclick=()=>{annotationEditMode(false);$('annotationDlg').close()};
+$('annotationEdit').onclick=()=>annotationEditMode(true);
+$('annotationCancel').onclick=()=>annotationEditMode(false);
+$('annotationApply').onclick=()=>{
+ if(!$('annotationEditor').value.trim()){alert('Аннотация не может быть пустой.');return}
+ state.annotationMarkdown=$('annotationEditor').value;
+ save();annotationEditMode(false);
+};
+$('annotationCopy').onclick=async()=>{
+ const txt=annotationIsEditing?$('annotationEditor').value:(state.annotationMarkdown||'');
+ try{await navigator.clipboard.writeText(txt)}catch{
+  const text=el('textarea');text.value=txt;document.body.append(text);text.select();document.execCommand('copy');text.remove()
+ }
+};
+$('annotationDlg').addEventListener('close',()=>{annotationEditMode(false)});
+
+window.addEventListener('resize',updateSize);document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('dlg').open&&!$('annotationDlg').open){selected=placing=null;render()}});applyTheme(state.uiTheme||'dark');render();persistMsg();document.documentElement.classList.add('interactive');fitAll();
+</script></body></html>
