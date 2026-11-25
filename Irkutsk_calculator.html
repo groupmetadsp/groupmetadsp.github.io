@@ -20,9 +20,10 @@
 @media(max-width:1150px){.layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.layout>section:first-child{grid-column:1/-1}}
 @media(max-width:690px){.layout{grid-template-columns:minmax(0,1fr)}#massView{position:static}}
 .scenario th{white-space:normal}.scenario td:first-child{white-space:normal;min-width:95px}.scenario th:not(:first-child),.scenario td:not(:first-child){min-width:77px}.scenario tr:nth-last-child(3) td{font-weight:700}.scenario tr:last-child td{font-weight:700;border-top:2px solid var(--line)}
+.mode-panel{margin-bottom:16px}.mode-switch{display:flex;gap:10px;flex-wrap:wrap}.mode-switch button{flex:1;min-width:160px;padding:14px;text-align:left;font-size:15px;font-weight:700}.mode-switch button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}.common-panel{margin-bottom:16px}.common-panel .fields{grid-template-columns:repeat(auto-fit,minmax(175px,1fr))}.layout[data-model="theory"]{grid-template-columns:minmax(0,1.3fr) minmax(300px,1fr)}.layout[data-model="theory"] #massView{grid-column:auto}.theory-note{margin:12px 0}@media(max-width:690px){.layout[data-model="theory"]{grid-template-columns:1fr}}
 </style>
 </head><body><main>
-<header><h1>Иркутск · Плотность и КЭП</h1></header>
+<header><h1>Иркутск · Плотность и КЭП</h1><p class="note">Раздельный расчёт строительной и общей площади</p></header>
 <nav class="toolbar" aria-label="Управление проектом">
  <button id="save">Сохранить проект</button>
  <button id="open">Открыть проект</button>
@@ -33,8 +34,10 @@
  <button id="reset">Вернуть исходные данные</button>
 </nav>
 <p id="toolbarStatus" class="note toolbar-status" role="status"></p>
-<div class="layout">
-<section class="panel">
+<section class="panel mode-panel"><h2>Режим расчёта</h2><div class="mode-switch"><button type="button" id="actualMode" aria-pressed="true">1. Фактический расчёт</button><button type="button" id="theoryMode" aria-pressed="false">2. Теоретический расчёт</button></div></section>
+<section class="panel common-panel"><h2>Исходные данные</h2><div id="commonFields" class="fields"></div><p class="note">К перехода = Sобщ / Sстр. Стартовое значение 0,96 — предварительная оценка для стены 250 мм.</p></section>
+<div class="layout" id="modelLayout">
+<section class="panel" id="apartmentPanel">
 <h2>Квартирография</h2>
 <div class="scroll"><table>
 <thead><tr><th>Тип</th><th>Площадь с лоджией<br>м²/кв.</th><th>Есть балкон<br>или лоджия</th><th>Балкон / лоджия<br>м²/кв.</th><th>Без лоджий<br>м²/кв.</th><th>Секция А<br>шт./эт.</th><th>Секция Б<br>шт./эт.</th><th>Всего<br>шт.</th><th>Доля</th><th>Без лоджий<br>всего, м²</th><th>С лоджиями<br>всего, м²</th><th></th></tr></thead>
@@ -45,21 +48,25 @@
 </section>
 <section class="panel">
 <h2>Расчёт</h2>
+<div id="theoryControls" hidden><label>Что найти<select id="theoryModeCalc"><option value="kep">КЭП при целевой продаваемой площади</option><option value="sales">Продаваемая площадь при заданном КЭП</option></select></label><div id="theoryFields" class="fields"></div><label>Балконы и лоджии при проверке плотности<select id="theoryBasis"><option value="exclude">Исключить из надземной площади</option><option value="include">Включить в надземную площадь</option></select></label><p class="note">Лоджии уже входят в Sпрод. Их площадь вычитается из расчётной Sобщ для плотности; цель Sпрод сохраняется.</p><p class="note">Используем максимальную общую надземную площадь по плотности. 3D показывает только текущую фактическую компоновку.</p></div>
+<div id="actualControls">
 <label>Что найти<select id="mode"><option value="gross">Надземная площадь</option><option value="sales">Продаваемая площадь по лимиту</option><option value="kep">Минимальный КЭП</option><option value="floors">Этажность при заданном КЭП</option><option value="pair">Этажность и минимальный КЭП</option></select></label>
 <div class="fields" id="parameters"></div>
 <label>Сценарий продажи для подбора этажности<select id="saleBasis"><option value="exclude">Без балконов и лоджий</option><option value="include">С балконами и лоджиями (100% площади)</option></select></label>
 <label class="section">Балконы и лоджии при проверке плотности<select id="basis"><option value="exclude">Исключить из надземной площади</option><option value="include">Включить в надземную площадь</option></select></label>
 <label class="section">Предел надземной площади<select id="limitMode"><option value="norm">По площади участка и плотности</option><option value="manual">Дополнительно ограничить вручную</option></select></label>
 <div id="manualField" class="fields" hidden=""></div>
+</div>
 <p id="error" class="bad" role="status" hidden=""></p>
 <div id="result" aria-live="polite"></div>
 <div id="variants"></div>
 <details class="note"><summary>Формулы и база площадей</summary>
+<p>К перехода = Sобщ / Sстр. Стартовое значение 0,96 — предварительная оценка при толщине стены 250 мм без утеплителя и навесного фасада. Требуется калибровка по обмеру секций и сверка правил учёта шахт. При К перехода = 1 возвращается прежняя методика.</p>
 <p>Предел по плотности = площадь участка × плотность. При ручном ограничении используется меньшее из двух значений.</p>
-<p>Продаваемая площадь без лоджий = квартиры без балконов и лоджий + надземная коммерция + коммерция на перепаде рельефа. В сценарии продажи с лоджиями добавляется 100% их площади. Надземная без лоджий = (квартиры без балконов и лоджий + надземная коммерция) ÷ КЭП. Надземная с лоджиями = надземная без лоджий + введённая площадь балконов и лоджий.</p>
+<p>Продаваемая площадь без лоджий = квартиры без балконов и лоджий + надземная коммерция + коммерция на перепаде рельефа. В сценарии продажи с лоджиями добавляется 100% их площади. Sстр без лоджий = (квартиры без балконов и лоджий + надземная коммерция) ÷ КЭП. Sобщ без лоджий = Sстр × К перехода. Sобщ с лоджиями = Sобщ без лоджий + введённая площадь балконов и лоджий.</p>
 <p>Цель по надземной продаже = максимум из 0 и (общая цель по ТЭП − коммерция на перепаде рельефа). Цель по квартирам дополнительно уменьшается на надземную коммерцию.</p>
-<p>Потенциал без лоджий = (предел надземной площади − учитываемая в плотности площадь лоджий) × КЭП + коммерция на перепаде рельефа. Потенциал с лоджиями дополнительно включает их текущую площадь. КЭП задан на базе продажи без лоджий.</p>
-<p>КЭП в модели — единый коэффициент для квартир и коммерции, рассчитанный на надземную площадь без балконов и лоджий. При включении лоджий минимальный КЭП = (квартиры без лоджий + надземная коммерция) ÷ (предел надземной площади − площадь балконов и лоджий).</p>
+<p>Потенциал без лоджий = (предел надземной площади − учитываемая в плотности площадь лоджий) ÷ К перехода × КЭП + коммерция на перепаде рельефа. Потенциал с лоджиями дополнительно включает их текущую площадь. КЭП задан на базе продажи без лоджий.</p>
+<p>КЭП в модели — единый коэффициент для квартир и коммерции, рассчитанный на строительную площадь без балконов и лоджий в принятой базе модели. Минимальный КЭП = (квартиры без лоджий + надземная коммерция) × К перехода ÷ (предел Sобщ − учитываемая в плотности площадь лоджий).</p>
 </details>
 </section>
 <section class="panel" id="massView">
@@ -80,7 +87,7 @@
 </section>
 </div>
 </main>
-<script type="application/json" id="embeddedProject">{"format":"irkutsk-calculator","version":1,"settings":{"land":"0.9023","density":"22500","target":"16200","commercial":"900","underground":"500","a":"16","b":"15","kep":"0.715","minA":"1","maxA":"25","minB":"1","maxB":"25","manual":"20301.75","mode":"sales","basis":"exclude","limitMode":"norm","theme":"dark","floorHeight":"3"},"rows":[{"type":"1С","total":"22.5","enabled":true,"balcony":"3","a":"1","b":"0"},{"type":"1С","total":"24.9","enabled":true,"balcony":"3","a":"1","b":"1"},{"type":"1С","total":"26.3","enabled":true,"balcony":"3","a":"0","b":"2"},{"type":"1К/2С","total":"31.5","enabled":true,"balcony":"3","a":"2","b":"2"},{"type":"1К/2С","total":"34.6","enabled":true,"balcony":"3","a":"0","b":"1"},{"type":"1К/2С","total":"35.1","enabled":true,"balcony":"3","a":"1","b":"0"},{"type":"1К/2С","total":"33.2","enabled":true,"balcony":"3","a":"0","b":"1"},{"type":"1К/2С","total":"34.6","enabled":true,"balcony":"3","a":"0","b":"1"},{"type":"1К/2С","total":"38.9","enabled":true,"balcony":"3","a":"2","b":"0"},{"type":"1К/2С","total":"35.2","enabled":true,"balcony":"3","a":"0","b":"2"},{"type":"3С","total":"43.2","enabled":true,"balcony":"3","a":"1","b":"1"},{"type":"3С","total":"47.2","enabled":true,"balcony":"3","a":"1","b":"0"},{"type":"3С","total":"47.4","enabled":true,"balcony":"3","a":"1","b":"0"},{"type":"3С","total":"50","enabled":true,"balcony":"3","a":"1","b":"0"},{"type":"3С","total":"51.9","enabled":true,"balcony":"3","a":"1","b":"1"},{"type":"3С","total":"60","enabled":true,"balcony":"3","a":"0","b":"1"},{"type":"4С","total":"72","enabled":true,"balcony":"3","a":"0","b":"1"}]}</script>
+<script type="application/json" id="embeddedProject">{"format":"irkutsk-calculator","version":1,"settings":{"land":"0.9023","density":"22500","target":"16200","commercial":"900","underground":"500","a":"16","b":"15","kep":"0.715","minA":"1","maxA":"25","minB":"1","maxB":"25","manual":"20301.75","mode":"sales","basis":"exclude","limitMode":"norm","theme":"dark","floorHeight":"3","transition":"0.96"},"rows":[{"type":"1С","total":"22.5","enabled":true,"balcony":"3","a":"1","b":"0"},{"type":"1С","total":"24.9","enabled":true,"balcony":"3","a":"1","b":"1"},{"type":"1С","total":"26.3","enabled":true,"balcony":"3","a":"0","b":"2"},{"type":"1К/2С","total":"31.5","enabled":true,"balcony":"3","a":"2","b":"2"},{"type":"1К/2С","total":"34.6","enabled":true,"balcony":"3","a":"0","b":"1"},{"type":"1К/2С","total":"35.1","enabled":true,"balcony":"3","a":"1","b":"0"},{"type":"1К/2С","total":"33.2","enabled":true,"balcony":"3","a":"0","b":"1"},{"type":"1К/2С","total":"34.6","enabled":true,"balcony":"3","a":"0","b":"1"},{"type":"1К/2С","total":"38.9","enabled":true,"balcony":"3","a":"2","b":"0"},{"type":"1К/2С","total":"35.2","enabled":true,"balcony":"3","a":"0","b":"2"},{"type":"3С","total":"43.2","enabled":true,"balcony":"3","a":"1","b":"1"},{"type":"3С","total":"47.2","enabled":true,"balcony":"3","a":"1","b":"0"},{"type":"3С","total":"47.4","enabled":true,"balcony":"3","a":"1","b":"0"},{"type":"3С","total":"50","enabled":true,"balcony":"3","a":"1","b":"0"},{"type":"3С","total":"51.9","enabled":true,"balcony":"3","a":"1","b":"1"},{"type":"3С","total":"60","enabled":true,"balcony":"3","a":"0","b":"1"},{"type":"4С","total":"72","enabled":true,"balcony":"3","a":"0","b":"1"}]}</script>
 <script>
 "use strict";
 const seed = [
@@ -100,11 +107,12 @@ const definitions = [
  ["a","Жилые этажи А",16,1,1,150],
  ["b","Жилые этажи Б",15,1,1,150],
  ["kep","Заданный КЭП",0.8,0.0001,0.0001,1],
+ ["transition","К перехода Sобщ / Sстр",0.96,0.0001,0.0001,1],
  ["minA","Минимум этажей А",1,1,1,150],
  ["maxA","Максимум этажей А",25,1,1,150],
  ["minB","Минимум этажей Б",1,1,1,150],
  ["maxB","Максимум этажей Б",25,1,1,150],
- ["manual","Ручной предел надземной, м²",20301.75,0.01,0.01]
+ ["manual","Ручной предел Sобщ, м²",20301.75,0.01,0.01]
 ];
 const byId = id => document.getElementById(id);
 const number = (value, digits=2) => Number.isFinite(value)
@@ -122,7 +130,76 @@ const field = (id,label,value,step,min,max) => {
  wrapper.append(input);
  return wrapper;
 };
-for(const def of definitions) byId(def[0]==="manual"?"manualField":"parameters").append(field(...def));
+const commonIds=["land","density","target","underground","transition"];
+for(const def of definitions) byId(commonIds.includes(def[0])?"commonFields":def[0]==="manual"?"manualField":"parameters").append(field(...def));
+byId("theoryFields").append(field("theoryKep","Заданный КЭП (для сравнения)",0.715,0.0001,0.0001,1),field("theoryBalconies","Балконы и лоджии всего, м²",0,0.01,0));
+let model="actual";
+function setModel(value){
+ model=value==="theory"?"theory":"actual";
+ const theoretical=model==="theory";
+ byId("modelLayout").dataset.model=model;
+ byId("actualMode").setAttribute("aria-pressed",String(!theoretical));
+ byId("theoryMode").setAttribute("aria-pressed",String(theoretical));
+ byId("apartmentPanel").hidden=theoretical;
+ byId("actualControls").hidden=theoretical;
+ byId("theoryControls").hidden=!theoretical;
+ byId("massLegend").title=theoretical?"Фактическая компоновка для справки":"";
+ for(const button of document.querySelectorAll(".floor-controls button")) button.hidden=theoretical;
+}
+byId("actualMode").onclick=()=>{setModel("actual");recalculate()};
+byId("theoryMode").onclick=()=>{setModel("theory");recalculate()};
+function theoreticalCalculation(s,mode,kep){
+ const gross=s.land*s.density;
+ const deduction=s.include?0:s.balconies;
+ const available=gross+deduction;
+ const construction=available/s.transition;
+ const aboveTarget=Math.max(0,s.target-s.underground);
+ const required=aboveTarget/construction;
+ const used=mode==="kep"?required:kep;
+ const above=construction*used;
+ const total=above+s.underground;
+ const baselineDensity=aboveTarget/kep*s.transition;
+ const targetDensity=baselineDensity-deduction;
+ const baselinePotential=gross/s.transition*kep+s.underground;
+ const potential=construction*kep+s.underground;
+ return {gross,available,construction,required,used,above,total,gap:total-s.target,deduction,targetDensity,baselineDensity,baselinePotential,potential};
+}
+function renderTheory(){
+ const mode=byId("theoryModeCalc").value;
+ byId("theoryKep").closest("label").hidden=false;
+ const invalid=[...commonIds,"theoryBalconies"].filter(id=>!byId(id).checkValidity());
+ if(!byId("theoryKep").checkValidity()) invalid.push("КЭП");
+ const error=byId("error"),result=byId("result");
+ error.hidden=!invalid.length; error.textContent=invalid.length?"Проверьте исходные данные и КЭП.":"";
+ result.innerHTML=""; byId("variants").innerHTML="";
+ if(invalid.length)return;
+ const s=Object.fromEntries(commonIds.map(id=>[id,byId(id).valueAsNumber]));
+ s.balconies=byId("theoryBalconies").valueAsNumber;
+ s.include=byId("theoryBasis").value==="include";
+ const r=theoreticalCalculation(s,mode,byId("theoryKep").valueAsNumber);
+ if(r.targetDensity<0){error.hidden=false;error.textContent="Площадь исключаемых лоджий превышает общую площадь для цели.";return;}
+ const metric=(label,value,kind="")=>'<div class="metric">'+label+'<strong class="'+kind+'">'+value+'</strong></div>';
+ result.innerHTML='<h3>Максимальный потенциал участка</h3><div class="metrics">'+[
+ metric("Лимит Sобщ по плотности, м²",number(r.gross)),
+ metric("Балконы и лоджии, м²",number(s.balconies)),
+ metric("Допустимая Sобщ до вычета, м²",number(r.available)),
+ metric("Вычет лоджий из плотности, м²",number(r.deduction)),
+ metric("Максимальная Sстр, м²",number(r.construction)),
+ metric("Требуемый КЭП",number(r.required,6),r.required<=1?"good":"bad"),
+ metric("КЭП в расчёте",number(r.used,6),r.used<=1?"good":"bad"),
+ metric("Надземная продаваемая (включая лоджии), м²",number(r.above)),
+ metric("Коммерция на перепаде, м²",number(s.underground)),
+ metric("Итого продаваемая, м²",number(r.total)),
+ metric("Отклонение от цели, м²",signed(r.gap),r.gap>=-tolerance?"good":"bad"),
+ metric("При заданном КЭП: Sобщ до вычета, м²",number(r.baselineDensity)),
+ metric("При заданном КЭП: Sобщ по плотности после вычета, м²",number(r.targetDensity)),
+ metric("Экономия лимита Sобщ, м²",signed(r.baselineDensity-r.targetDensity),r.baselineDensity>=r.targetDensity?"good":"bad"),
+ metric("Запас плотности для цели, м²",signed(r.gross-r.targetDensity),r.gross>=r.targetDensity?"good":"bad"),
+ metric("Прирост потенциала ТЭП, м²",signed(r.potential-r.baselinePotential),r.potential>=r.baselinePotential?"good":"bad")
+ ].join("")+'</div><p class="note">Лимит = участок × плотность. Для заданной Sпрод: Sстр = (Sпрод − коммерция на перепаде) ÷ КЭП; Sобщ для плотности = Sстр × К перехода − исключаемые лоджии. Для потенциала: Sпрод = (лимит + исключаемые лоджии) ÷ К перехода × КЭП + коммерция на перепаде. КЭП в теоретическом режиме включает лоджии в числителе.</p>';
+ if(r.required>1)result.insertAdjacentHTML("beforeend",'<p class="bad">Цель требует КЭП выше 1,00.</p>');
+ drawMass();
+}
 
 function addRow([type,area,balcony,a,b], saved) {
  const row = table.insertRow();
@@ -172,10 +249,11 @@ function evaluate(s, a, b, kep) {
  const aboveGroundSales=housing+s.commercial;
  const sales=aboveGroundSales+s.underground+(s.sellBalconies?balconies:0);
  const extra=s.include?balconies:0;
- const without=aboveGroundSales/kep;
+ const construction=aboveGroundSales/kep;
+ const without=construction*s.transition;
  const denominator=s.limit-extra;
- const minimum=denominator>0?aboveGroundSales/denominator:Infinity;
- return {a,b,housing,balconies,aboveGroundSales,sales,minimum,without,withBalconies:without+balconies,gross:without+extra};
+ const minimum=denominator>0?aboveGroundSales*s.transition/denominator:Infinity;
+ return {a,b,housing,balconies,aboveGroundSales,sales,minimum,construction,without,withBalconies:without+balconies,gross:without+extra};
 }
 function targetBalance(s, aboveGroundSales, soldBalconies=0) {
  const aboveGroundTarget=Math.max(0,s.target-s.underground);
@@ -186,7 +264,7 @@ function targetBalance(s, aboveGroundSales, soldBalconies=0) {
 function calculateSalesPotential(s, balconies) {
  const available=s.limit-(s.include?balconies:0);
  if(available<0) return null;
- const aboveGround=available*s.kep;
+ const aboveGround=available/s.transition*s.kep;
  return {total:aboveGround+s.underground,housing:aboveGround-s.commercial,aboveGround};
 }
 function collectVariants(s, mode) {
@@ -213,6 +291,7 @@ function updateTable(data, a, b) {
  byId("totals").innerHTML="<tr><td>Итого</td><td colspan='4'></td>"+[number(pa,0),number(pb,0),number(total,0),total?"100,00%":"—",number(h),number(h+bal),""].map(value=>"<td>"+value+"</td>").join("")+"</tr>";
 }
 function recalculate() {
+ if(model==="theory"){renderTheory();return;}
  const mode=byId("mode").value;
  const manual=byId("limitMode").value==="manual";
  byId("manualField").hidden=!manual;
@@ -268,14 +347,17 @@ function recalculate() {
  const scenarioTable=(title,rows)=>'<h3>'+title+'</h3><div class="scroll"><table class="scenario"><thead><tr><th>Показатель, м²</th><th>Без лоджий</th><th>С лоджиями</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
  const withoutBalance=targetBalance(s,current.aboveGroundSales);
  const withBalance=targetBalance(s,current.aboveGroundSales,current.balconies);
- const goalKep=(soldBalconies)=>availableForGoal>0?Math.max(s.commercial,s.target-s.underground-soldBalconies)/availableForGoal:Infinity;
+ const goalKep=(soldBalconies)=>availableForGoal>0?Math.max(s.commercial,s.target-s.underground-soldBalconies)*s.transition/availableForGoal:Infinity;
  result.innerHTML='<h3>1. Плотность и этажность · '+s.a+' + '+s.b+'</h3><div class="metrics">'+[
   metric("Лимит по плотности, м²",number(s.norm)),
-  metric("Предел в расчёте, м²",number(s.limit)),
+  metric("Предел Sобщ в расчёте, м²",number(s.limit)),
+  metric("К перехода Sобщ / Sстр",number(s.transition,4)),
+  metric("Допустимая Sстр без лоджий, м²",availableForGoal>=0?number(availableForGoal/s.transition):"—"),
+  metric("Расчётная Sстр без лоджий, м²",grossAvailable?number(current.construction):"—"),
   metric("КЭП в расчёте",number(effectiveKep,6)),
   metric("Лоджии и балконы, м²",number(current.balconies)),
-  metric("Надземная без лоджий, м²",grossAvailable?number(current.without):"—"),
-  metric("Надземная с лоджиями, м²",grossAvailable?number(current.withBalconies):"—"),
+  metric("Sобщ без лоджий, м²",grossAvailable?number(current.without):"—"),
+  metric("Sобщ с лоджиями, м²",grossAvailable?number(current.withBalconies):"—"),
   metric("Запас по плотности, м²",grossAvailable?signed(Math.abs(grossGap)<tolerance?0:grossGap):"—",grossAvailable?mark(grossGap):""),
   metric("Мин. КЭП текущей квартирографии",number(baseline.minimum,6),baseline.minimum<=1?"good":"bad")
  ].join("")+'</div>';
@@ -315,7 +397,7 @@ function recalculate() {
   return;
  }
  const pair=mode==="pair";
- const heading=pair?"Мин. КЭП":"Надземная, м²";
+ const heading=pair?"Мин. КЭП":"Sобщ по плотности, м²";
  variants.innerHTML='<h3>Допустимые пары · '+options.length+'</h3><div class="scroll"><table><thead><tr><th>Этажи А</th><th>Этажи Б</th><th>Продажа, м²</th><th>'+heading+'</th><th></th></tr></thead><tbody></tbody></table></div>';
  const body=variants.querySelector("tbody");
  for(const item of options){
@@ -336,6 +418,7 @@ document.querySelector("main").addEventListener("input",recalculate);
 byId("add").addEventListener("click",()=>{addRow(["",20,0,0,0]);table.lastElementChild.querySelector("input").focus();recalculate();});
 byId("reset").addEventListener("click",()=>{
  for(const [key,,value] of definitions) byId(key).value=value;
+ byId("theoryKep").value="0.715";byId("theoryModeCalc").value="kep";byId("theoryBalconies").value="0";byId("theoryBasis").value="exclude";
  Object.assign(byId("mode"),{value:"gross"});
  byId("limitMode").value="norm";byId("basis").value="exclude";byId("saleBasis").value="exclude";
  byId("floorHeight").value="3";
@@ -344,7 +427,7 @@ byId("reset").addEventListener("click",()=>{
  recalculate();
 });
 
-const selectors=["mode","basis","limitMode","theme","saleBasis"];
+const selectors=["mode","basis","limitMode","theme","saleBasis","theoryModeCalc","theoryBasis"];
 const fieldIds=definitions.map(([id])=>id);
 const status=message=>{byId("toolbarStatus").textContent=message;};
 function projectState(){
@@ -354,10 +437,14 @@ function projectState(){
   return {type:type.value,total:total.value,enabled:enabled.checked,balcony:balcony.value,a:a.value,b:b.value};
  });
  settings.floorHeight=byId("floorHeight").value;
+ settings.model=model; settings.theoryKep=byId("theoryKep").value;settings.theoryBalconies=byId("theoryBalconies").value;
  return {format:"irkutsk-calculator",version:1,settings,rows};
 }
 function restoreProject(project){
  if(project?.settings && project.settings.saleBasis===undefined) project.settings.saleBasis="exclude";
+ if(project?.settings && project.settings.transition===undefined) project.settings.transition="0.96";
+ if(project?.settings && project.settings.theoryModeCalc===undefined) project.settings.theoryModeCalc="kep";
+ if(project?.settings && project.settings.theoryBasis===undefined) project.settings.theoryBasis="exclude";
  if(project?.format!=="irkutsk-calculator" || project.version!==1 ||
     !Array.isArray(project.rows) || project.rows.length>500 ||
     !project.settings || !fieldIds.every(id=>typeof project.settings[id]==="string") ||
@@ -369,6 +456,9 @@ function restoreProject(project){
  for(const id of [...fieldIds,...selectors]) byId(id).value=project.settings[id];
  document.documentElement.dataset.theme=byId("theme").value;
  byId("floorHeight").value=typeof project.settings.floorHeight==="string"?project.settings.floorHeight:"3";
+ byId("theoryKep").value=typeof project.settings.theoryKep==="string"?project.settings.theoryKep:project.settings.kep;
+ byId("theoryBalconies").value=typeof project.settings.theoryBalconies==="string"?project.settings.theoryBalconies:"0";
+ setModel(project.settings.model);
  table.replaceChildren();
  for(const row of project.rows) addRow([row.type,0,0,0,0],row);
  recalculate();
@@ -399,7 +489,7 @@ byId("projectFile").addEventListener("change",async event=>{
 byId("saveHtml").addEventListener("click",()=>{
  const copy=document.documentElement.cloneNode(true);
  copy.querySelector("#embeddedProject").textContent=JSON.stringify(projectState()).replace(/</g,"\\u003c");
- for(const id of ["parameters","manualField","apartments","totals","result","variants","toolbarStatus","error"]){
+ for(const id of ["commonFields","parameters","theoryFields","manualField","apartments","totals","result","variants","toolbarStatus","error"]){
   copy.querySelector("#"+id).replaceChildren();
  }
  download("Irkutsk_calculator.html","text/html;charset=utf-8","<!doctype html>\n"+copy.outerHTML);
