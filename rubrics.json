@@ -1,5 +1,20 @@
 {
-  "system": [],
+  "system": [
+    {
+      "id": "project-directorate",
+      "name": "Проектная дирекция",
+      "materials": [
+        {
+          "id": "ofs-11",
+          "name": "ОФС",
+          "url": "/OFS_11_theme_selector.html",
+          "primary": true,
+          "status": "development",
+          "archived": false
+        }
+      ]
+    }
+  ],
   "method": [
     {
       "id": "sub-mwlmf5mm-t9ztr4",
