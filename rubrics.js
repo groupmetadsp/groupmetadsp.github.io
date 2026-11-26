@@ -369,7 +369,9 @@ function renderRubric(rubric){
       const githubFile=githubMaterialPath(t);
       return '<article class="tool-card rubric-material-card rubric-sortable'+(main?' is-primary':'')+(hasLink?' is-linked':'')+'" data-sort-id="'+t.id+'" data-sort-kind="materials"'+(hasLink?' data-open-material="'+t.id+'" role="link" tabindex="0"':'')+'>'
         +'<div class="tool-card-top"><h2>'+name+'</h2>'
-          +'<div class="material-card-head-actions">'+materialBadges(t)
+          +'<div class="material-card-head-actions">'
+          +(hasLink?'<button type="button" class="material-copy-link" data-copy-material="'+t.id+'" title="Скопировать ссылку" aria-label="Скопировать прямую ссылку на '+name+'">'+copyIcon+'</button>':'')
+          +materialBadges(t)
           +'<button type="button" class="material-drag-handle" data-drag-handle="materials" title="Перетащить материал" aria-label="Перетащить материал «'+name+'». Стрелки меняют порядок">'+gripIcon()+'</button>'
           +'</div></div>'
         +(rubric==='tools' && Object.hasOwn(toolDescriptions,t.id)?'<p class="tool-mobile-description">'+esc(toolDescriptions[t.id])+'</p>':'')
@@ -379,7 +381,6 @@ function renderRubric(rubric){
         +(githubFile?'<div class="rubric-updated" data-github-file="'+esc(githubFile)+'">Обновлено: …</div>':'')
         +'<div class="tool-card-actions">'
         +'<button type="button" class="tool-open" data-open-material="'+t.id+'">'+(hasLink?'Открыть':'Назначить ссылку')+'</button>'
-        +(hasLink?'<button type="button" class="tool-edit" data-copy-material="'+t.id+'" title="Скопировать ссылку" aria-label="Скопировать прямую ссылку на '+name+'">'+copyIcon+'</button>':'')
         +'<button type="button" class="tool-edit" data-edit-material="'+t.id+'" title="Редактировать материал" aria-label="Редактировать '+name+'">'+icon('pencil')+'</button>'
         +'<button type="button" class="tool-delete" data-delete-material="'+t.id+'" title="Удалить материал" aria-label="Удалить '+name+'">'+trashIcon()+'</button>'
         +'</div></article>';
