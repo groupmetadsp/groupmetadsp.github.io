@@ -107,6 +107,14 @@
           "primary": false,
           "status": "",
           "archived": false
+        },
+        {
+          "id": "lintels",
+          "name": "10 · Калькулятор подбора перемычек",
+          "url": "/tools/lintels/",
+          "primary": false,
+          "status": "",
+          "archived": false
         }
       ]
     },

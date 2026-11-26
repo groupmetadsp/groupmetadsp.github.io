@@ -284,7 +284,8 @@ const toolDescriptions={
   'building-height':'Оценка этажности и высоты здания.',
   'surface-parking-configurator':'Компоновка наземных парковочных мест.',
   'massing-platforms':'Переход к версиям LITE и FULL для массинга.',
-  'masonry-sp15':'Проверка гибкости кирпичных стен и перегородок по СП 15.13330.2020.'
+  'masonry-sp15':'Проверка гибкости кирпичных стен и перегородок по СП 15.13330.2020.',
+  'lintels':'Подбор железобетонных перемычек и прогонов для проёмов.'
 };
 // Date shown on cards is the last GitHub commit touching the linked SITE FILE.
 // External resources (Google Docs etc.) do not have a reliable GitHub file date.
