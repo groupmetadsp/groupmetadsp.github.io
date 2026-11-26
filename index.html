@@ -771,6 +771,12 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
     .mobile-settings .theme-menu { max-height:none; }
   }
 </style>
+<style>
+.rubric-material-card .material-card-head-actions{flex-wrap:wrap}
+.rubric-material-card .material-copy-link{display:inline-grid;place-items:center;flex:0 0 32px;width:32px;height:32px;padding:0;border:1px solid var(--ink-strong);border-radius:8px;background:var(--surface2);color:var(--ink-strong);cursor:pointer}
+.rubric-material-card .material-copy-link:is(:hover,:focus-visible){background:var(--accent-soft);outline:2px solid currentColor;outline-offset:2px}
+.material-copy-link svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+</style>
 </head>
 <body><div id="water-ripple-layer" aria-hidden="true"></div>
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
@@ -1268,7 +1274,7 @@ render();
   placeActions();
 })();
 </script>
-<script src="/rubrics.js?v=copy-material-link-20261126"></script>
+<script src="/rubrics.js?v=visible-copy-icon-20261126"></script>
 <script>
 (function(){
  const key='platform-pattern-preview';
