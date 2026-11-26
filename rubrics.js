@@ -594,6 +594,11 @@ function openMaterial(id){
   if(!t)return;
   const href=validUrl(t.url);
   if(!href){openDialog('material',sub.id,t.id);return;}
+  if(['ofs-11','annual-report-2026'].includes(t.id)){
+    const password=window.prompt('Введите пароль для материала «'+t.name+'»');
+    if(password===null)return;
+    if(password!=='1111'){window.alert('Неверный пароль');return;}
+  }
   audioStarted=true;playSound('navigate');
   window.open(href,'_blank','noopener,noreferrer');
 }
