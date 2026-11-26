@@ -1,6 +1,16 @@
 <!doctype html>
 <html lang="ru" data-theme="dark">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>ПЛАТФОРМА · Годовой отчёт 2026</title>
+<script>document.documentElement.classList.add('ofs-locked');</script>
+<style>
+.ofs-locked body > :not(#ofsPasswordDialog){visibility:hidden}
+#ofsPasswordDialog{width:min(380px,90vw);padding:24px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink)}
+#ofsPasswordDialog::backdrop{background:var(--bg)}
+#ofsPasswordDialog label{display:block;margin:14px 0 4px}
+#ofsPasswordDialog input{width:100%;margin:0 0 12px}
+#ofsPasswordError{color:var(--ink);margin:8px 0}
+#ofsPasswordDialog button{padding:6px 14px;background:var(--accent);color:#10191f;border:0;border-radius:6px;cursor:pointer}
+</style>
 <style>
 :root{color-scheme:dark;--bg:#10191f;--panel:#192631;--panel2:#233541;--ink:#f5f5f1;--muted:#a7b7bd;--line:#344751;--accent:#ed8354;--green:#67b99c;--cyan:#80bfd1}
 :root[data-theme="light"]{color-scheme:light;--bg:#f3f0e9;--panel:#fcfaf6;--panel2:#f0e9df;--ink:#273130;--muted:#64706c;--line:#d9d5cb;--accent:#b95228;--green:#21785d;--cyan:#2e728e}
@@ -13,7 +23,39 @@ main{min-width:0;padding:22px clamp(18px,4vw,62px) 54px}.wrap{max-width:1350px;m
 @media(max-width:1100px){.kpis{grid-template-columns:1fr 1fr}.effect{grid-template-columns:1fr}.effect .right{border-left:0;border-top:1px solid #42565d;display:flex;justify-content:space-between}}
 @media(max-width:800px){.shell{display:block}.side{position:static;height:auto;gap:10px;padding:13px}.menu{display:flex;overflow:auto}.menu a{white-space:nowrap}.sidefoot,.side small{display:none}main{padding:16px}.cols,.groups{grid-template-columns:1fr}.sources{grid-template-columns:1fr}.heading h2{font-size:24px}}@media(max-width:550px){.top{align-items:flex-start;flex-direction:column}.kpis{gap:8px}.kpi{padding:15px}.kpi strong{font-size:25px}.measure{grid-template-columns:1fr 100px}.measure span:first-child{grid-column:1/-1}.effect>div{padding:22px}.effect .value{font-size:31px}}
 @media print{.shell{display:block}.side,.actions,.search{display:none}main{padding:0}.block{padding-top:25px}.kpis,.groups,.cols{break-inside:avoid}.effect,.box,.kpi,.group{print-color-adjust:exact}}
-</style></head><body><div class="shell"><aside class="side"><a class="brand" href="/"><span class="mark">▤</span>ПЛАТФОРМА</a><small>Аналитика · 2026</small><nav class="menu"><a href="#overview" class="active">Обзор</a><a href="#economy">Экономика</a><a href="#implementation">Внедрение</a><a href="#results">Результаты</a><a href="#sources">Источники</a></nav><div class="sidefoot">Годовой отчёт 2026<br>Данные: 20.10.2026</div></aside><main><div class="wrap">
+</style></head><body>
+<dialog id="ofsPasswordDialog" aria-labelledby="ofsPasswordTitle">
+ <form id="ofsPasswordForm">
+  <h2 id="ofsPasswordTitle">Открыть годовой отчёт</h2>
+  <label for="ofsPassword">Пароль</label>
+  <input id="ofsPassword" type="password" inputmode="numeric" required autofocus>
+  <button type="submit" class="accent">Открыть</button>
+  <p id="ofsPasswordError" role="alert" hidden>Неверный пароль</p>
+ </form>
+</dialog>
+<script>
+{
+ const dialog=document.getElementById('ofsPasswordDialog');
+ const form=document.getElementById('ofsPasswordForm');
+ const input=document.getElementById('ofsPassword');
+ const error=document.getElementById('ofsPasswordError');
+ dialog.addEventListener('cancel', event=>event.preventDefault());
+ form.addEventListener('submit', event=>{
+  event.preventDefault();
+  if(input.value!=='1111'){
+   error.hidden=false;
+   input.select();
+   return;
+  }
+  input.value='';
+  error.hidden=true;
+  document.documentElement.classList.remove('ofs-locked');
+  dialog.close();
+ });
+ dialog.showModal();
+}
+</script>
+<div class="shell"><aside class="side"><a class="brand" href="/"><span class="mark">▤</span>ПЛАТФОРМА</a><small>Аналитика · 2026</small><nav class="menu"><a href="#overview" class="active">Обзор</a><a href="#economy">Экономика</a><a href="#implementation">Внедрение</a><a href="#results">Результаты</a><a href="#sources">Источники</a></nav><div class="sidefoot">Годовой отчёт 2026<br>Данные: 20.10.2026</div></aside><main><div class="wrap">
 <header class="top"><div class="crumb">ПЛАТФОРМА / АНАЛИТИКА / ГОДОВОЙ ОТЧЁТ</div><div class="actions"><button id="theme" type="button" class="button">Светлая тема</button><button type="button" class="button" onclick="print()">Печать / PDF</button><a class="button primary" href="/">На главную</a></div></header>
 <section class="hero" id="overview"><div class="eyebrow">Результаты деятельности Платформы</div><h1>ГОДОВОЙ ОТЧЁТ <span style="color:var(--accent)">2026</span></h1><p>Показатели проектных решений, архитектурной и экономической эффективности и степени внедрения. Данные исходного годового отчёта v17, снимок от 20 октября 2026 года.</p><div class="period">ИСТОЧНИК ДАННЫХ: «Калькулятор Оптимизаций за 26 год» · лист «Свод»</div></section>
 <section class="effect"><div><div class="label">Интегральный экономический эффект · оценка</div><div class="value">556,24 <em>—</em> 831,41 <span style="font-size:.54em">млн ₽</span></div><div>Оценочный диапазон по принятой методике расчётного свода</div></div><div class="right"><div><strong>+0,37 п.п.</strong><div>Средний прирост КЭП</div></div><div><strong>14</strong><div>Объектов в работе</div></div></div></section>
