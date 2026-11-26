@@ -1874,7 +1874,7 @@ body{background:#f3f0e9}
                 <th>L × b × h, мм</th>
                 <th>L₀, мм</th>
                 <th>q допустимая, кН/м</th>
-                <th>Опир., мм</th>
+                <th scope="col" style="white-space:normal">Опирание на сторону, мм</th><th scope="col" style="white-space:normal">Мин. опирание по серии, мм</th>
                 <th>Масса итого</th>
                 <th>Серия</th>
               </tr>
@@ -1887,6 +1887,7 @@ body{background:#f3f0e9}
         <td class="num">1290 × 120 × 90</td>
         <td class="num">1190</td>
         <td class="num">1.47</td>
+        <td class="num">—</td>
         <td class="num">100</td>
         <td class="num">70 кг</td>
         <td>1.038.1-1 вып.4</td>
@@ -4095,9 +4096,8 @@ window.LINTEL_DB = {
     </div>`;
   }
 
-  function supportText(item, openingWidth) {
-    const perSide = supportPerSide(item, openingWidth).toLocaleString('ru-RU', {maximumFractionDigits: 3});
-    return perSide + ' / ' + item.min_support;
+  function formatSupportPerSide(item, openingWidth) {
+    return supportPerSide(item, openingWidth).toLocaleString('ru-RU', {maximumFractionDigits: 3});
   }
 
   function renderDetails(combo, input) {
@@ -4118,7 +4118,8 @@ window.LINTEL_DB = {
         <td class="num">${item.L} × ${item.b} × ${item.h}</td>
         <td class="num">${item.L0}</td>
         <td class="num">${loadMarkup(item.q_design_kN_m)}</td>
-        <td class="num">${supportText(item, input.openingWidth)}</td>
+        <td class="num">${formatSupportPerSide(item, input.openingWidth)}</td>
+        <td class="num">${item.min_support}</td>
         <td class="num">${item.mass_kg ? (item.mass_kg * count) + ' кг' : '—'}</td>
         <td>${item.series_id || '—'}</td>
       </tr>`).join('');
@@ -4148,7 +4149,7 @@ window.LINTEL_DB = {
                 <th>L × b × h, мм</th>
                 <th>L₀, мм</th>
                 <th>q допустимая, ${loadLabelMarkup()}</th>
-                <th>Опирание*, мм</th>
+                <th scope="col" style="white-space:normal">Опирание на сторону, мм</th><th scope="col" style="white-space:normal">Мин. опирание по серии, мм</th>
                 <th>Масса итого</th>
                 <th>Серия</th>
               </tr>
@@ -4157,7 +4158,7 @@ window.LINTEL_DB = {
           </table>
         </div>
 
-        <div class="plan-caption">* На одну сторону при симметричной укладке / минимум по серии.</div>
+        <div class="plan-caption">Опирание на сторону рассчитано для симметричной укладки.</div>
         <div class="det-actions">
           <button class="btn btn-primary" id="btn-pdf">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -4260,7 +4261,8 @@ window.LINTEL_DB = {
         <td class="num">${item.L} × ${item.b} × ${item.h}</td>
         <td class="num">${item.L0}</td>
         <td class="num">${formatLoad(item.q_design_kN_m)}</td>
-        <td class="num">${supportText(item, input.openingWidth)}</td>
+        <td class="num">${formatSupportPerSide(item, input.openingWidth)}</td>
+        <td class="num">${item.min_support}</td>
         <td class="num">${item.mass_kg ? (item.mass_kg * count) + ' кг' : '—'}</td>
         <td>${item.armor_frame || '—'}</td>
         <td>${item.concrete || '—'}</td>
@@ -4367,13 +4369,13 @@ window.LINTEL_DB = {
     <thead>
       <tr>
         <th>Марка</th><th>Тип</th><th>Кол.</th><th>L × b × h, мм</th><th>L₀, мм</th>
-        <th>q допустимая, ${loadLabel()}</th><th>Опирание*, мм</th><th>Масса итого</th><th>Каркас</th><th>Бетон</th><th>Серия</th>
+        <th>q допустимая, ${loadLabel()}</th><th scope="col" style="white-space:normal">Опирание на сторону, мм</th><th scope="col" style="white-space:normal">Мин. опирание по серии, мм</th><th>Масса итого</th><th>Каркас</th><th>Бетон</th><th>Серия</th>
       </tr>
     </thead>
     <tbody>${specRows}</tbody>
   </table>
 
-  <div class="plan-caption">* На одну сторону при симметричной укладке / минимум по серии.</div>
+  <div class="plan-caption">Опирание на сторону рассчитано для симметричной укладки.</div>
   <h2>4. Указания по монтажу</h2>
   <ul style="margin:6px 0 0 0; padding-left:20px; font-size:9.5pt; line-height:1.5;">
     <li>Глубина опирания каждой перемычки на стену — не менее значения, указанного в спецификации.</li>
