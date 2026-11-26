@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="ru"><head><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><meta charset="utf-8">
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Калькулятор подбора перемычек · Калькулятор</title>
@@ -1113,20 +1113,20 @@ a:hover { text-decoration: underline; }
 @media (max-width: 860px) {
   .grid-2 { grid-template-columns: 1fr; }
   .field-row { grid-template-columns: 1fr; }
-
-
+  
+  
   .page { padding: 16px 14px 60px; }
   .info-block { padding: 18px 20px; }
   .info-block h3 { font-size: 22px; }
   .card { padding: 18px 20px; }
-
+  
   .calc-title-block h2 { font-size: 20px; }
   .results-table-wrap { overflow-x: auto; }
   .results-table { min-width: 720px; }
 }
 
 @media (max-width: 480px) {
-
+  
   .btn-back span { display: none; }
   .brand-logo { width: 30px; height: 30px; font-size: 11px; }
 }
@@ -1170,7 +1170,38 @@ a:hover { text-decoration: underline; }
 .lintel-catalog-table td:first-child{font-weight:600}
 .lintel-catalog-note{font-size:13px;color:var(--c-text-muted)}
 @media(max-width:500px){.lintel-catalog{padding:12px}}
-.lintel-modes{margin:0 0 18px}.lintel-modes label{display:block;font-weight:700;margin-bottom:7px}#app{--lintel-control-height:48px;--lintel-arrow-width:26px;--lintel-load-unit-width:100px}
+.lintel-modes{margin:0 0 18px}.lintel-modes label{display:block;font-weight:700;margin-bottom:7px}.lintel-form-layout .lintel-form-group,.lintel-form-layout .lintel-form-types{margin:14px 0;padding-top:12px;border-top:1px solid #d9d5cb}
+.lintel-form-layout .lintel-form-group>h4,.lintel-form-layout .lintel-form-types>label{font-size:14px;font-weight:700;margin:0 0 8px}
+.lintel-form-layout .field-row,.lintel-form-layout .lintel-height-grid,.lintel-form-layout .lintel-masonry-load-rule,.lintel-form-layout .lintel-density-and-units{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin:0}
+.lintel-form-layout .lintel-masonry-load-rule:not([hidden]) + .lintel-density-and-units{margin-top:8px}
+.lintel-form-layout .lintel-height-block{margin:0}
+.lintel-form-layout .lintel-height-levels,.lintel-form-layout .lintel-height-grid>.field{grid-column:1;grid-row:auto}
+.lintel-form-layout .lintel-form-line{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);column-gap:12px;row-gap:4px;align-items:center;min-width:0;margin:0}
+.lintel-form-layout .lintel-height-levels .lintel-form-line+.lintel-form-line{margin-top:8px}
+.lintel-form-layout .lintel-form-line>label{margin:0;grid-column:1}
+.lintel-density-help{grid-column:1;display:flex;align-items:center;gap:5px;position:relative}
+.lintel-density-help .lintel-density-label{margin:0!important}
+.lintel-density-help .lintel-density-info{padding:0 4px;border:0;background:transparent;color:#0f766e;font:inherit;cursor:pointer}
+.lintel-density-tip{display:none;position:absolute;left:0;top:100%;z-index:10;width:min(245px,70vw);padding:8px 10px;border:1px solid #d9d5cb;border-radius:6px;background:#fcfaf6;color:var(--c-text);font-size:13px;box-shadow:0 4px 14px #333b3820}
+.lintel-density-info[aria-expanded=true]+.lintel-density-tip{display:block}
+@media(hover:hover){.lintel-density-help:hover .lintel-density-tip{display:block}}
+.lintel-form-layout .lintel-form-line>.input-with-unit,.lintel-form-layout .lintel-form-line>select{grid-column:2;grid-row:1;min-width:0}
+.lintel-form-layout .lintel-form-line>.field-hint,.lintel-form-layout .lintel-form-line>.lintel-height-error{grid-column:1/-1;margin:0}
+.lintel-form-layout #masonry-span-field>label.lintel-density-label{grid-row:2;grid-column:1/-1;margin:0!important}
+.lintel-form-layout .input-with-unit:has(.lintel-stepper)>#load-unit{width:auto;max-width:45%;flex-basis:85px}
+.lintel-form-layout{--lintel-unit-space:38px}
+.lintel-form-layout .lintel-form-line>.input-with-unit:has(.lintel-stepper,#partition-load-unit)>.unit{flex-basis:var(--lintel-unit-space);box-sizing:border-box}
+.lintel-form-layout .lintel-form-line>select,.lintel-form-layout .lintel-partition-load-unit>.input-with-unit{width:calc(100% - var(--lintel-unit-space) - 8px)}
+.lintel-form-layout .lintel-partition-load-unit .unit{display:none!important}
+.lintel-form-layout #lintel-mode,.lintel-form-layout #masonry-load-method{padding-block:4px;padding-inline:12px 28px;line-height:1.2}
+.lintel-form-layout :is(#lintel-mode,#masonry-load-method) selectedcontent{display:block;white-space:normal;text-wrap:balance;text-align:left;line-height:1.2}
+.lintel-form-layout #lintel-mode selectedcontent .lintel-mode-second-line{display:block}
+@media(max-width:540px){
+ .lintel-form-layout .lintel-form-line{grid-template-columns:minmax(0,1fr)}
+ .lintel-form-layout .lintel-form-line>.input-with-unit,.lintel-form-layout .lintel-form-line>select{grid-column:1;grid-row:auto}
+ .lintel-form-layout #masonry-span-field>label.lintel-density-label{grid-row:auto}
+}
+#app{--lintel-control-height:48px;--lintel-arrow-width:26px;--lintel-load-unit-width:100px}
 .lintel-masonry-load-rule{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0;align-items:start}
 .lintel-masonry-load-rule > .field{min-width:0;margin:0}
 @media(max-width:600px){.lintel-masonry-load-rule{grid-template-columns:1fr;gap:12px}}
@@ -1186,11 +1217,13 @@ a:hover { text-decoration: underline; }
 .input-with-unit:has(.lintel-stepper)>#load-unit{position:static;flex:0 0 var(--lintel-load-unit-width);width:var(--lintel-load-unit-width)}
 .input-with-unit:has(.lintel-stepper)>#load-unit,.lintel-wall-bearing .input-with-unit>.unit{box-sizing:border-box}
 .lintel-wall-bearing .input-with-unit:has(.lintel-stepper,#partition-load-unit)>.unit{flex-basis:var(--lintel-load-unit-width)}
-:is(#load-unit,#partition-load-unit){appearance:none;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m2 2 4 4 4-4' fill='none' stroke='%23333b38' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+:is(#lintel-mode,#masonry-load-method,#load-unit,#partition-load-unit){appearance:none;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m2 2 4 4 4-4' fill='none' stroke='%23333b38' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
 @supports (appearance:base-select) and selector(::picker(select)){
   :is(#lintel-mode,#masonry-load-method,#load-unit,#partition-load-unit,#lintel-catalog-type),
   :is(#lintel-mode,#masonry-load-method,#load-unit,#partition-load-unit,#lintel-catalog-type)::picker(select){appearance:base-select}
-  :is(#load-unit,#partition-load-unit)::picker-icon{display:none}
+  :is(#lintel-mode,#masonry-load-method,#load-unit,#partition-load-unit)::picker-icon{display:none}
+  .lintel-form-layout #lintel-mode{align-items:center}
+  .lintel-form-layout #lintel-mode>button{display:flex;align-items:center;margin-block:auto}
   :is(#lintel-mode,#masonry-load-method,#load-unit,#partition-load-unit,#lintel-catalog-type)::picker(select){position-area:block-end;position-try-fallbacks:none;align-self:start;margin:2px 0 0;padding:4px 0;background:#fcfaf6;border:1px solid #aaa394;border-radius:7px;box-shadow:0 6px 16px #333b381a}
   :is(#lintel-mode,#masonry-load-method,#load-unit,#partition-load-unit,#lintel-catalog-type) option{padding:7px 10px;background:transparent;color:#333b38}
   :is(#lintel-mode,#masonry-load-method,#load-unit,#partition-load-unit,#lintel-catalog-type) option:disabled{color:#77736b}
@@ -1198,7 +1231,9 @@ a:hover { text-decoration: underline; }
   :is(#lintel-mode,#masonry-load-method,#load-unit,#partition-load-unit,#lintel-catalog-type):open:not(:has(option:enabled:hover)) option:enabled:focus,
   :is(#lintel-mode,#masonry-load-method,#load-unit,#partition-load-unit,#lintel-catalog-type):open:not(:has(option:enabled:hover,option:enabled:focus)) option:enabled:checked{background:#0f766e;color:#fff}
   #masonry-load-method selectedcontent{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  #masonry-load-method selectedcontent small{display:none}
+  .lintel-form-layout #masonry-load-method{height:auto;min-height:var(--lintel-control-height);padding-block:6px}
+.lintel-form-layout #masonry-load-method selectedcontent{overflow:visible}
+.lintel-form-layout #masonry-load-method selectedcontent small{display:block;margin-top:2px;font-size:.85em;color:var(--c-text-muted)}
   #masonry-load-method option{display:grid;gap:2px;padding:8px 12px}
   #masonry-load-method option small{font-size:.85em}
   #masonry-load-method option::checkmark{display:none}
@@ -1429,13 +1464,12 @@ body{background:#f3f0e9}
 
 
 
-
 <main class="page">
 
-
+  
   <div id="app">
 
-
+    
     <section class="lintel-intro" aria-labelledby="lintel-intro-title">
       <h2 id="lintel-intro-title">Калькулятор подбора перемычек на всю толщину стены</h2>
       <p class="lintel-intro-description">Введите ширину проёма, толщину стены и высоту кладки над проёмом. Калькулятор рассчитает нагрузку от кладки и подберёт варианты перемычек в один элемент или в ряд.</p>
@@ -1464,9 +1498,9 @@ body{background:#f3f0e9}
       </dialog>
     </section>
 
-
+    
     <div class="grid-2">
-
+      
       <div class="card">
         <div class="card-header">
           <div class="card-title">Исходные данные</div>
@@ -1532,7 +1566,7 @@ body{background:#f3f0e9}
         </button>
       </div>
 
-
+      
       <div class="card">
         <div class="card-header">
           <div class="card-title">Расчётная схема</div>
@@ -1540,7 +1574,7 @@ body{background:#f3f0e9}
         </div>
         <div class="schema-box">
           <svg viewBox="0 0 480 320" xmlns="http://www.w3.org/2000/svg">
-
+            
             <defs>
               <pattern id="brick" patternUnits="userSpaceOnUse" width="40" height="20">
                 <rect width="40" height="20" fill="#F5F0E8"></rect>
@@ -1549,20 +1583,20 @@ body{background:#f3f0e9}
                 <line x1="20" y1="10" x2="20" y2="20" stroke="#C9B89A" stroke-width="1"></line>
               </pattern>
             </defs>
-
+            
             <rect x="20" y="40" width="100" height="240" fill="url(#brick)" stroke="#B8A586" stroke-width="1"></rect>
-
+            
             <rect x="360" y="40" width="100" height="240" fill="url(#brick)" stroke="#B8A586" stroke-width="1"></rect>
-
+            
             <rect x="20" y="40" width="440" height="80" fill="url(#brick)" stroke="#B8A586" stroke-width="1"></rect>
-
+            
             <rect x="80" y="125" width="320" height="30" fill="#9CA3AF" stroke="#1A2B6D" stroke-width="2"></rect>
-
+            
             <line x1="95" y1="146" x2="385" y2="146" stroke="#1A2B6D" stroke-width="1.5" stroke-dasharray="2,2"></line>
             <line x1="95" y1="134" x2="385" y2="134" stroke="#1A2B6D" stroke-width="1.5" stroke-dasharray="2,2"></line>
-
+            
             <rect x="120" y="155" width="240" height="125" fill="#fff" stroke="none"></rect>
-
+            
             <g stroke="#0F766E" stroke-width="1.5" fill="#0F766E">
               <g transform="translate(120, 25)">
                 <line x1="0" y1="0" x2="0" y2="12"></line>
@@ -1590,20 +1624,20 @@ body{background:#f3f0e9}
               </g>
             </g>
             <text x="240" y="18" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#0F766E" font-weight="600">q, кН/м</text>
-
+            
             <g stroke="#1A2B6D" stroke-width="1" fill="#1A2B6D" font-family="JetBrains Mono, monospace" font-size="11">
-
+              
               <line x1="120" y1="295" x2="360" y2="295"></line>
               <polygon points="120,295 126,292 126,298"></polygon>
               <polygon points="360,295 354,292 354,298"></polygon>
               <text x="240" y="310" text-anchor="middle" font-size="12" font-weight="600">Ширина проёма</text>
-
+              
               <line x1="80" y1="170" x2="120" y2="170" stroke-dasharray="2,2"></line>
               <text x="100" y="180" text-anchor="middle" font-size="9">ℓ</text>
-
+              
               <line x1="360" y1="170" x2="400" y2="170" stroke-dasharray="2,2"></line>
               <text x="380" y="180" text-anchor="middle" font-size="9">ℓ</text>
-
+              
               <line x1="80" y1="115" x2="400" y2="115"></line>
               <polygon points="80,115 86,112 86,118"></polygon>
               <polygon points="400,115 394,112 394,118"></polygon>
@@ -1615,7 +1649,7 @@ body{background:#f3f0e9}
       </div>
     </div>
 
-
+    
     <section id="results-section" class="results-section">
       <div class="results-header">
         <h3>Результаты подбора</h3>
@@ -1647,7 +1681,7 @@ body{background:#f3f0e9}
           <td class="num">1</td>
           <td>
             <div class="combo-cell"><span class="combo-mark"><span class="type-tag ">ПБ</span> 8ПБ13-1</span><span class="combo-plus">+</span><span class="combo-mark"><span class="type-tag ">ПБ</span> 8ПБ13-1</span></div>
-
+            
           </td>
           <td class="num">2</td>
           <td class="num">90</td>
@@ -1660,7 +1694,7 @@ body{background:#f3f0e9}
           <td class="num">2</td>
           <td>
             <div class="combo-cell"><span class="combo-mark"><span class="type-tag ">ПБ</span> 10ПБ18-27</span></div>
-
+            
           </td>
           <td class="num">1</td>
           <td class="num">190</td>
@@ -1673,7 +1707,7 @@ body{background:#f3f0e9}
           <td class="num">3</td>
           <td>
             <div class="combo-cell"><span class="combo-mark"><span class="type-tag ">ПБ</span> 9ПБ22-3</span><span class="combo-plus">+</span><span class="combo-mark"><span class="type-tag ">ПБ</span> 9ПБ22-3</span></div>
-
+            
           </td>
           <td class="num">2</td>
           <td class="num">190</td>
@@ -1686,7 +1720,7 @@ body{background:#f3f0e9}
           <td class="num">4</td>
           <td>
             <div class="combo-cell"><span class="combo-mark"><span class="type-tag t-prg">ПРГ</span> ПРГ 28.1.3-4Т</span><span class="combo-plus">+</span><span class="combo-mark"><span class="type-tag t-prg">ПРГ</span> ПРГ 28.1.3-4Т</span></div>
-
+            
           </td>
           <td class="num">2</td>
           <td class="num">300</td>
@@ -1699,7 +1733,7 @@ body{background:#f3f0e9}
           <td class="num">5</td>
           <td>
             <div class="combo-cell"><span class="combo-mark"><span class="type-tag t-prg">ПРГ</span> ПРГ 32.1.4-4Т</span><span class="combo-plus">+</span><span class="combo-mark"><span class="type-tag t-prg">ПРГ</span> ПРГ 32.1.4-4Т</span></div>
-
+            
           </td>
           <td class="num">2</td>
           <td class="num">400</td>
@@ -1712,7 +1746,7 @@ body{background:#f3f0e9}
           <td class="num">6</td>
           <td>
             <div class="combo-cell"><span class="combo-mark"><span class="type-tag ">ПБ</span> 5ПБ 34-20</span></div>
-
+            
           </td>
           <td class="num">1</td>
           <td class="num">220</td>
@@ -1725,7 +1759,7 @@ body{background:#f3f0e9}
           <td class="num">7</td>
           <td>
             <div class="combo-cell"><span class="combo-mark"><span class="type-tag ">ПБ</span> 1ПБ 13-1</span><span class="combo-plus">+</span><span class="combo-mark"><span class="type-tag ">ПБ</span> 1ПБ 13-1</span></div>
-
+            
           </td>
           <td class="num">2</td>
           <td class="num">65</td>
@@ -1738,7 +1772,7 @@ body{background:#f3f0e9}
           <td class="num">8</td>
           <td>
             <div class="combo-cell"><span class="combo-mark"><span class="type-tag ">ПБ</span> 2ПБ 13-1</span><span class="combo-plus">+</span><span class="combo-mark"><span class="type-tag ">ПБ</span> 2ПБ 13-1</span></div>
-
+            
           </td>
           <td class="num">2</td>
           <td class="num">140</td>
@@ -1751,7 +1785,7 @@ body{background:#f3f0e9}
           <td class="num">9</td>
           <td>
             <div class="combo-cell"><span class="combo-mark"><span class="type-tag ">ПБ</span> 3ПБ 34-4</span><span class="combo-plus">+</span><span class="combo-mark"><span class="type-tag ">ПБ</span> 3ПБ 34-4</span></div>
-
+            
           </td>
           <td class="num">2</td>
           <td class="num">220</td>
@@ -1764,7 +1798,7 @@ body{background:#f3f0e9}
           <td class="num">10</td>
           <td>
             <div class="combo-cell"><span class="combo-mark"><span class="type-tag ">ПБ</span> 4ПБ 30-4</span><span class="combo-plus">+</span><span class="combo-mark"><span class="type-tag ">ПБ</span> 4ПБ 30-4</span></div>
-
+            
           </td>
           <td class="num">2</td>
           <td class="num">290</td>
@@ -1777,7 +1811,7 @@ body{background:#f3f0e9}
           <td class="num">11</td>
           <td>
             <div class="combo-cell"><span class="combo-mark"><span class="type-tag t-prg">ПРГ</span> ПРГ 60.2.5-4Т</span></div>
-
+            
           </td>
           <td class="num">1</td>
           <td class="num">500</td>
@@ -1799,7 +1833,7 @@ body{background:#f3f0e9}
 
         <div class="plan-schema">
       <svg viewBox="-110 -70 470 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
-
+        
       <defs>
         <pattern id="masonry" patternUnits="userSpaceOnUse" width="22" height="10">
           <rect width="22" height="10" fill="#F5F0E8"></rect>
@@ -1809,10 +1843,10 @@ body{background:#f3f0e9}
       <rect x="0" y="0" width="250" height="60" fill="url(#masonry)"></rect>
       <rect x="0" y="150" width="250" height="60" fill="#FAFAFA" stroke="none"></rect>
       <text x="125" y="184" text-anchor="middle" font-size="11" fill="#9CA3AF">проём (низ перемычек)</text>
-
+        
       <rect x="0" y="0" width="250" height="210" fill="none" stroke="#1A2B6D" stroke-width="1.6"></rect>
-
-
+        
+        
         <g>
           <rect x="0" y="60" width="120" height="90" fill="#0F766E" fill-opacity="0.16" stroke="#0F766E" stroke-width="1.6"></rect>
           <text x="60" y="102" text-anchor="middle" font-size="13" font-weight="700" fill="#0F766E" font-family="JetBrains Mono, monospace">8ПБ13-1</text>
@@ -1839,10 +1873,10 @@ body{background:#f3f0e9}
           <polygon points="250,166 245,163 245,169" fill="#1A2B6D"></polygon>
         </g>
         <text x="190" y="162" text-anchor="middle" font-size="10" fill="#1A2B6D" font-family="JetBrains Mono, monospace">120</text>
-
+        
           <rect x="120" y="60" width="10" height="90" fill="#F59E0B" fill-opacity="0.20" stroke="#F59E0B" stroke-width="0.8" stroke-dasharray="2 2"></rect>
           <text x="125" y="56" text-anchor="middle" font-size="9" fill="#B45309" font-family="JetBrains Mono, monospace">10</text>
-
+        
       <g stroke="#1A2B6D" stroke-width="0.8" fill="none">
         <line x1="0" y1="0" x2="0" y2="-34"></line>
         <line x1="250" y1="0" x2="250" y2="-34"></line>
@@ -1852,7 +1886,7 @@ body{background:#f3f0e9}
       </g>
       <text x="125" y="-36" text-anchor="middle" font-size="12" fill="#1A2B6D" font-weight="700" font-family="JetBrains Mono, monospace">250 мм</text>
       <text x="125" y="-52" text-anchor="middle" font-size="10" fill="#6B7280">толщина стены</text>
-
+        
       <g stroke="#1A2B6D" stroke-width="0.8" fill="none">
         <line x1="0" y1="60" x2="-36" y2="60"></line>
         <line x1="0" y1="150" x2="-36" y2="150"></line>
@@ -1861,7 +1895,7 @@ body{background:#f3f0e9}
         <polygon points="-32,150 -35,144 -29,144" fill="#1A2B6D"></polygon>
       </g>
       <text x="-40" y="109" text-anchor="end" font-size="11" fill="#1A2B6D" font-weight="700" font-family="JetBrains Mono, monospace">h=90</text>
-
+        
       <text x="-4" y="224" text-anchor="end" font-size="10" fill="#6B7280">внешняя сторона</text>
       <text x="254" y="224" text-anchor="start" font-size="10" fill="#6B7280">внутренняя сторона</text>
       </svg>
@@ -1908,7 +1942,7 @@ body{background:#f3f0e9}
       </div></div>
     </section>
 
-
+    
     <div class="methodology">
 <h3>Как работает алгоритм подбора</h3>
 <div class="method-step"><div class="num">1</div><div class="body"><strong>Пролёт и опирание</strong>
@@ -1946,7 +1980,7 @@ body{background:#f3f0e9}
 
   </div>
 
-
+  
   </main>
 
 
@@ -4033,7 +4067,7 @@ window.LINTEL_DB = {
           <td class="num">${i + 1}</td>
           <td>
             <div class="combo-cell">${compositionHtml}</div>
-
+            
           </td>
           <td class="num">${c.n}</td>
           <td class="num">${c.h}</td>
@@ -4484,11 +4518,9 @@ window.LINTEL_DB = {
   const modeBox = document.createElement('div');
   modeBox.className = 'lintel-modes';
   modeBox.innerHTML = `<label for="lintel-mode">Режим расчёта</label><select id="lintel-mode">
-    <option value="partition" selected>Перемычка для перегородки/ненесущей стены</option>
-    <option value="bearing">Перемычка несущая</option>
-    <option disabled>Уголок в лицевой кладке · одиночный (в разработке)</option>
-    <option disabled>Уголок в перегородке · одиночный или спаренный (в разработке)</option>
-    <option disabled>Уголок в несущей стене · одиночный или спаренный (в разработке)</option>
+    <button><selectedcontent></selectedcontent></button>
+    <option value="partition" selected>Перегородка / <span class="lintel-mode-second-line">ненесущая стена</span></option>
+    <option value="bearing">Несущая перемычка</option>
   </select>`;
   card.querySelector('.card-header').after(modeBox);
   const heightField = document.createElement('div');
@@ -4509,7 +4541,7 @@ window.LINTEL_DB = {
   heightBlock.innerHTML = `<legend>Способ ввода высоты</legend>
     <div class="lintel-height-grid">
       <label class="lintel-height-choice"><input id="height-by-levels" type="radio" name="height-method" checked><span aria-hidden="true"></span>По высоте этажа и верху проёма</label>
-      <label class="lintel-height-choice"><input id="height-direct" type="radio" name="height-method"><span aria-hidden="true"></span>Ввести высоту кладки</label>
+      <label class="lintel-height-choice"><input id="height-direct" type="radio" name="height-method"><span aria-hidden="true"></span>По высоте кладки над проёмом</label>
       <div class="lintel-height-levels" hidden>
         <div class="field"><label for="clear-storey-height">Высота этажа в свету, H</label><div class="input-with-unit"><input id="clear-storey-height" type="number" min="1" value="2740" inputmode="numeric"><span class="unit">мм</span></div></div>
         <div class="field"><label for="opening-top-height">Верх проёма, Hпр</label><div class="input-with-unit"><input id="opening-top-height" type="number" min="1" value="2100" inputmode="numeric"><span class="unit">мм</span></div><div class="field-hint">От пола до низа перемычки</div></div>
@@ -4549,7 +4581,15 @@ window.LINTEL_DB = {
   button.before(types);
   const densityField = document.createElement('div');
   densityField.className = 'field lintel-density-field';
-  densityField.innerHTML = '<label class="lintel-density-label" for="custom-masonry-density"><input id="custom-masonry-density" type="checkbox"> Задать плотность кладки</label><div class="input-with-unit"><input id="masonry-density" aria-label="Плотность кирпичной кладки" type="number" min="1" step="10" value="1800" inputmode="decimal" disabled><span class="unit">кг/м³</span></div>';
+  densityField.innerHTML = '<div class="lintel-density-help"><label class="lintel-density-label" for="custom-masonry-density"><input id="custom-masonry-density" type="checkbox"> Задать плотность кладки</label><button type="button" class="lintel-density-info" aria-label="О плотности кладки" aria-expanded="false" aria-controls="lintel-density-tip">ⓘ</button><span class="lintel-density-tip" id="lintel-density-tip">По умолчанию принята плотность кладки из полнотелого керамического кирпича — 1800 кг/м³.</span></div><div class="input-with-unit"><input id="masonry-density" aria-label="Плотность кирпичной кладки" type="number" min="1" step="10" value="1800" inputmode="decimal" disabled><span class="unit">кг/м³</span></div>';
+  const densityInfo = densityField.querySelector('.lintel-density-info');
+  densityInfo.addEventListener('click', () => {
+    densityInfo.setAttribute('aria-expanded', String(densityInfo.getAttribute('aria-expanded') !== 'true'));
+  });
+  densityInfo.addEventListener('blur', () => densityInfo.setAttribute('aria-expanded', 'false'));
+  densityInfo.addEventListener('keydown', event => {
+    if (event.key === 'Escape') densityInfo.setAttribute('aria-expanded', 'false');
+  });
   const densityAndUnits = document.createElement('div');
   densityAndUnits.className = 'lintel-density-and-units';
   const partitionUnit = unit.cloneNode(true);
@@ -4680,12 +4720,10 @@ window.LINTEL_DB = {
     densityField.classList.toggle('is-default', !customDensity.checked);
     densityField.querySelectorAll('.lintel-stepper-controls button').forEach(arrow => arrow.disabled = density.disabled);
     if (!customDensity.checked) density.value = '1800';
-    heightBlock.hidden = !isPartition;
+    heightSection.hidden = !isPartition;
     manualField.hidden = isPartition;
     types.hidden = false;
-    wallField.classList.toggle('lintel-wall-bearing', !isPartition);
-    if (isPartition && wallField.parentElement !== sourceRow) sourceRow.append(wallField);
-    if (!isPartition && wallField.parentElement === sourceRow) heightBlock.after(wallField);
+
     const automatic = isPartition && heightByLevels.checked;
     heightLevels.hidden = !automatic;
     heightHint.hidden = !automatic;
@@ -4806,6 +4844,14 @@ window.LINTEL_DB = {
     const sideMortar = `M0 0H${sideModule}M0 ${course}H${sideModule}M0 0V${course}M${sideModule / 2} ${course}V${2 * course}`;
     const counted = showMasonryHeight ? countedMasonryHeight() : 0;
     const beltHeight = counted > 0 ? (lintelTop - top) * counted / masonryHeight : 0;
+    const beltTop = lintelTop - beltHeight;
+    const beltDimensionX = right + depthX + 28;
+    const beltDimension = beltHeight > 0 && masonryMethod.value !== 'full' ? `
+      <g class="lm-counted-masonry-dimension">
+        <path class="lm-witness" d="M${clearRight} ${beltTop}H${beltDimensionX + 5} M${clearRight + bearing} ${lintelTop}H${beltDimensionX + 5}"/>
+        ${dim(beltDimensionX, beltTop, beltDimensionX, lintelTop, 'Нкл.учт = ' + formatDimension(Math.round(counted)) + ' мм',
+          beltDimensionX + 23, (beltTop + lintelTop) / 2, -90)}
+      </g>` : '';
     const loadY = lintelTop - 13;
     const arrowCount = Math.max(3, Math.min(9, Math.round((clearRight - clearLeft) / 28)));
     const loadArrows = Array.from({length: arrowCount}, (_, index) => {
@@ -4840,7 +4886,7 @@ window.LINTEL_DB = {
         <path class="lm-axon-reveal" clip-path="url(#lm-axon-opening-clip)" d="M${clearLeft} ${lintelBottom}
           H${clearLeft + depthX} V${Math.max(lintelBottom, floor-depthY)} L${clearLeft} ${floor} Z"/>
         <path class="lm-axon-front" d="M${left} ${top} H${right} V${floor} H${clearRight} V${lintelBottom} H${clearLeft} V${floor} H${left} Z"/>
-        ${beltHeight > 0 ? `<rect class="lm-masonry-belt" x="${clearLeft}" y="${lintelTop - beltHeight}" width="${clearRight - clearLeft}" height="${beltHeight}"/>` : ''}
+        ${beltHeight > 0 ? `<rect class="lm-masonry-belt" x="${clearLeft}" y="${beltTop}" width="${clearRight - clearLeft}" height="${beltHeight}"/>` : ''}
         <rect x="${clearLeft - bearing}" y="${lintelTop}" width="${clearRight - clearLeft + bearing*2}" height="${lintelHeight}" fill="#c2c6bc" stroke="#829084" stroke-width=".8"/>
         <g class="lintel-load" aria-label="Равномерно распределённая нагрузка"${Number(load.value) > 0 ? '' : ' display="none"'}>
           <line x1="${clearLeft}" y1="${loadY}" x2="${clearRight}" y2="${loadY}"/>
@@ -4849,6 +4895,7 @@ window.LINTEL_DB = {
           <text x="${center}" y="${loadY-10}" text-anchor="middle">q = ${loadWithUnit(Number(load.value), ' ')}</text>
         </g>
         ${heightDimensions}
+        ${beltDimension}
         <path class="lm-witness" d="M${clearLeft} ${floor+2}V${groundDimensionY+6} M${clearRight} ${floor+2}V${groundDimensionY+6}
           M${right} ${floor}l26 14 M${right+depthX} ${floor-depthY}l26 14"/>
         ${dim(clearLeft, groundDimensionY, clearRight, groundDimensionY, 'L = '+formatDimension(openingWidth)+' мм', center, floor+44)}
@@ -5149,6 +5196,29 @@ window.LINTEL_DB = {
   });
   catalogSearch.addEventListener('input', renderCatalog);
   catalogType.addEventListener('change', renderCatalog);
+
+  card.classList.add('lintel-form-layout');
+  function formSection(title, ...fields) {
+    const section = document.createElement('section');
+    section.className = 'lintel-form-group';
+    const heading = document.createElement('h4');
+    heading.textContent = title;
+    fields[0].before(section);
+    section.append(heading, ...fields);
+    return section;
+  }
+  sourceRow.append(wallField);
+  formSection('Проём и стена', sourceRow);
+  const heightSection = formSection('Высота кладки', heightBlock);
+  formSection('Нагрузка', masonryLoadRule, densityAndUnits, manualField);
+  types.classList.add('lintel-form-types');
+  const alignedFields = [
+    modeBox, width.closest('.field'), wallField, heightField,
+    storeyHeight.closest('.field'), openingTop.closest('.field'),
+    masonryMethod.closest('.field'), masonrySpanField, densityField,
+    partitionUnitField, manualField,
+  ];
+  for (const field of alignedFields) field.classList.add('lintel-form-line');
   sync();
 })();
 </script></body>
