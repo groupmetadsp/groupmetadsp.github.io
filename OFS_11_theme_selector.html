@@ -1,5 +1,14 @@
 <!doctype html>
 <html lang="ru" data-theme="dark" class=""><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ОФС · Конструктор структуры — версия 10</title>
+<script>document.documentElement.classList.add('ofs-locked');</script>
+<style>
+.ofs-locked body > :not(#ofsPasswordDialog){visibility:hidden}
+#ofsPasswordDialog{width:min(380px,90vw);padding:24px}
+#ofsPasswordDialog::backdrop{background:var(--theme-bg,#10171b)}
+#ofsPasswordDialog label{display:block;margin:14px 0 4px}
+#ofsPasswordDialog input{width:100%;margin:0 0 12px}
+#ofsPasswordError{color:var(--theme-text);margin:8px 0}
+</style>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#10171b;color:#eef1eb;font:14px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--lime:#caed92;--blue:#9acbf7;--border:#384348;--dim:#afbab9;color-scheme:dark}header,main,footer{max-width:1550px;margin:auto}header{padding:22px 3vw;display:flex;align-items:center;gap:13px;border-bottom:1px solid var(--border)}.brand{background:var(--lime);color:#192516;border-radius:8px;padding:6px 9px;font-weight:850;letter-spacing:-1px}h1,h2,h3,p{margin:0}h1{font-size:clamp(19px,2.4vw,30px);letter-spacing:-.04em}.actions{margin-left:auto;display:flex;gap:7px}button,input,textarea,select{font:inherit}button{cursor:pointer;border:1px solid var(--border);border-radius:7px;background:#202a2e;color:inherit;padding:7px 11px}button:hover{border-color:#96ac99}button:focus-visible,summary:focus-visible{outline:2px solid var(--lime)}.accent{background:var(--lime);color:#162315;border-color:transparent;font-weight:650}main{padding:22px 3vw}.layout{display:grid;grid-template-columns:265px minmax(0,1fr);border:1px solid var(--border);border-radius:13px;overflow:hidden;background:#192125}aside{padding:19px;border-right:1px solid var(--border)}h2{font-size:18px;letter-spacing:-.03em}.muted,small{color:var(--dim)}aside p{font-size:13px;margin:6px 0 15px}.buttons{display:flex;gap:6px;flex-wrap:wrap}.group{margin-top:22px}h3{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}.entry{display:flex;align-items:center;gap:4px;margin-bottom:6px;border:1px solid var(--border);border-radius:6px;background:#222d31;padding:3px}.entry button{border:0;background:transparent}.entry .pick{flex:1;text-align:left;cursor:grab;overflow-wrap:anywhere}.entry.active{outline:2px solid var(--lime)}.typeDot{display:inline-block;width:9px;height:9px;margin-right:8px;background:var(--blue);border-radius:2px}.roleDot{background:var(--lime);transform:rotate(45deg);border-radius:1px}.bar,.status{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 15px}.bar{border-bottom:1px solid var(--border)}.bar small{margin-left:auto}.status{border-top:1px solid var(--border);font-size:12px;color:var(--dim);min-height:49px}.status button{margin-left:auto;font-size:12px}.viewport{height:485px;overflow:hidden;background-color:#141c20;background-image:radial-gradient(#354246 1px, transparent 1px);background-size:18px 18px;overscroll-behavior:contain}.world{position:relative;isolation:isolate}.world svg{position:absolute;inset:0;overflow:visible;pointer-events:none}.wire{pointer-events:stroke;cursor:pointer}.wire:hover,.wire:focus-visible{stroke:#ffffff33;stroke-width:13;outline:none}.card{position:absolute;width:196px;height:103px;background:#202d33;border:1px solid #4f6671;border-left:3px solid var(--blue);border-radius:8px;text-align:left;padding:8px 12px;box-shadow:0 4px 10px #0002;touch-action:none;cursor:grab;user-select:none}.card.role{border-color:#536345;border-left-color:var(--lime);background:#262e27}.card.sel{outline:2px solid var(--lime);outline-offset:3px}.card small{font-size:10px;display:block;color:var(--blue)}.card.role small{color:var(--lime)}.card strong,.card span,.card em{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.card strong{font-size:15px;line-height:1.7}.card em{font-style:normal;color:#c6cfcb;font-size:12px}.card span{color:var(--dim);font-size:11px;margin-top:4px}.editcard{position:absolute;top:2px;right:3px;border:0;background:transparent;padding:4px 7px;font-size:14px}/* Назначенные роли — текст непосредственно на карточке должности */
 .role-notes{margin-top:5px;padding-top:4px;border-top:1px dotted rgba(202,237,146,.38)}
@@ -171,7 +180,39 @@ html[data-theme] .role-note:hover,html[data-theme] .role-note:focus-visible{colo
 #responsibilityDlg tbody th{background:var(--theme-panel-secondary);text-align:left}
 @media(max-width:600px){#responsibilityDlg .annotation-head{padding:10px;gap:8px}#responsibilityDlg h2{font-size:16px}}
 </style></head>
-<body><header><span class="brand">ОФС</span><h1>Конструктор структуры</h1><div class="actions"><button id="downloadHtml">Сохранить HTML</button><button class="accent" id="responsibilityBtn" type="button">Зоны ответственности и функции</button><button class="accent" id="annotationBtn" type="button" title="Открыть методологию и пояснения к ОФС">Аннотация</button><label class="theme-picker" for="themeSelect"><span>Тема</span><select id="themeSelect" aria-label="Тема оформления ОФС">
+<body>
+<dialog id="ofsPasswordDialog" aria-labelledby="ofsPasswordTitle">
+ <form id="ofsPasswordForm">
+  <h2 id="ofsPasswordTitle">Открыть ОФС</h2>
+  <label for="ofsPassword">Пароль</label>
+  <input id="ofsPassword" type="password" inputmode="numeric" required autofocus>
+  <button type="submit" class="accent">Открыть</button>
+  <p id="ofsPasswordError" role="alert" hidden>Неверный пароль</p>
+ </form>
+</dialog>
+<script>
+{
+ const dialog=document.getElementById('ofsPasswordDialog');
+ const form=document.getElementById('ofsPasswordForm');
+ const input=document.getElementById('ofsPassword');
+ const error=document.getElementById('ofsPasswordError');
+ dialog.addEventListener('cancel', event=>event.preventDefault());
+ form.addEventListener('submit', event=>{
+  event.preventDefault();
+  if(input.value!=='1111'){
+   error.hidden=false;
+   input.select();
+   return;
+  }
+  input.value='';
+  error.hidden=true;
+  document.documentElement.classList.remove('ofs-locked');
+  dialog.close();
+ });
+ dialog.showModal();
+}
+</script>
+<header><span class="brand">ОФС</span><h1>Конструктор структуры</h1><div class="actions"><button id="downloadHtml">Сохранить HTML</button><button class="accent" id="responsibilityBtn" type="button">Зоны ответственности и функции</button><button class="accent" id="annotationBtn" type="button" title="Открыть методологию и пояснения к ОФС">Аннотация</button><label class="theme-picker" for="themeSelect"><span>Тема</span><select id="themeSelect" aria-label="Тема оформления ОФС">
 <option value="dark">Тёмная</option><option value="light">Светлая</option><option value="sea">Море</option><option value="forest">Лес</option><option value="mountain">Горы</option><option value="sheregesh">Шерегеш</option>
 </select></label><button id="exportBtn">Скачать JSON</button><button id="importBtn">Открыть JSON</button><input type="file" id="file" accept=".json,application/json" hidden=""></div></header>
 <p class="preview-message">Режим просмотра. Для редактирования откройте HTML в браузере с поддержкой JavaScript.</p><main><div class="layout"><aside class="library-panel"><h2>Библиотека карточек</h2><p class="muted">Перетащите карточку или выберите её и щёлкните по полю.</p><div class="buttons"><button id="newJob">+ Должность</button><button id="newRole">+ Роль</button><button id="newUnit">+ Подразделение</button><button id="newTeam">+ Проектная команда</button><button id="newExternal">+ Внешний контур</button></div><div id="library"><div class="group"><h3>Должности</h3><div class="items"><div class="entry"><button class="pick" draggable="true"><i class="typeDot jobDot"></i>Директор Тех.зак</button><button title="Изменить Директор Тех.зак">✎</button></div></div></div><div class="group"><h3>Роли</h3><div class="items"><div class="entry"><button class="pick" title="Роль отображается значком на карточке должности"><i class="typeDot roleDot"></i>Держатель потока К</button><button title="Изменить Держатель потока К">✎</button></div><div class="entry"><button class="pick" title="Роль отображается значком на карточке должности"><i class="typeDot roleDot"></i>Держатель потока ЭП</button><button title="Изменить Держатель потока ЭП">✎</button></div><div class="entry"><button class="pick" title="Роль отображается значком на карточке должности"><i class="typeDot roleDot"></i>Держатель потока П,Р</button><button title="Изменить Держатель потока П,Р">✎</button></div></div></div><div class="group"><h3>Подразделения</h3><div class="items"></div></div><div class="group"><h3>Проектные команды</h3><div class="items"></div></div><div class="group"><h3>Внешний контур</h3><div class="items"></div></div></div></aside>
@@ -1354,6 +1395,6 @@ const compactLayout=matchMedia('(max-width:800px)');
 const setComparisonVisibility=()=>{$('comparisonPanel').open=!compactLayout.matches};
 compactLayout.addEventListener('change',setComparisonVisibility);setComparisonVisibility();
 $('comparisonPanel').addEventListener('toggle',updateSize);
-window.addEventListener('resize',updateSize);document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('dlg').open&&!$('annotationDlg').open&&!$('responsibilityDlg').open){selected=placing=null;render()}});applyTheme(state.uiTheme||'dark');render();persistMsg();document.documentElement.classList.add('interactive');fitAll();
+window.addEventListener('resize',updateSize);document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('dlg').open&&!$('annotationDlg').open&&!$('responsibilityDlg').open&&!$('ofsPasswordDialog').open){selected=placing=null;render()}});applyTheme(state.uiTheme||'dark');render();persistMsg();document.documentElement.classList.add('interactive');fitAll();
 </script>
 </body></html>
