@@ -1877,7 +1877,7 @@ body{background:#f3f0e9}
                 <th>L × b × h, мм</th>
                 <th>L₀, мм</th>
                 <th>q допустимая, кН/м</th>
-                <th scope="col" style="white-space:normal">Опирание на сторону, мм</th><th scope="col" style="white-space:normal">Мин. опирание по серии, мм</th>
+                <th scope="col" style="white-space:normal">Опирание на сторону (факт.), мм</th><th scope="col" style="white-space:normal">Мин. опирание по серии, мм</th>
                 <th>Масса итого</th>
                 <th>Серия</th>
               </tr>
@@ -4068,7 +4068,7 @@ window.LINTEL_DB = {
               <th>h, мм</th>
               <th>Σb, мм</th>
               <th class="load-column-heading">q на эл., ${loadLabelMarkup()}</th>
-              <th scope="col" class="bearing-column-heading">Опирание на сторону, мм</th>
+              <th scope="col" class="bearing-column-heading">Опирание на сторону (факт.), мм</th>
               <th scope="col" class="bearing-column-heading">Мин. опирание по серии, мм</th>
               <th>Масса всего</th>
               <th></th>
@@ -4077,7 +4077,7 @@ window.LINTEL_DB = {
           <tbody>${rows}</tbody>
         </table>
       </div>
-      <p class="results-bearing-note">Опирание на сторону рассчитано для симметричной укладки.</p>
+      <p class="results-bearing-note">Фактическое опирание в таблице рассчитано для симметричной укладки.</p>
       <div id="details-panel-host"></div>
     `;
 
@@ -4163,7 +4163,7 @@ window.LINTEL_DB = {
                 <th>L × b × h, мм</th>
                 <th>L₀, мм</th>
                 <th>q допустимая, ${loadLabelMarkup()}</th>
-                <th scope="col" style="white-space:normal">Опирание на сторону, мм</th><th scope="col" style="white-space:normal">Мин. опирание по серии, мм</th>
+                <th scope="col" style="white-space:normal">Опирание на сторону (факт.), мм</th><th scope="col" style="white-space:normal">Мин. опирание по серии, мм</th>
                 <th>Масса итого</th>
                 <th>Серия</th>
               </tr>
@@ -4172,7 +4172,7 @@ window.LINTEL_DB = {
           </table>
         </div>
 
-        <div class="plan-caption">Опирание на сторону рассчитано для симметричной укладки.</div>
+        <div class="plan-caption">Фактическое опирание в таблице рассчитано для симметричной укладки.</div>
         <div class="det-actions">
           <button class="btn btn-primary" id="btn-pdf">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -4383,13 +4383,13 @@ window.LINTEL_DB = {
     <thead>
       <tr>
         <th>Марка</th><th>Тип</th><th>Кол.</th><th>L × b × h, мм</th><th>L₀, мм</th>
-        <th>q допустимая, ${loadLabel()}</th><th scope="col" style="white-space:normal">Опирание на сторону, мм</th><th scope="col" style="white-space:normal">Мин. опирание по серии, мм</th><th>Масса итого</th><th>Каркас</th><th>Бетон</th><th>Серия</th>
+        <th>q допустимая, ${loadLabel()}</th><th scope="col" style="white-space:normal">Опирание на сторону (факт.), мм</th><th scope="col" style="white-space:normal">Мин. опирание по серии, мм</th><th>Масса итого</th><th>Каркас</th><th>Бетон</th><th>Серия</th>
       </tr>
     </thead>
     <tbody>${specRows}</tbody>
   </table>
 
-  <div class="plan-caption">Опирание на сторону рассчитано для симметричной укладки.</div>
+  <div class="plan-caption">Фактическое опирание в таблице рассчитано для симметричной укладки.</div>
   <h2>4. Указания по монтажу</h2>
   <ul style="margin:6px 0 0 0; padding-left:20px; font-size:9.5pt; line-height:1.5;">
     <li>Глубина опирания каждой перемычки на стену — не менее значения, указанного в спецификации.</li>
