@@ -1374,7 +1374,10 @@ body{background:#f3f0e9}
 #details-panel-host .btn:focus-visible{outline:2px solid #0f766e;outline-offset:3px}
 
 /* Center the numeric result columns beneath their headings. */
-#results-section .results-table th:nth-child(n+3):nth-child(-n+7),#results-section .results-table td:nth-child(n+3):nth-child(-n+7){text-align:center;vertical-align:middle}
+#results-section .results-table th:nth-child(n+3):nth-last-child(n+2),#results-section .results-table td:nth-child(n+3):nth-last-child(n+2){text-align:center;vertical-align:middle}
+#results-section .results-table .bearing-column-heading{white-space:normal;min-width:105px;text-transform:none}
+#results-section .results-bearing-value{white-space:nowrap;text-align:left}
+#results-section .results-bearing-note{margin:6px 0 0;color:var(--c-text-muted);font-size:13px}
 
 /* Span value beside the source data, formula on its own line, teal checks. */
 .field .field-hint .lintel-span-formula{display:block;width:fit-content;margin-top:3px;font-family:var(--font-sans);white-space:normal}
@@ -3974,6 +3977,12 @@ window.LINTEL_DB = {
   const loadMarkup = (value, withUnit = false) =>
     '<span data-lintel-load="' + value + '"' + (withUnit ? ' data-lintel-with-unit' : '') + '>' + loadText(value, withUnit) + '</span>';
 
+  function renderRowBearing(marks, getValue) {
+    const distinct = [...new Map(marks.map(item => [item.mark, item])).values()];
+    if (distinct.length === 1) return getValue(distinct[0]);
+    return distinct.map(item => `<div class="results-bearing-value">${item.mark} — ${getValue(item)}</div>`).join('');
+  }
+
   function renderResults(input, result) {
     const { combos, L0_required } = result;
 
@@ -4030,6 +4039,8 @@ window.LINTEL_DB = {
           <td class="num">${c.h}</td>
           <td class="num">${c.total_b}${c.undershoot ? ` <span class="undershoot">(−${c.undershoot})</span>` : ''}${c.overshoot ? ` <span class="overshoot">(+${c.overshoot})</span>` : ''}</td>
           <td class="num">${loadMarkup(c.q_per_item)}</td>
+          <td class="num">${renderRowBearing(c.marks, item => formatSupportPerSide(item, input.openingWidth))}</td>
+          <td class="num">${renderRowBearing(c.marks, item => item.min_support)}</td>
           <td class="num">${c.total_mass ? c.total_mass + ' кг' : '—'}</td>
           <td><button class="row-select" data-idx="${i}">Подробнее</button></td>
         </tr>`;
@@ -4057,6 +4068,8 @@ window.LINTEL_DB = {
               <th>h, мм</th>
               <th>Σb, мм</th>
               <th class="load-column-heading">q на эл., ${loadLabelMarkup()}</th>
+              <th scope="col" class="bearing-column-heading">Опирание на сторону, мм</th>
+              <th scope="col" class="bearing-column-heading">Мин. опирание по серии, мм</th>
               <th>Масса всего</th>
               <th></th>
             </tr>
@@ -4064,6 +4077,7 @@ window.LINTEL_DB = {
           <tbody>${rows}</tbody>
         </table>
       </div>
+      <p class="results-bearing-note">Опирание на сторону рассчитано для симметричной укладки.</p>
       <div id="details-panel-host"></div>
     `;
 
