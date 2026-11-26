@@ -350,6 +350,8 @@ function refreshMaterialDates(){
 const dateStyle=document.createElement('style');
 dateStyle.textContent='.rubric-material-card .rubric-updated{font-size:11px;line-height:1.4;color:var(--muted);margin:7px 0 9px;font-variant-numeric:tabular-nums}';
 document.head.appendChild(dateStyle);
+const copyIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a4 4 0 0 0 6 0l4-4a4 4 0 0 0-6-6l-2 2M14 11a4 4 0 0 0-6 0l-4 4a4 4 0 0 0 6 6l2-2"/></svg>';
+const copyTimers=new WeakMap();
 function renderRubric(rubric){
   const section=sectionInfo(rubric);
   const selected=pick(rubric);
@@ -377,6 +379,7 @@ function renderRubric(rubric){
         +(githubFile?'<div class="rubric-updated" data-github-file="'+esc(githubFile)+'">Обновлено: …</div>':'')
         +'<div class="tool-card-actions">'
         +'<button type="button" class="tool-open" data-open-material="'+t.id+'">'+(hasLink?'Открыть':'Назначить ссылку')+'</button>'
+        +(hasLink?'<button type="button" class="tool-edit" data-copy-material="'+t.id+'" title="Скопировать ссылку" aria-label="Скопировать прямую ссылку на '+name+'">'+copyIcon+'</button>':'')
         +'<button type="button" class="tool-edit" data-edit-material="'+t.id+'" title="Редактировать материал" aria-label="Редактировать '+name+'">'+icon('pencil')+'</button>'
         +'<button type="button" class="tool-delete" data-delete-material="'+t.id+'" title="Удалить материал" aria-label="Удалить '+name+'">'+trashIcon()+'</button>'
         +'</div></article>';
@@ -587,6 +590,30 @@ document.addEventListener('keydown',e=>{
     next?.querySelector('[data-drag-handle]')?.focus();
   }
 });
+async function copyMaterialLink(button){
+  const material=pick(current)?.materials.find(item=>item.id===button.dataset.copyMaterial);
+  const href=validUrl(material?.url);
+  if(!href)return;
+  try{
+    await navigator.clipboard.writeText(href);
+  }catch(error){
+    window.prompt('Скопируйте прямую ссылку на материал',href);
+    return;
+  }
+  if(!button.isConnected)return;
+  clearTimeout(copyTimers.get(button));
+  button.title='Ссылка скопирована';
+  const label=button.getAttribute('aria-label');
+  const originalLabel=button.dataset.copyLabel||label;
+  button.dataset.copyLabel=originalLabel;
+  button.setAttribute('aria-label','Ссылка скопирована');
+  button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';
+  copyTimers.set(button,setTimeout(()=>{
+    button.title='Скопировать ссылку';
+    button.setAttribute('aria-label',originalLabel);
+    button.innerHTML=copyIcon;
+  },1800));
+}
 function openMaterial(id){
   const sub=pick(current);
   if(!sub)return;
@@ -594,11 +621,6 @@ function openMaterial(id){
   if(!t)return;
   const href=validUrl(t.url);
   if(!href){openDialog('material',sub.id,t.id);return;}
-  if(t.id==='annual-report-2026'){
-    const password=window.prompt('Введите пароль для материала «'+t.name+'»');
-    if(password===null)return;
-    if(password!=='1111'){window.alert('Неверный пароль');return;}
-  }
   audioStarted=true;playSound('navigate');
   window.open(href,'_blank','noopener,noreferrer');
 }
@@ -683,6 +705,8 @@ document.addEventListener('click',function(e){
   if(newMat){const sub=pick(current);if(sub)openDialog('material',sub.id);return;}
   const editMat=e.target.closest('[data-edit-material]');
   if(editMat){const sub=pick(current);if(sub)openDialog('material',sub.id,editMat.dataset.editMaterial);return;}
+  const copyButton=e.target.closest('[data-copy-material]');
+  if(copyButton){copyMaterialLink(copyButton);return;}
   const openButton=e.target.closest('.tool-open[data-open-material]');
   if(openButton){openMaterial(openButton.dataset.openMaterial);return;}
   if(e.target.closest('button,a,input,select,textarea'))return;
